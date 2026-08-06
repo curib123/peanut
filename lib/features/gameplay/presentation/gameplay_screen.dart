@@ -70,7 +70,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Sunrise Bakery'),
+            Text(BundledLevelRepository.worldNameForLevel(widget.level)),
             Text('Level ${widget.level}', style: const TextStyle(fontSize: 12)),
           ],
         ),

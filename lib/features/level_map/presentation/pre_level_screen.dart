@@ -71,6 +71,10 @@ class PreLevelScreen extends StatelessWidget {
       'target_score' => 'Reach $target points',
       'collect_pieces' => 'Collect $target ${goal.parameters['pieceId']}',
       'clear_frosting' => 'Clear $target Sugar Frosting tiles',
+      'break_crates' => 'Break $target Peanut Crates',
+      'drop_recipe_baskets' => 'Drop $target Recipe Baskets',
+      'spread_cream' => 'Spread Coconut Cream to $target tiles',
+      'light_ovens' => 'Light $target Festival Ovens',
       _ => 'Complete the bakery objective',
     };
   }

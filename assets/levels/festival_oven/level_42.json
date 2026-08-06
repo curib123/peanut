@@ -1,0 +1,55 @@
+{
+  "id": "festival_oven_2",
+  "worldId": "festival_oven",
+  "order": 42,
+  "rows": 8,
+  "columns": 8,
+  "moves": 26,
+  "seed": 2714,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    6420,
+    8988,
+    11877
+  ],
+  "goals": [
+    {
+      "id": "light_ovens",
+      "parameters": {
+        "target": 3,
+        "cells": [
+          [
+            1,
+            1
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            2
+          ]
+        ]
+      }
+    }
+  ],
+  "blockers": [],
+  "tutorial": [
+    {
+      "message": "Make matches on or beside each oven to light it."
+    }
+  ],
+  "metadata": {
+    "difficulty": 42,
+    "name": "Festival Oven Recipe 2",
+    "simulationTier": "standard"
+  }
+}

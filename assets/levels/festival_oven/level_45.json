@@ -1,0 +1,80 @@
+{
+  "id": "festival_oven_5",
+  "worldId": "festival_oven",
+  "order": 45,
+  "rows": 8,
+  "columns": 8,
+  "moves": 27,
+  "seed": 2765,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    6750,
+    9450,
+    12488
+  ],
+  "goals": [
+    {
+      "id": "light_ovens",
+      "parameters": {
+        "target": 3,
+        "cells": [
+          [
+            1,
+            1
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            6,
+            2
+          ]
+        ]
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "oven_stone",
+      "parameters": {
+        "row": 2,
+        "column": 4,
+        "layers": 1
+      }
+    },
+    {
+      "id": "oven_stone",
+      "parameters": {
+        "row": 3,
+        "column": 5,
+        "layers": 1
+      }
+    },
+    {
+      "id": "oven_stone",
+      "parameters": {
+        "row": 4,
+        "column": 6,
+        "layers": 1
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Make matches on or beside each oven to light it."
+    }
+  ],
+  "metadata": {
+    "difficulty": 45,
+    "name": "Festival Oven Recipe 5",
+    "simulationTier": "standard"
+  }
+}

@@ -48,6 +48,8 @@ Players enter an unlocked level through a goal preview. Winning saves the best s
 
 Levels 1-10 are individually authored JSON recipes. They introduce basic swaps, cascades, two-ingredient collection, single-layer frosting, Sugar Beams, irregular playable cells, objective-focused special use, double-layer frosting, mixed goals, and a three-goal finale. Every recipe carries a deterministic seed, gradually increasing move/score budget, tutorial message, spawn weights, star thresholds, and stable mechanic IDs.
 
+The remaining launch journey expands those foundations: Peanut Grove emphasizes crates and twine; Egg Cloud Kitchen introduces falling baskets, cream, and sticky caramel; Sugar Harbor mixes spreading chocolate with frosting; Festival Oven focuses on lighting ovens around oven stones; Starlight Bake-Off combines layered blockers, ingredient collection, scoring, irregular trays, and special-focused finale recipes. Levels 18-20, 28-30, 38-40, 48-50, and 58-60 use milestone balancing profiles.
+
 ## Live events
 
 Events have stable IDs, UTC start/end times, optional event worlds and levels, and parameterized modifiers. Expired content is removed from the active catalog snapshot without deleting earned progress. Existing mechanics can be mixed and rebalanced entirely in data; new rule types must be registered and tested before a pack references them.

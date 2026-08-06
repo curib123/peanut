@@ -1,0 +1,91 @@
+{
+  "id": "sugar_harbor_4",
+  "worldId": "sugar_harbor",
+  "order": 34,
+  "rows": 8,
+  "columns": 8,
+  "moves": 26,
+  "seed": 2578,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    5540,
+    7756,
+    10249
+  ],
+  "goals": [
+    {
+      "id": "collect_pieces",
+      "parameters": {
+        "target": 22,
+        "pieceId": "sugar_crystal"
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 6,
+        "column": 5,
+        "layers": 1
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 1,
+        "column": 6,
+        "layers": 1
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 3,
+        "column": 1,
+        "layers": 1
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 4,
+        "column": 2,
+        "layers": 1
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 5,
+        "column": 3,
+        "layers": 1
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 6,
+        "column": 4,
+        "layers": 1
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Clear Chocolate Crumbs before they spread."
+    }
+  ],
+  "metadata": {
+    "difficulty": 34,
+    "name": "Sugar Harbor Recipe 4",
+    "simulationTier": "standard"
+  }
+}

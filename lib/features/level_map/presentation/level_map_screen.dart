@@ -11,7 +11,7 @@ class LevelMapScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final save = ref.watch(progressControllerProvider).data;
     return Scaffold(
-      appBar: AppBar(title: const Text('Sunrise Bakery')),
+      appBar: AppBar(title: const Text('Island Recipe Journey')),
       body: GridView.builder(
         padding: const EdgeInsets.all(20),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -19,7 +19,7 @@ class LevelMapScreen extends ConsumerWidget {
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
         ),
-        itemCount: 10,
+        itemCount: 60,
         itemBuilder: (context, index) {
           final level = index + 1;
           final unlocked = level <= save.highestUnlockedLevel;

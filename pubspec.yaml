@@ -75,6 +75,11 @@ flutter:
     - assets/svg/backgrounds/
     - assets/svg/characters/
     - assets/levels/sunrise_bakery/
+    - assets/levels/peanut_grove/
+    - assets/levels/egg_cloud_kitchen/
+    - assets/levels/sugar_harbor/
+    - assets/levels/festival_oven/
+    - assets/levels/starlight_bake_off/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

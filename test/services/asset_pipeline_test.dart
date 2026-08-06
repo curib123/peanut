@@ -13,11 +13,11 @@ void main() {
         .where((path) => path.startsWith('assets/'))
         .toList();
 
-    expect(assets, hasLength(52));
+    expect(assets, hasLength(102));
     expect(assets.where((path) => path.endsWith('.svg')), hasLength(33));
     expect(assets.where((path) => path.endsWith('.wav')), hasLength(8));
     expect(assets.where((path) => path.endsWith('.png')), hasLength(1));
-    expect(assets.where((path) => path.endsWith('.json')), hasLength(10));
+    expect(assets.where((path) => path.endsWith('.json')), hasLength(60));
 
     for (final path in assets) {
       final ByteData bytes = await rootBundle.load(path);

@@ -58,6 +58,7 @@ class IslandMatchGame extends FlameGame {
       blockers: level == null
           ? null
           : BlockerGrid.fromMechanics(level!.blockers),
+      boardObjectives: level == null ? null : _boardObjectives(level!),
       inaccessibleCells: level == null
           ? const {}
           : board.positions
@@ -124,6 +125,31 @@ class IslandMatchGame extends FlameGame {
       )
       ..resizeBoard(Vector2.all(extent));
   }
+}
+
+BoardObjectives _boardObjectives(LevelDefinition level) {
+  Set<Position> cellsFor(String goalId) {
+    final cells = <Position>{};
+    for (final goal in level.goals.where((goal) => goal.id == goalId)) {
+      final raw = goal.parameters['cells'];
+      if (raw is! List) continue;
+      for (final value in raw) {
+        if (value is List &&
+            value.length == 2 &&
+            value[0] is int &&
+            value[1] is int) {
+          cells.add(Position(value[0] as int, value[1] as int));
+        }
+      }
+    }
+    return cells;
+  }
+
+  return BoardObjectives(
+    recipeBaskets: cellsFor('drop_recipe_baskets'),
+    cream: cellsFor('spread_cream'),
+    ovens: cellsFor('light_ovens'),
+  );
 }
 
 class GameHudState {

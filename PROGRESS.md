@@ -1,6 +1,6 @@
 # Current Status
 
-Current phase: Phase 8 (ready to begin)
+Current phase: Phase 9 (ready to begin)
 
 ## Completed
 
@@ -64,6 +64,13 @@ Current phase: Phase 8 (ready to begin)
 - Added persistent inaccessible-cell support for irregular boards
 - Added deterministic level generation and validation tests for all ten openings
 - Phase 7 verification completed
+- Added Levels 11-60 across Peanut Grove, Egg Cloud Kitchen, Sugar Harbor, Festival Oven, and Starlight Bake-Off
+- Expanded the bundled repository and level map to all 60 launch levels
+- Added data-driven baskets, cream, ovens, crates, twine, caramel, chocolate, frosting, and oven-stone recipes
+- Added reproducible launch-level generation with milestone balancing profiles
+- Added `tool/validate_levels.dart` for schema, mechanics, masks, openings, and bounded gameplay validation
+- Validated all 60 deterministic openings and ran 200 simulations across Levels 11-60
+- Phase 8 verification completed
 
 ## In Progress
 
@@ -71,13 +78,14 @@ Current phase: Phase 8 (ready to begin)
 
 ## Remaining
 
-- Phase 8 expansion to the remaining five launch worlds and 60 total levels
+- Phase 9 animation, audio, haptic, and reduced-motion polish
 
 ## Tests
 
-- `dart format --output=none --set-exit-if-changed .`: passed (49 Dart files checked)
+- `dart format --output=none --set-exit-if-changed .`: passed (52 Dart files checked)
 - `flutter analyze`: passed, no issues
-- `flutter test`: passed, 69 tests
+- `flutter test`: passed, 71 tests
+- `dart run tool/validate_levels.dart`: passed, 60 levels and 200 simulations
 - Generated-board validation: 1,000 deterministic 8x8 boards passed
 - `flutter build web --debug`: passed (`build/web`)
 
