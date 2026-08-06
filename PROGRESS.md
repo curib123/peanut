@@ -1,6 +1,6 @@
 # Current Status
 
-Current phase: Phase 9 (ready to begin)
+Current phase: Phase 9 (complete)
 
 ## Completed
 
@@ -71,6 +71,11 @@ Current phase: Phase 9 (ready to begin)
 - Added `tool/validate_levels.dart` for schema, mechanics, masks, openings, and bounded gameplay validation
 - Validated all 60 deterministic openings and ran 200 simulations across Levels 11-60
 - Phase 8 verification completed
+- Added pulsing selection, swap/reject feedback, match pops, bounded particles, landing bounce, and cascade callouts
+- Added deterministic unused-move scoring and animated star-fill victory presentation
+- Wired all eight original sound effects into gameplay with failure-safe playback
+- Added settings-aware haptics and reduced-motion alternatives
+- Phase 9 verification completed
 
 ## In Progress
 
@@ -78,13 +83,13 @@ Current phase: Phase 9 (ready to begin)
 
 ## Remaining
 
-- Phase 9 animation, audio, haptic, and reduced-motion polish
+- None; launch plan complete
 
 ## Tests
 
 - `dart format --output=none --set-exit-if-changed .`: passed (52 Dart files checked)
 - `flutter analyze`: passed, no issues
-- `flutter test`: passed, 71 tests
+- `flutter test`: passed, 72 tests
 - `dart run tool/validate_levels.dart`: passed, 60 levels and 200 simulations
 - Generated-board validation: 1,000 deterministic 8x8 boards passed
 - `flutter build web --debug`: passed (`build/web`)

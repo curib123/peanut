@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
+import '../../services/audio/game_audio_service.dart';
 
 import '../domain/match3.dart';
 import 'board_component.dart';
@@ -14,7 +15,12 @@ class IslandMatchGame extends FlameGame {
     this.animationDuration = 0.18,
     this.onLevelEnded,
     this.level,
+    GameAudioService? audio,
+    GameHapticsService? haptics,
+    this.reducedMotion = false,
   }) : _seed = seed,
+       audio = audio ?? GameAudioService.flame(),
+       haptics = haptics ?? GameHapticsService(),
        board =
            initialBoard ??
            BoardGenerator(
@@ -27,6 +33,9 @@ class IslandMatchGame extends FlameGame {
   final void Function(LevelStatus status, int score)? onLevelEnded;
   final LevelDefinition? level;
   final Board board;
+  final GameAudioService audio;
+  final GameHapticsService haptics;
+  final bool reducedMotion;
   late final TurnEngine _turnEngine;
   late final LevelSession _session;
   late final BoardComponent boardComponent;
@@ -34,6 +43,7 @@ class IslandMatchGame extends FlameGame {
   final ValueNotifier<GameHudState> hud = ValueNotifier(
     const GameHudState(moves: 20, score: 0, status: LevelStatus.playing),
   );
+  final ValueNotifier<String?> cascadeMessage = ValueNotifier(null);
 
   bool get isInputLocked => _inputGate.isLocked;
 
@@ -86,6 +96,8 @@ class IslandMatchGame extends FlameGame {
     final result = await _inputGate.run(() async {
       final turn = _session.play(first, second);
       if (!turn.resolution.isValid) {
+        await audio.play('invalid');
+        await haptics.tap();
         await boardComponent.animateInvalidSwap(
           first,
           second,
@@ -93,23 +105,40 @@ class IslandMatchGame extends FlameGame {
         );
         return false;
       }
+      await audio.play('swap');
       await boardComponent.animateResolution(
         first,
         second,
         turn.resolution,
         animationDuration,
       );
+      if (turn.resolution.cascades.length > 1) {
+        cascadeMessage.value =
+            '${turn.resolution.cascades.length}x Tasty Cascade!';
+        Future<void>.delayed(const Duration(milliseconds: 850), () {
+          if (cascadeMessage.value != null) cascadeMessage.value = null;
+        });
+      }
       hud.value = GameHudState(
         moves: turn.movesRemaining,
         score: turn.score,
         status: turn.status,
       );
       if (turn.status != LevelStatus.playing) {
+        await audio.play(turn.status == LevelStatus.won ? 'win' : 'lose');
+        if (turn.status == LevelStatus.won) await haptics.celebrate();
         onLevelEnded?.call(turn.status, turn.score);
       }
       return true;
     });
     return result ?? false;
+  }
+
+  @override
+  void onRemove() {
+    hud.dispose();
+    cascadeMessage.dispose();
+    super.onRemove();
   }
 
   void _layout(Vector2 canvasSize) {

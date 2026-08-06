@@ -7,6 +7,7 @@ import '../../../game/domain/level_session.dart';
 import '../../../game/domain/content.dart';
 import '../../../game/presentation/island_match_game.dart';
 import '../../../services/content/bundled_level_repository.dart';
+import '../../../services/audio/game_audio_service.dart';
 import '../../progress/application/progress_controller.dart';
 
 class GameplayScreen extends ConsumerStatefulWidget {
@@ -31,12 +32,16 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
         .data
         .settings
         .reducedMotion;
+    final settings = ref.read(progressControllerProvider).data.settings;
     _gameFuture = const BundledLevelRepository().load(widget.level).then((
       level,
     ) {
       return _game = IslandMatchGame(
         level: level,
         animationDuration: reducedMotion ? 0.04 : 0.18,
+        reducedMotion: reducedMotion,
+        audio: GameAudioService.flame(soundEnabled: settings.soundEnabled),
+        haptics: GameHapticsService(enabled: settings.hapticsEnabled),
         onLevelEnded: _onLevelEnded,
       );
     });
@@ -137,6 +142,12 @@ class _LoadedGameplay extends StatelessWidget {
         ),
         if (game.level?.tutorial.isNotEmpty == true && hud.score == 0)
           _TutorialBanner(step: game.level!.tutorial.first),
+        ValueListenableBuilder<String?>(
+          valueListenable: game.cascadeMessage,
+          builder: (context, message, child) => message == null
+              ? const SizedBox.shrink()
+              : _CascadeBanner(message: message),
+        ),
         if (paused)
           _StatusOverlay(
             title: 'Paused',
@@ -145,9 +156,10 @@ class _LoadedGameplay extends StatelessWidget {
             onExit: () => context.go('/map'),
           ),
         if (hud.status == LevelStatus.won)
-          _StatusOverlay(
+          _VictoryOverlay(
             title: 'Perfect Batch!',
-            message: 'Score: ${hud.score}',
+            score: hud.score,
+            movesRemaining: hud.moves,
             primaryLabel: 'Level Map',
             onPrimary: () => context.go('/map'),
           ),
@@ -162,6 +174,96 @@ class _LoadedGameplay extends StatelessWidget {
       ],
     ),
   );
+}
+
+class _CascadeBanner extends StatelessWidget {
+  const _CascadeBanner({required this.message});
+  final String message;
+  @override
+  Widget build(BuildContext context) => Center(
+    child: IgnorePointer(
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: .7, end: 1),
+        duration: const Duration(milliseconds: 220),
+        builder: (context, value, child) =>
+            Transform.scale(scale: value, child: child),
+        child: Card(
+          color: Theme.of(context).colorScheme.tertiaryContainer,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+            child: Text(message, style: Theme.of(context).textTheme.titleLarge),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+class _VictoryOverlay extends StatelessWidget {
+  const _VictoryOverlay({
+    required this.title,
+    required this.score,
+    required this.movesRemaining,
+    required this.primaryLabel,
+    required this.onPrimary,
+  });
+  final String title;
+  final int score;
+  final int movesRemaining;
+  final String primaryLabel;
+  final VoidCallback onPrimary;
+  @override
+  Widget build(BuildContext context) {
+    final stars = score >= 10000
+        ? 3
+        : score >= 7000
+        ? 2
+        : 1;
+    return ColoredBox(
+      color: const Color(0x99000000),
+      child: Center(
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.headlineMedium),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    3,
+                    (index) => TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0, end: 1),
+                      duration: Duration(milliseconds: 250 + index * 170),
+                      builder: (context, value, child) => Transform.scale(
+                        scale: value,
+                        child: Icon(
+                          index < stars
+                              ? Icons.star_rounded
+                              : Icons.star_outline_rounded,
+                          color: const Color(0xFFFFC43D),
+                          size: 44,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Text('Score: $score'),
+                Text(
+                  '+${movesRemaining * 100} unused-move bonus',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 20),
+                FilledButton(onPressed: onPrimary, child: Text(primaryLabel)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _TutorialBanner extends StatelessWidget {

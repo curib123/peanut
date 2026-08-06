@@ -98,6 +98,14 @@ class BoardComponent extends PositionComponent
   ) async {
     await _animateSwap(first, second, duration);
     await _animateSwap(first, second, duration, returnToOrigin: true);
+    if (!game.reducedMotion) {
+      final shake = MoveEffect.by(
+        Vector2(7, 0),
+        EffectController(duration: .045, reverseDuration: .045, repeatCount: 2),
+      );
+      add(shake);
+      await shake.completed;
+    }
   }
 
   Future<void> animateResolution(
@@ -110,7 +118,19 @@ class BoardComponent extends PositionComponent
     _board = resolution.afterSwap.copy();
     _swapPieceKeys(first, second);
 
-    for (final cascade in resolution.cascades) {
+    for (
+      var cascadeIndex = 0;
+      cascadeIndex < resolution.cascades.length;
+      cascadeIndex++
+    ) {
+      final cascade = resolution.cascades[cascadeIndex];
+      await game.audio.play(
+        cascade.activatedSpecials.isNotEmpty
+            ? 'special'
+            : cascadeIndex == 0
+            ? 'match'
+            : 'cascade',
+      );
       final effects = <Future<void>>[];
       for (final position in cascade.matched) {
         final piece = _pieces[position];
@@ -121,6 +141,7 @@ class BoardComponent extends PositionComponent
         );
         piece.add(effect);
         effects.add(effect.completed);
+        if (!game.reducedMotion) _burstAt(position);
       }
       await Future.wait(effects);
       _rebuild(cascade.afterRemoval);
@@ -128,6 +149,29 @@ class BoardComponent extends PositionComponent
       await _rebuildFalling(cascade.afterRefill, duration);
     }
     _rebuild(resolution.finalBoard);
+  }
+
+  void _burstAt(domain.Position position) {
+    const colors = [Color(0xFFFFC43D), Color(0xFFE968A8), Color(0xFF72D5E8)];
+    for (var index = 0; index < 5; index++) {
+      final particle = CircleComponent(
+        radius: cellExtent * .055,
+        paint: Paint()..color = colors[index % colors.length],
+        position: _cellPosition(position) + Vector2.all(cellExtent / 2),
+        anchor: Anchor.center,
+      );
+      add(particle);
+      particle.add(
+        MoveEffect.by(
+          Vector2(
+            (index - 2) * cellExtent * .18,
+            (index.isEven ? -1 : 1) * cellExtent * .25,
+          ),
+          EffectController(duration: .28),
+        )..onComplete = particle.removeFromParent,
+      );
+      particle.add(OpacityEffect.fadeOut(EffectController(duration: .28)));
+    }
   }
 
   void resizeBoard(Vector2 newSize) {
@@ -208,6 +252,14 @@ class BoardComponent extends PositionComponent
           EffectController(duration: duration, curve: Curves.easeOutCubic),
         );
         component.add(effect);
+        if (!game.reducedMotion) {
+          component.add(
+            ScaleEffect.to(
+              Vector2(1.06, .94),
+              EffectController(duration: duration + .07, reverseDuration: .08),
+            ),
+          );
+        }
         effects.add(effect.completed);
       }
     }

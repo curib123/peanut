@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flutter/painting.dart';
 
 import '../domain/piece.dart';
@@ -11,7 +12,22 @@ class PieceComponent extends PositionComponent {
   }) : super(size: Vector2.all(extent), anchor: Anchor.topLeft);
 
   final Piece piece;
-  bool isSelected = false;
+  bool _isSelected = false;
+  bool get isSelected => _isSelected;
+  set isSelected(bool value) {
+    if (_isSelected == value) return;
+    _isSelected = value;
+    removeWhere((component) => component is ScaleEffect);
+    scale = Vector2.all(1);
+    if (value) {
+      add(
+        ScaleEffect.to(
+          Vector2.all(1.09),
+          EffectController(duration: .32, reverseDuration: .32, infinite: true),
+        ),
+      );
+    }
+  }
 
   static const _colors = {
     'peanut': Color(0xFFD99048),

@@ -84,7 +84,7 @@ void main() {
 
       expect(result.status, LevelStatus.won);
       expect(result.movesRemaining, 2);
-      expect(result.score, greaterThan(0));
+      expect(result.score, result.progress.score + 200);
     });
 
     test('failure occurs when the last move ends with incomplete goals', () {

@@ -41,6 +41,8 @@ Completing the current highest unlocked level opens exactly the next level. Repl
 
 Splash waits for local state before routing to Home. Home opens the world/level map, locked levels have disabled controls, and an unlocked level opens a pre-level goal panel before gameplay. Gameplay owns Flutter pause/victory/failure overlays around Flame, persists winning results, and uses reduced-motion settings to shorten animation timing. Settings exposes all persistent accessibility/audio controls and confirmed reset.
 
+Gameplay presentation consumes immutable `TurnResolution` frames: pieces swap, invalid moves return with a shake, cleared pieces pop into a bounded five-particle burst, refills land with squash, and multi-step turns announce their cascade count. These effects never calculate board state. The session adds a deterministic 100-point bonus for each unused move after goals complete. Original synthesized WAV cues and platform haptics are failure-safe and obey saved settings; reduced motion keeps short positional continuity while removing looping pulse, particles, shake, and bounce.
+
 ## Levels
 
 ## Extensible content system

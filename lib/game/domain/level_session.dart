@@ -137,6 +137,9 @@ class LevelSession {
     goals.apply(progress);
     if (goals.isComplete) {
       status = LevelStatus.won;
+      // Bank unused moves only after the goals are complete. This keeps the
+      // deterministic domain score authoritative while the UI animates it.
+      score += movesRemaining * 100;
     } else if (movesRemaining == 0) {
       status = LevelStatus.lost;
     }

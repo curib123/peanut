@@ -52,4 +52,21 @@ void main() {
     );
     expect(await audio.play('win'), isFalse);
   });
+
+  test('haptics respect settings and swallow device failures', () async {
+    var taps = 0;
+    final haptics = GameHapticsService(
+      enabled: false,
+      light: () async => taps++,
+    );
+    await haptics.tap();
+    expect(taps, 0);
+    haptics.enabled = true;
+    await haptics.tap();
+    expect(taps, 1);
+    final failing = GameHapticsService(
+      light: () async => throw StateError('device'),
+    );
+    await expectLater(failing.tap(), completes);
+  });
 }
