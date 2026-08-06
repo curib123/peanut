@@ -29,6 +29,8 @@ Input is converted to an adjacent swap request. `TurnEngine` validates and resol
 
 `SpecialResolver` is the single authority for special creation, activation expansion, and pair combinations. It returns a set of cleared cells, created pieces, and uniquely activated origins; it never animates. `TurnEngine` folds that plan into the normal bounded cascade frames. This prevents duplicate activation and lets later objectives provide a higher-priority target selector for Peanut Spinner without coupling special rules to Flame.
 
+`LevelSession` owns the move limit, accumulated score, goal tracker, blocker grid, and board objectives. It consumes `TurnEngine` frames to count collected pieces and apply normal/special damage without recomputing matches. Hard blockers are passed into gravity, refill, shuffle, and swap validation as blocked positions. Goal and blocker factories map stable content IDs to tested handlers, keeping target counts, layers, layouts, and combinations in level data.
+
 ## Save data
 
 Shared Preferences stores a versioned JSON document containing the highest unlocked level, stars and best score by level, booster inventory, sound/music/haptic/reduced-motion settings, and save version. Parsing uses safe defaults; explicit migrations upgrade older versions.

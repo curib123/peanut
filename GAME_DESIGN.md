@@ -21,13 +21,22 @@ Special-to-special combinations amplify and combine these effects as specified i
 
 Objectives include target score, collecting pieces, clearing frosting, breaking crates, dropping recipe baskets, spreading cream, and lighting ovens. Blockers are Sugar Frosting, Peanut Crates, Sticky Caramel, Chocolate Crumbs, Oven Stones, and Baker's Twine.
 
+- Sugar Frosting is layered over a cell and loses one layer from a clear.
+- Peanut Crates occupy cells and break from adjacent matches or direct special effects.
+- Sticky Caramel locks its piece until the caramel is cleared.
+- Chocolate Crumbs spread to one neighboring cell after an untouched turn.
+- Oven Stones occupy cells and require adjacent hits or direct special effects.
+- Baker's Twine prevents swapping its piece until cut by a clear.
+
+Recipe baskets fall to exits, cream spreads through clears connected to existing cream, and ovens light from clears on or beside them. Invalid and blocker-locked swaps consume no moves.
+
 ## Boosters
 
 Launch boosters will provide limited, explicitly selected help before or during a level. Exact inventory balance and effects will be finalized with the ten-level vertical slice.
 
 ## Scoring and progression
 
-Matches, cascades, specials, and completed objectives award score. Each level has a move limit and three ascending star thresholds. Completing goals before moves reach zero wins; otherwise the level fails. Stars, best scores, unlocked levels, and booster inventory persist locally.
+Matches award points per cleared piece, cascade depth multiplies the award, and special activations add a bonus. Each level has a move limit and three ascending star thresholds. Completing every configured goal wins immediately; reaching zero moves with an incomplete goal fails. Stars, best scores, unlocked levels, and booster inventory persist locally.
 
 ## Worlds
 

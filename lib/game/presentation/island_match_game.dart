@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart';
 
 import '../domain/match3.dart';
 import 'board_component.dart';
@@ -18,8 +19,12 @@ class IslandMatchGame extends FlameGame {
   final double animationDuration;
   final Board board;
   late final TurnEngine _turnEngine;
+  late final LevelSession _session;
   late final BoardComponent boardComponent;
   final TurnInputGate _inputGate = TurnInputGate();
+  final ValueNotifier<GameHudState> hud = ValueNotifier(
+    const GameHudState(moves: 20, score: 0, status: LevelStatus.playing),
+  );
 
   bool get isInputLocked => _inputGate.isLocked;
 
@@ -33,6 +38,12 @@ class IslandMatchGame extends FlameGame {
       resolver: BoardResolver(seed: _seed + 1),
       shuffler: BoardShuffler(seed: _seed + 2),
     );
+    _session = LevelSession(
+      turnEngine: _turnEngine,
+      board: board,
+      moveLimit: 20,
+      goals: GoalTracker([GoalState(kind: GoalKind.targetScore, target: 5000)]),
+    );
     boardComponent = BoardComponent(board: board);
     add(boardComponent);
     _layout(size);
@@ -45,9 +56,10 @@ class IslandMatchGame extends FlameGame {
   }
 
   Future<bool> attemptSwap(Position first, Position second) async {
+    if (_session.status != LevelStatus.playing) return false;
     final result = await _inputGate.run(() async {
-      final resolution = _turnEngine.resolveSwap(board, first, second);
-      if (!resolution.isValid) {
+      final turn = _session.play(first, second);
+      if (!turn.resolution.isValid) {
         await boardComponent.animateInvalidSwap(
           first,
           second,
@@ -58,8 +70,13 @@ class IslandMatchGame extends FlameGame {
       await boardComponent.animateResolution(
         first,
         second,
-        resolution,
+        turn.resolution,
         animationDuration,
+      );
+      hud.value = GameHudState(
+        moves: turn.movesRemaining,
+        score: turn.score,
+        status: turn.status,
       );
       return true;
     });
@@ -79,4 +96,16 @@ class IslandMatchGame extends FlameGame {
       )
       ..resizeBoard(Vector2.all(extent));
   }
+}
+
+class GameHudState {
+  const GameHudState({
+    required this.moves,
+    required this.score,
+    required this.status,
+  });
+
+  final int moves;
+  final int score;
+  final LevelStatus status;
 }

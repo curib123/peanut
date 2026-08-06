@@ -1,10 +1,13 @@
 export 'board.dart';
+export 'blockers.dart';
 export 'board_generator.dart';
 export 'board_resolver.dart';
 export 'board_shuffler.dart';
 export 'content.dart';
 export 'match_finder.dart';
+export 'level_session.dart';
 export 'move_validator.dart';
+export 'objectives.dart';
 export 'piece.dart';
 export 'position.dart';
 export 'special_resolver.dart';

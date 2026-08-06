@@ -29,11 +29,16 @@ class BoardResolver {
     }
   }
 
-  void applyGravity(Board board) {
+  void applyGravity(Board board, {Set<Position> blocked = const {}}) {
     for (var column = 0; column < board.columns; column++) {
       var destination = board.rows - 1;
       for (var row = board.rows - 1; row >= 0; row--) {
         final source = Position(row, column);
+        if (blocked.contains(source)) {
+          board.setPiece(source, null);
+          destination = row - 1;
+          continue;
+        }
         final piece = board.pieceAt(source);
         if (piece == null) continue;
         board.setPiece(Position(destination, column), piece);
@@ -47,9 +52,9 @@ class BoardResolver {
     }
   }
 
-  void refill(Board board) {
+  void refill(Board board, {Set<Position> blocked = const {}}) {
     for (final position in board.positions) {
-      if (board.pieceAt(position) == null) {
+      if (board.pieceAt(position) == null && !blocked.contains(position)) {
         board.setPiece(
           position,
           Piece(pieceTypes[_random.nextInt(pieceTypes.length)]),
@@ -58,15 +63,19 @@ class BoardResolver {
     }
   }
 
-  List<CascadeStep> resolve(Board board, {int maxCascades = 100}) {
+  List<CascadeStep> resolve(
+    Board board, {
+    int maxCascades = 100,
+    Set<Position> blocked = const {},
+  }) {
     final steps = <CascadeStep>[];
     while (steps.length < maxCascades) {
       final matches = matchFinder.find(board);
       if (matches.isEmpty) return steps;
       final removed = {for (final match in matches) ...match.positions};
       remove(board, removed);
-      applyGravity(board);
-      refill(board);
+      applyGravity(board, blocked: blocked);
+      refill(board, blocked: blocked);
       steps.add(CascadeStep(matches: matches, removed: removed));
     }
     throw StateError('Cascade limit of $maxCascades exceeded.');

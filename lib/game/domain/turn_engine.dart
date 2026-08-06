@@ -9,15 +9,19 @@ import 'special_resolver.dart';
 class CascadeFrame {
   CascadeFrame({
     required this.matched,
+    required this.beforeClear,
     required this.afterRemoval,
     required this.afterGravity,
     required this.afterRefill,
+    required this.activatedSpecials,
   });
 
   final Set<Position> matched;
+  final Board beforeClear;
   final Board afterRemoval;
   final Board afterGravity;
   final Board afterRefill;
+  final Set<Position> activatedSpecials;
 }
 
 class TurnResolution {
@@ -62,8 +66,11 @@ class TurnEngine {
     Position first,
     Position second, {
     int maxCascades = 100,
+    Set<Position> blockedCells = const {},
   }) {
-    if (!moveValidator.isValidSwap(board, first, second)) {
+    if (blockedCells.contains(first) ||
+        blockedCells.contains(second) ||
+        !moveValidator.isValidSwap(board, first, second)) {
       return TurnResolution.invalid(board: board);
     }
 
@@ -89,20 +96,23 @@ class TurnEngine {
           preferredPosition: cascades.isEmpty ? second : null,
         );
       }
+      final beforeClear = board.copy();
       resolver.remove(board, plan.cleared);
       for (final creation in plan.created.entries) {
         board.setPiece(creation.key, creation.value);
       }
       final afterRemoval = board.copy();
-      resolver.applyGravity(board);
+      resolver.applyGravity(board, blocked: blockedCells);
       final afterGravity = board.copy();
-      resolver.refill(board);
+      resolver.refill(board, blocked: blockedCells);
       cascades.add(
         CascadeFrame(
           matched: plan.cleared,
+          beforeClear: beforeClear,
           afterRemoval: afterRemoval,
           afterGravity: afterGravity,
           afterRefill: board.copy(),
+          activatedSpecials: plan.activated,
         ),
       );
     }

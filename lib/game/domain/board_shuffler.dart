@@ -17,18 +17,15 @@ class BoardShuffler {
   final Random _random;
 
   void shuffle(Board board, {int maxAttempts = 1000}) {
-    final pieces = board.positions
-        .map(board.pieceAt)
-        .whereType<Piece>()
+    final occupied = board.positions
+        .where((position) => board.pieceAt(position) != null)
         .toList();
-    if (pieces.length != board.rows * board.columns) {
-      throw StateError('Only full boards can be shuffled.');
-    }
+    final pieces = occupied.map(board.pieceAt).whereType<Piece>().toList();
 
     for (var attempt = 0; attempt < maxAttempts; attempt++) {
       pieces.shuffle(_random);
       var index = 0;
-      for (final position in board.positions) {
+      for (final position in occupied) {
         board.setPiece(position, pieces[index++]);
       }
       if (matchFinder.find(board).isEmpty &&

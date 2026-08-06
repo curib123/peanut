@@ -1,6 +1,6 @@
 # Current Status
 
-Current phase: Phase 4 (ready to begin)
+Current phase: Phase 5 (ready to begin)
 
 ## Completed
 
@@ -35,6 +35,13 @@ Current phase: Phase 4 (ready to begin)
 - Added duplicate-activation protection and bounded special cascades
 - Added distinct programmatic rendering for every special piece
 - Phase 3 verification completed
+- Added data-driven score, collection, frosting, crate, basket, cream, and oven goals
+- Added Sugar Frosting, Peanut Crate, Sticky Caramel, Chocolate Crumbs, Oven Stone, and Baker's Twine behaviors
+- Added blocker-aware swapping, segmented gravity, refill, and partial-board shuffle
+- Added recipe-basket dropping, cream spreading, oven lighting, and chocolate spreading
+- Added cascade scoring, move consumption, immediate victory, and move-limit failure
+- Connected the playable HUD to real moves, score, and level status
+- Phase 4 verification completed
 
 ## In Progress
 
@@ -42,16 +49,17 @@ Current phase: Phase 4 (ready to begin)
 
 ## Remaining
 
-- Score and collection objectives
-- Frosting, crates, recipe baskets, cream, and oven objectives
-- Sugar Frosting, Peanut Crates, Sticky Caramel, Chocolate Crumbs, Oven Stones, and Baker's Twine
-- Move-limit victory and failure evaluation
+- Splash, map, pre-level, pause, victory, and failure experiences
+- Versioned local progress and save migrations
+- Level unlocking, stars, best scores, and booster inventory
+- Persistent sound, music, haptic, and reduced-motion settings
+- Confirmed progress reset
 
 ## Tests
 
-- `dart format --output=none --set-exit-if-changed .`: passed (30 files checked)
+- `dart format --output=none --set-exit-if-changed .`: passed (35 files checked)
 - `flutter analyze`: passed, no issues
-- `flutter test`: passed, 42 tests
+- `flutter test`: passed, 57 tests
 - Generated-board validation: 1,000 deterministic 8x8 boards passed
 - `flutter build web --debug`: passed (`build/web`)
 

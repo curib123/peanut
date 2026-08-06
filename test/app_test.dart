@@ -32,5 +32,7 @@ void main() {
 
     expect(find.text('Sunrise Bakery'), findsOneWidget);
     expect(find.text('Practice Board'), findsOneWidget);
+    expect(find.text('Moves: 20'), findsOneWidget);
+    expect(find.text('Score: 0'), findsOneWidget);
   });
 }
