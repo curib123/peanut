@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 32),
                     FilledButton.icon(
-                      onPressed: () => context.push('/game'),
+                      onPressed: () => context.push('/map'),
                       icon: const Icon(Icons.play_arrow_rounded),
                       label: const Text('Play'),
                     ),

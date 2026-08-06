@@ -42,6 +42,8 @@ Matches award points per cleared piece, cascade depth multiplies the award, and 
 
 The launch set has six worlds of ten levels each: Sunrise Bakery, Peanut Grove, Egg Cloud Kitchen, Sugar Harbor, Festival Oven, and Starlight Bake-Off. This is not a fixed ceiling. Later updates may add permanent worlds or time-bounded event worlds through versioned content packs. The first ten levels introduce mechanics gradually before the remaining launch worlds are authored.
 
+Players enter an unlocked level through a goal preview. Winning saves the best score and highest star result and unlocks the next level; replaying never lowers previous results. Pausing offers resume or map exit, while victory and failure present clear next actions. Resetting all progression requires explicit confirmation.
+
 ## Live events
 
 Events have stable IDs, UTC start/end times, optional event worlds and levels, and parameterized modifiers. Expired content is removed from the active catalog snapshot without deleting earned progress. Existing mechanics can be mixed and rebalanced entirely in data; new rule types must be registered and tested before a pack references them.

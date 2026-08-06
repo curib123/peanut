@@ -12,11 +12,13 @@ class IslandMatchGame extends FlameGame {
     Board? initialBoard,
     int seed = 20260806,
     this.animationDuration = 0.18,
+    this.onLevelEnded,
   }) : _seed = seed,
        board = initialBoard ?? BoardGenerator(seed: seed).generate();
 
   final int _seed;
   final double animationDuration;
+  final void Function(LevelStatus status, int score)? onLevelEnded;
   final Board board;
   late final TurnEngine _turnEngine;
   late final LevelSession _session;
@@ -78,6 +80,9 @@ class IslandMatchGame extends FlameGame {
         score: turn.score,
         status: turn.status,
       );
+      if (turn.status != LevelStatus.playing) {
+        onLevelEnded?.call(turn.status, turn.score);
+      }
       return true;
     });
     return result ?? false;

@@ -33,7 +33,13 @@ Input is converted to an adjacent swap request. `TurnEngine` validates and resol
 
 ## Save data
 
-Shared Preferences stores a versioned JSON document containing the highest unlocked level, stars and best score by level, booster inventory, sound/music/haptic/reduced-motion settings, and save version. Parsing uses safe defaults; explicit migrations upgrade older versions.
+`SharedPreferencesSaveRepository` stores one versioned JSON document. `ProgressController` is the Riverpod source of truth for the highest unlocked level, stars and best score by level, open-ended booster inventory, and sound/music/haptic/reduced-motion settings. Parsing clamps corrupt values and uses safe defaults; version-1 flat settings migrate into the version-2 nested settings object. Unknown future save versions reset safely rather than being interpreted incorrectly.
+
+Completing the current highest unlocked level opens exactly the next level. Replays may improve stars and best score but never reduce either. Settings and booster mutations save immediately. Progress reset removes the stored document only after UI confirmation.
+
+## Application flow
+
+Splash waits for local state before routing to Home. Home opens the world/level map, locked levels have disabled controls, and an unlocked level opens a pre-level goal panel before gameplay. Gameplay owns Flutter pause/victory/failure overlays around Flame, persists winning results, and uses reduced-motion settings to shorten animation timing. Settings exposes all persistent accessibility/audio controls and confirmed reset.
 
 ## Levels
 

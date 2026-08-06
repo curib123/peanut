@@ -1,6 +1,6 @@
 # Current Status
 
-Current phase: Phase 5 (ready to begin)
+Current phase: Phase 6 (ready to begin)
 
 ## Completed
 
@@ -42,6 +42,14 @@ Current phase: Phase 5 (ready to begin)
 - Added cascade scoring, move consumption, immediate victory, and move-limit failure
 - Connected the playable HUD to real moves, score, and level status
 - Phase 4 verification completed
+- Added splash, level map, pre-level, pause, victory, and failure experiences
+- Added versioned Shared Preferences save repository and version-1 migration
+- Added Riverpod progress controller for unlocks, stars, scores, boosters, and settings
+- Added persistent sound, music, haptic, and reduced-motion controls
+- Added confirmed progress reset
+- Connected victories to best-result saving and sequential level unlocking
+- Applied reduced-motion timing to new gameplay sessions
+- Phase 5 verification completed
 
 ## In Progress
 
@@ -49,17 +57,16 @@ Current phase: Phase 5 (ready to begin)
 
 ## Remaining
 
-- Splash, map, pre-level, pause, victory, and failure experiences
-- Versioned local progress and save migrations
-- Level unlocking, stars, best scores, and booster inventory
-- Persistent sound, music, haptic, and reduced-motion settings
-- Confirmed progress reset
+- Deterministic SVG asset generator
+- Original piece, special, blocker, booster, goal, UI, background, and character art
+- Deterministic original sound-effect generator
+- Asset validation, loading fallback, and audio-setting integration
 
 ## Tests
 
-- `dart format --output=none --set-exit-if-changed .`: passed (35 files checked)
+- `dart format --output=none --set-exit-if-changed .`: passed (42 files checked)
 - `flutter analyze`: passed, no issues
-- `flutter test`: passed, 57 tests
+- `flutter test`: passed, 62 tests
 - Generated-board validation: 1,000 deterministic 8x8 boards passed
 - `flutter build web --debug`: passed (`build/web`)
 
