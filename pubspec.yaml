@@ -63,6 +63,18 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  assets:
+    - assets/images/backgrounds/
+    - assets/audio/sfx/
+    - assets/svg/pieces/
+    - assets/svg/specials/
+    - assets/svg/blockers/
+    - assets/svg/boosters/
+    - assets/svg/ui/
+    - assets/svg/goals/
+    - assets/svg/backgrounds/
+    - assets/svg/characters/
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
