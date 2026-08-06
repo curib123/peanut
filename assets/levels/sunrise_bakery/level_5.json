@@ -1,0 +1,40 @@
+{
+  "id": "sunrise_5",
+  "worldId": "sunrise_bakery",
+  "order": 5,
+  "rows": 8,
+  "columns": 8,
+  "moves": 22,
+  "seed": 1105,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    3200,
+    4640,
+    6080
+  ],
+  "goals": [
+    {
+      "id": "target_score",
+      "parameters": {
+        "target": 3200
+      }
+    }
+  ],
+  "blockers": [],
+  "tutorial": [
+    {
+      "message": "Match four in a line to bake a Sugar Beam."
+    }
+  ],
+  "metadata": {
+    "difficulty": 5,
+    "name": "Morning Recipe 5"
+  }
+}

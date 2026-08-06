@@ -1,0 +1,40 @@
+{
+  "id": "sunrise_2",
+  "worldId": "sunrise_bakery",
+  "order": 2,
+  "rows": 8,
+  "columns": 8,
+  "moves": 18,
+  "seed": 1102,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    1800,
+    2610,
+    3420
+  ],
+  "goals": [
+    {
+      "id": "target_score",
+      "parameters": {
+        "target": 1800
+      }
+    }
+  ],
+  "blockers": [],
+  "tutorial": [
+    {
+      "message": "Matches can fall into another match. Enjoy the cascade!"
+    }
+  ],
+  "metadata": {
+    "difficulty": 2,
+    "name": "Morning Recipe 2"
+  }
+}

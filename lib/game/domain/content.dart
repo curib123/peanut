@@ -1,4 +1,5 @@
 import 'piece.dart';
+import 'position.dart';
 
 class ContentException implements Exception {
   const ContentException(this.message);
@@ -39,11 +40,22 @@ class LevelDefinition {
     required List<int> starThresholds,
     List<MechanicDefinition> goals = const [],
     List<MechanicDefinition> blockers = const [],
+    Set<Position>? playableCells,
+    List<TutorialStep> tutorial = const [],
     Map<String, Object?> metadata = const {},
   }) : spawnWeights = Map.unmodifiable(spawnWeights),
        starThresholds = List.unmodifiable(starThresholds),
        goals = List.unmodifiable(goals),
        blockers = List.unmodifiable(blockers),
+       playableCells = Set.unmodifiable(
+         playableCells ??
+             {
+               for (var row = 0; row < rows; row++)
+                 for (var column = 0; column < columns; column++)
+                   Position(row, column),
+             },
+       ),
+       tutorial = List.unmodifiable(tutorial),
        metadata = Map.unmodifiable(metadata) {
     if (rows < 3 || columns < 3) {
       throw ContentException('Level $id must be at least 3x3.');
@@ -62,6 +74,16 @@ class LevelDefinition {
       throw ContentException(
         'Level $id needs three ascending star thresholds.',
       );
+    }
+    if (this.playableCells.length < 9 ||
+        this.playableCells.any(
+          (cell) =>
+              cell.row < 0 ||
+              cell.row >= rows ||
+              cell.column < 0 ||
+              cell.column >= columns,
+        )) {
+      throw ContentException('Level $id has invalid playable cells.');
     }
   }
 
@@ -88,6 +110,11 @@ class LevelDefinition {
       ).map((value) => _asInt(value, 'star threshold')).toList(),
       goals: _mechanics(json['goals'], 'goals'),
       blockers: _mechanics(json['blockers'], 'blockers'),
+      playableCells: _positions(json['playableCells'], 'playableCells'),
+      tutorial: _maps(
+        json['tutorial'],
+        'tutorial',
+      ).map(TutorialStep.fromJson).toList(),
       metadata: _objectMap(json['metadata'], 'metadata'),
     );
   }
@@ -103,12 +130,28 @@ class LevelDefinition {
   final List<int> starThresholds;
   final List<MechanicDefinition> goals;
   final List<MechanicDefinition> blockers;
+  final Set<Position> playableCells;
+  final List<TutorialStep> tutorial;
   final Map<String, Object?> metadata;
 
   List<PieceKind> get spawnPool => [
     for (final entry in spawnWeights.entries)
       for (var count = 0; count < entry.value; count++) entry.key,
   ];
+}
+
+class TutorialStep {
+  const TutorialStep({required this.message, this.from, this.to});
+
+  factory TutorialStep.fromJson(Map<String, Object?> json) => TutorialStep(
+    message: _requiredString(json, 'message'),
+    from: _optionalPosition(json['from'], 'tutorial from'),
+    to: _optionalPosition(json['to'], 'tutorial to'),
+  );
+
+  final String message;
+  final Position? from;
+  final Position? to;
 }
 
 class WorldDefinition {
@@ -316,6 +359,25 @@ Map<String, Object?> _objectMap(Object? value, String label) {
   if (value == null) return const {};
   if (value is! Map) throw ContentException('$label must be an object.');
   return value.map((key, item) => MapEntry(key.toString(), item));
+}
+
+Set<Position>? _positions(Object? value, String label) {
+  if (value == null) return null;
+  return _list(
+    value,
+    label,
+  ).map((item) => _requiredPosition(item, label)).toSet();
+}
+
+Position? _optionalPosition(Object? value, String label) =>
+    value == null ? null : _requiredPosition(value, label);
+
+Position _requiredPosition(Object? value, String label) {
+  final values = _list(value, label);
+  if (values.length != 2) {
+    throw ContentException('$label must be [row, column].');
+  }
+  return Position(_asInt(values[0], label), _asInt(values[1], label));
 }
 
 String _requiredString(Map<String, Object?> json, String key) {

@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../game/domain/level_session.dart';
+import '../../../game/domain/content.dart';
 import '../../../game/presentation/island_match_game.dart';
+import '../../../services/content/bundled_level_repository.dart';
 import '../../progress/application/progress_controller.dart';
 
 class GameplayScreen extends ConsumerStatefulWidget {
@@ -17,7 +19,8 @@ class GameplayScreen extends ConsumerStatefulWidget {
 }
 
 class _GameplayScreenState extends ConsumerState<GameplayScreen> {
-  late final IslandMatchGame _game;
+  late final Future<IslandMatchGame> _gameFuture;
+  IslandMatchGame? _game;
   bool _paused = false;
 
   @override
@@ -28,11 +31,15 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
         .data
         .settings
         .reducedMotion;
-    _game = IslandMatchGame(
-      seed: 20260806 + widget.level,
-      animationDuration: reducedMotion ? 0.04 : 0.18,
-      onLevelEnded: _onLevelEnded,
-    );
+    _gameFuture = const BundledLevelRepository().load(widget.level).then((
+      level,
+    ) {
+      return _game = IslandMatchGame(
+        level: level,
+        animationDuration: reducedMotion ? 0.04 : 0.18,
+        onLevelEnded: _onLevelEnded,
+      );
+    });
   }
 
   void _onLevelEnded(LevelStatus status, int score) {
@@ -46,10 +53,12 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
   void _togglePause() {
     setState(() {
       _paused = !_paused;
+      final game = _game;
+      if (game == null) return;
       if (_paused) {
-        _game.pauseEngine();
+        game.pauseEngine();
       } else {
-        _game.resumeEngine();
+        game.resumeEngine();
       }
     });
   }
@@ -73,48 +82,113 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
           ),
         ],
       ),
-      body: ValueListenableBuilder<GameHudState>(
-        valueListenable: _game.hud,
-        builder: (context, hud, child) => Stack(
-          children: [
-            Column(
-              children: [
-                _GameHud(hud: hud),
-                Expanded(
-                  child: Semantics(
-                    label: 'Playable eight by eight match board',
-                    child: GameWidget(game: _game),
-                  ),
-                ),
-              ],
-            ),
-            if (_paused)
-              _StatusOverlay(
-                title: 'Paused',
-                primaryLabel: 'Resume',
-                onPrimary: _togglePause,
-                onExit: () => context.go('/map'),
-              ),
-            if (hud.status == LevelStatus.won)
-              _StatusOverlay(
-                title: 'Perfect Batch!',
-                message: 'Score: ${hud.score}',
-                primaryLabel: 'Level Map',
-                onPrimary: () => context.go('/map'),
-              ),
-            if (hud.status == LevelStatus.lost)
-              _StatusOverlay(
-                title: 'Out of Moves',
-                message: 'Try a fresh recipe.',
-                primaryLabel: 'Try Again',
-                onPrimary: () => context.go('/level/${widget.level}'),
-                onExit: () => context.go('/map'),
-              ),
-          ],
-        ),
+      body: FutureBuilder<IslandMatchGame>(
+        future: _gameFuture,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('This recipe could not be loaded.'),
+            );
+          }
+          final game = snapshot.data;
+          if (game == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return _LoadedGameplay(
+            game: game,
+            level: widget.level,
+            paused: _paused,
+            onTogglePause: _togglePause,
+          );
+        },
       ),
     );
   }
+}
+
+class _LoadedGameplay extends StatelessWidget {
+  const _LoadedGameplay({
+    required this.game,
+    required this.level,
+    required this.paused,
+    required this.onTogglePause,
+  });
+
+  final IslandMatchGame game;
+  final int level;
+  final bool paused;
+  final VoidCallback onTogglePause;
+
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<GameHudState>(
+    valueListenable: game.hud,
+    builder: (context, hud, child) => Stack(
+      children: [
+        Column(
+          children: [
+            _GameHud(hud: hud),
+            Expanded(
+              child: Semantics(
+                label: 'Playable eight by eight match board',
+                child: GameWidget(game: game),
+              ),
+            ),
+          ],
+        ),
+        if (game.level?.tutorial.isNotEmpty == true && hud.score == 0)
+          _TutorialBanner(step: game.level!.tutorial.first),
+        if (paused)
+          _StatusOverlay(
+            title: 'Paused',
+            primaryLabel: 'Resume',
+            onPrimary: onTogglePause,
+            onExit: () => context.go('/map'),
+          ),
+        if (hud.status == LevelStatus.won)
+          _StatusOverlay(
+            title: 'Perfect Batch!',
+            message: 'Score: ${hud.score}',
+            primaryLabel: 'Level Map',
+            onPrimary: () => context.go('/map'),
+          ),
+        if (hud.status == LevelStatus.lost)
+          _StatusOverlay(
+            title: 'Out of Moves',
+            message: 'Try a fresh recipe.',
+            primaryLabel: 'Try Again',
+            onPrimary: () => context.go('/level/$level'),
+            onExit: () => context.go('/map'),
+          ),
+      ],
+    ),
+  );
+}
+
+class _TutorialBanner extends StatelessWidget {
+  const _TutorialBanner({required this.step});
+  final TutorialStep step;
+
+  @override
+  Widget build(BuildContext context) => Positioned(
+    left: 20,
+    right: 20,
+    bottom: 18,
+    child: IgnorePointer(
+      child: Card(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              const Icon(Icons.lightbulb_rounded),
+              const SizedBox(width: 10),
+              Expanded(child: Text(step.message)),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 class _GameHud extends StatelessWidget {

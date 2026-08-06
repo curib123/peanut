@@ -13,12 +13,19 @@ class IslandMatchGame extends FlameGame {
     int seed = 20260806,
     this.animationDuration = 0.18,
     this.onLevelEnded,
+    this.level,
   }) : _seed = seed,
-       board = initialBoard ?? BoardGenerator(seed: seed).generate();
+       board =
+           initialBoard ??
+           BoardGenerator(
+             seed: level?.seed ?? seed,
+             pieceTypes: level?.spawnPool ?? PieceKind.regularValues,
+           ).generate(rows: level?.rows ?? 8, columns: level?.columns ?? 8);
 
   final int _seed;
   final double animationDuration;
   final void Function(LevelStatus status, int score)? onLevelEnded;
+  final LevelDefinition? level;
   final Board board;
   late final TurnEngine _turnEngine;
   late final LevelSession _session;
@@ -43,8 +50,24 @@ class IslandMatchGame extends FlameGame {
     _session = LevelSession(
       turnEngine: _turnEngine,
       board: board,
-      moveLimit: 20,
-      goals: GoalTracker([GoalState(kind: GoalKind.targetScore, target: 5000)]),
+      moveLimit: level?.moves ?? 20,
+      goals: GoalTracker(
+        level?.goals.map(GoalState.fromMechanic).toList() ??
+            [GoalState(kind: GoalKind.targetScore, target: 5000)],
+      ),
+      blockers: level == null
+          ? null
+          : BlockerGrid.fromMechanics(level!.blockers),
+      inaccessibleCells: level == null
+          ? const {}
+          : board.positions
+                .where((cell) => !level!.playableCells.contains(cell))
+                .toSet(),
+    );
+    hud.value = GameHudState(
+      moves: level?.moves ?? 20,
+      score: 0,
+      status: LevelStatus.playing,
     );
     boardComponent = BoardComponent(board: board);
     add(boardComponent);

@@ -1,0 +1,48 @@
+{
+  "id": "sunrise_3",
+  "worldId": "sunrise_bakery",
+  "order": 3,
+  "rows": 8,
+  "columns": 8,
+  "moves": 20,
+  "seed": 1103,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    2200,
+    3190,
+    4180
+  ],
+  "goals": [
+    {
+      "id": "collect_pieces",
+      "parameters": {
+        "pieceId": "peanut",
+        "target": 12
+      }
+    },
+    {
+      "id": "collect_pieces",
+      "parameters": {
+        "pieceId": "egg",
+        "target": 12
+      }
+    }
+  ],
+  "blockers": [],
+  "tutorial": [
+    {
+      "message": "Collect both recipe ingredients before moves run out."
+    }
+  ],
+  "metadata": {
+    "difficulty": 3,
+    "name": "Morning Recipe 3"
+  }
+}

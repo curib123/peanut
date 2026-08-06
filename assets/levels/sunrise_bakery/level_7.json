@@ -1,0 +1,41 @@
+{
+  "id": "sunrise_7",
+  "worldId": "sunrise_bakery",
+  "order": 7,
+  "rows": 8,
+  "columns": 8,
+  "moves": 22,
+  "seed": 1107,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    4200,
+    6090,
+    7980
+  ],
+  "goals": [
+    {
+      "id": "collect_pieces",
+      "parameters": {
+        "pieceId": "sugar_crystal",
+        "target": 20
+      }
+    }
+  ],
+  "blockers": [],
+  "tutorial": [
+    {
+      "message": "Aim special treats at the ingredients you still need."
+    }
+  ],
+  "metadata": {
+    "difficulty": 7,
+    "name": "Morning Recipe 7"
+  }
+}

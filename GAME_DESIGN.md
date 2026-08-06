@@ -44,6 +44,10 @@ The launch set has six worlds of ten levels each: Sunrise Bakery, Peanut Grove, 
 
 Players enter an unlocked level through a goal preview. Winning saves the best score and highest star result and unlocks the next level; replaying never lowers previous results. Pausing offers resume or map exit, while victory and failure present clear next actions. Resetting all progression requires explicit confirmation.
 
+### Sunrise Bakery vertical slice
+
+Levels 1-10 are individually authored JSON recipes. They introduce basic swaps, cascades, two-ingredient collection, single-layer frosting, Sugar Beams, irregular playable cells, objective-focused special use, double-layer frosting, mixed goals, and a three-goal finale. Every recipe carries a deterministic seed, gradually increasing move/score budget, tutorial message, spawn weights, star thresholds, and stable mechanic IDs.
+
 ## Live events
 
 Events have stable IDs, UTC start/end times, optional event worlds and levels, and parameterized modifiers. Expired content is removed from the active catalog snapshot without deleting earned progress. Existing mechanics can be mixed and rebalanced entirely in data; new rule types must be registered and tested before a pack references them.

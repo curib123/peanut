@@ -74,6 +74,7 @@ flutter:
     - assets/svg/goals/
     - assets/svg/backgrounds/
     - assets/svg/characters/
+    - assets/levels/sunrise_bakery/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

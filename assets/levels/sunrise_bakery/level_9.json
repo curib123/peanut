@@ -1,0 +1,111 @@
+{
+  "id": "sunrise_9",
+  "worldId": "sunrise_bakery",
+  "order": 9,
+  "rows": 8,
+  "columns": 8,
+  "moves": 25,
+  "seed": 1109,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    5500,
+    7975,
+    10450
+  ],
+  "goals": [
+    {
+      "id": "target_score",
+      "parameters": {
+        "target": 4200
+      }
+    },
+    {
+      "id": "clear_frosting",
+      "parameters": {
+        "target": 8
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 1,
+        "row": 2,
+        "column": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 1,
+        "row": 2,
+        "column": 5
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 1,
+        "row": 3,
+        "column": 3
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 1,
+        "row": 3,
+        "column": 4
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 1,
+        "row": 4,
+        "column": 3
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 1,
+        "row": 4,
+        "column": 4
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 1,
+        "row": 5,
+        "column": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 1,
+        "row": 5,
+        "column": 5
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Balance the score recipe with frosting cleanup."
+    }
+  ],
+  "metadata": {
+    "difficulty": 9,
+    "name": "Morning Recipe 9"
+  }
+}

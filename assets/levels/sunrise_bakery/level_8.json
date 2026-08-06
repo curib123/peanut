@@ -1,0 +1,105 @@
+{
+  "id": "sunrise_8",
+  "worldId": "sunrise_bakery",
+  "order": 8,
+  "rows": 8,
+  "columns": 8,
+  "moves": 24,
+  "seed": 1108,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    4800,
+    6960,
+    9120
+  ],
+  "goals": [
+    {
+      "id": "clear_frosting",
+      "parameters": {
+        "target": 8
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 2,
+        "row": 1,
+        "column": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 2,
+        "row": 1,
+        "column": 3
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 2,
+        "row": 1,
+        "column": 4
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 2,
+        "row": 1,
+        "column": 5
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 2,
+        "row": 6,
+        "column": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 2,
+        "row": 6,
+        "column": 3
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 2,
+        "row": 6,
+        "column": 4
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "layers": 2,
+        "row": 6,
+        "column": 5
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Double frosting needs two delicious hits."
+    }
+  ],
+  "metadata": {
+    "difficulty": 8,
+    "name": "Morning Recipe 8"
+  }
+}

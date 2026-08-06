@@ -33,11 +33,16 @@ class LevelSession {
     required this.goals,
     BlockerGrid? blockers,
     BoardObjectives? boardObjectives,
+    Set<Position> inaccessibleCells = const {},
   }) : assert(moveLimit > 0),
        movesRemaining = moveLimit,
        blockers = blockers ?? BlockerGrid(),
+       inaccessibleCells = Set.unmodifiable(inaccessibleCells),
        boardObjectives = boardObjectives ?? BoardObjectives() {
     for (final position in this.blockers.blockingPositions) {
+      if (board.contains(position)) board.setPiece(position, null);
+    }
+    for (final position in this.inaccessibleCells) {
       if (board.contains(position)) board.setPiece(position, null);
     }
   }
@@ -46,6 +51,7 @@ class LevelSession {
   final Board board;
   final GoalTracker goals;
   final BlockerGrid blockers;
+  final Set<Position> inaccessibleCells;
   final BoardObjectives boardObjectives;
   int movesRemaining;
   int score = 0;
@@ -56,6 +62,8 @@ class LevelSession {
       throw StateError('The level has already ended.');
     }
     if (blockers.locksSwap(first) ||
+        inaccessibleCells.contains(first) ||
+        inaccessibleCells.contains(second) ||
         blockers.locksSwap(second) ||
         blockers.blocksCell(first) ||
         blockers.blocksCell(second)) {
@@ -66,7 +74,7 @@ class LevelSession {
       board,
       first,
       second,
-      blockedCells: blockers.blockingPositions,
+      blockedCells: {...blockers.blockingPositions, ...inaccessibleCells},
     );
     if (!resolution.isValid) {
       return LevelTurnResult(

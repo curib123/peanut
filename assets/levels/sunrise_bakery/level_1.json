@@ -1,0 +1,40 @@
+{
+  "id": "sunrise_1",
+  "worldId": "sunrise_bakery",
+  "order": 1,
+  "rows": 8,
+  "columns": 8,
+  "moves": 18,
+  "seed": 1101,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    1200,
+    1740,
+    2280
+  ],
+  "goals": [
+    {
+      "id": "target_score",
+      "parameters": {
+        "target": 1200
+      }
+    }
+  ],
+  "blockers": [],
+  "tutorial": [
+    {
+      "message": "Swap neighboring treats to make a row of three."
+    }
+  ],
+  "metadata": {
+    "difficulty": 1,
+    "name": "Morning Recipe 1"
+  }
+}

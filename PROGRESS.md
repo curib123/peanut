@@ -1,6 +1,6 @@
 # Current Status
 
-Current phase: Phase 7 (ready to begin)
+Current phase: Phase 8 (ready to begin)
 
 ## Completed
 
@@ -57,6 +57,13 @@ Current phase: Phase 7 (ready to begin)
 - Added safe SVG fallback loading and sound-setting-aware audio service
 - Declared and validated the complete 42-file production asset pack
 - Phase 6 verification completed
+- Added ten individually authored Sunrise Bakery JSON levels
+- Added gradual tutorials for swaps, cascades, collections, frosting, Sugar Beams, irregular trays, layered blockers, mixed goals, and the finale
+- Connected pre-level and gameplay screens to bundled level definitions
+- Added level-defined moves, goals, seeds, spawn weights, blockers, star thresholds, and tutorials
+- Added persistent inaccessible-cell support for irregular boards
+- Added deterministic level generation and validation tests for all ten openings
+- Phase 7 verification completed
 
 ## In Progress
 
@@ -64,13 +71,13 @@ Current phase: Phase 7 (ready to begin)
 
 ## Remaining
 
-- Phase 7 polish, accessibility, and release-readiness work
+- Phase 8 expansion to the remaining five launch worlds and 60 total levels
 
 ## Tests
 
-- `dart format --output=none --set-exit-if-changed .`: passed (46 files checked)
+- `dart format --output=none --set-exit-if-changed .`: passed (49 Dart files checked)
 - `flutter analyze`: passed, no issues
-- `flutter test`: passed, 66 tests
+- `flutter test`: passed, 69 tests
 - Generated-board validation: 1,000 deterministic 8x8 boards passed
 - `flutter build web --debug`: passed (`build/web`)
 
