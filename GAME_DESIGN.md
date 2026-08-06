@@ -15,7 +15,7 @@ The six regular pieces are Peanut, Egg, Sugar Crystal, Caramel Ribbon, Coconut C
 - Oven Burst: T or L match; clears a large nearby area.
 - Peanut Spinner: 2x2 match; targets an important objective and clears near arrival.
 
-Special-to-special combinations amplify and combine these effects as specified in `PLAN.md`.
+Special-to-special combinations amplify and combine these effects as specified in `PLAN.md`. Beam+Beam clears crossed lines; Beam+Burst clears three-row and three-column bands; Burst+Burst clears a larger area; Spark combinations apply the partner effect across the selected ingredient type; Spark+Spark clears the board; Spinner+special targets and activates its partner. Each special origin activates at most once per resolution chain.
 
 ## Objectives and blockers
 

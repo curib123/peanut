@@ -43,6 +43,36 @@ void main() {
     expect(result.isValid, isFalse);
     expect(board.toRows(), before);
   });
+
+  test('special swap resolves through the same bounded cascade pipeline', () {
+    final board = BoardGenerator(seed: 301).generate()
+      ..setPiece(
+        const Position(3, 3),
+        const Piece(
+          PieceKind.peanut,
+          specialKind: SpecialKind.sugarBeam,
+          beamOrientation: BeamOrientation.horizontal,
+        ),
+      );
+    final engine = TurnEngine(
+      resolver: BoardResolver(seed: 302),
+      shuffler: BoardShuffler(seed: 303),
+    );
+
+    final result = engine.resolveSwap(
+      board,
+      const Position(3, 3),
+      const Position(3, 4),
+    );
+
+    expect(result.isValid, isTrue);
+    expect(
+      result.cascades.first.matched.where((position) => position.row == 3),
+      hasLength(8),
+    );
+    expect(result.cascades.length, lessThan(100));
+    expect(const MatchFinder().find(result.finalBoard), isEmpty);
+  });
 }
 
 Board boardFrom(List<String> rows) => Board([

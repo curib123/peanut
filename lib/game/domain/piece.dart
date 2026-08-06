@@ -29,17 +29,31 @@ class PieceKind {
   String toString() => 'PieceKind($id)';
 }
 
+enum SpecialKind { sugarBeam, goldenRecipeSpark, ovenBurst, peanutSpinner }
+
+enum BeamOrientation { horizontal, vertical }
+
 class Piece {
-  const Piece(this.kind);
+  const Piece(this.kind, {this.specialKind, this.beamOrientation})
+    : assert(specialKind == SpecialKind.sugarBeam || beamOrientation == null),
+      assert(specialKind != SpecialKind.sugarBeam || beamOrientation != null);
 
   final PieceKind kind;
+  final SpecialKind? specialKind;
+  final BeamOrientation? beamOrientation;
+
+  bool get isSpecial => specialKind != null;
 
   @override
-  bool operator ==(Object other) => other is Piece && kind == other.kind;
+  bool operator ==(Object other) =>
+      other is Piece &&
+      kind == other.kind &&
+      specialKind == other.specialKind &&
+      beamOrientation == other.beamOrientation;
 
   @override
-  int get hashCode => kind.hashCode;
+  int get hashCode => Object.hash(kind, specialKind, beamOrientation);
 
   @override
-  String toString() => 'Piece(${kind.id})';
+  String toString() => 'Piece(${kind.id}, ${specialKind?.name})';
 }

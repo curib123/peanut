@@ -2,7 +2,7 @@ import 'board.dart';
 import 'piece.dart';
 import 'position.dart';
 
-enum MatchOrientation { horizontal, vertical, intersecting }
+enum MatchOrientation { horizontal, vertical, intersecting, square }
 
 class MatchGroup {
   MatchGroup({required this.type, required Set<Position> positions})
@@ -16,6 +16,9 @@ class MatchGroup {
     final columns = positions.map((position) => position.column).toSet();
     if (rows.length == 1) return MatchOrientation.horizontal;
     if (columns.length == 1) return MatchOrientation.vertical;
+    if (positions.length == 4 && rows.length == 2 && columns.length == 2) {
+      return MatchOrientation.square;
+    }
     return MatchOrientation.intersecting;
   }
 }
@@ -42,6 +45,23 @@ class MatchFinder {
         board,
         runs,
       );
+    }
+    for (var row = 0; row < board.rows - 1; row++) {
+      for (var column = 0; column < board.columns - 1; column++) {
+        final positions = {
+          Position(row, column),
+          Position(row, column + 1),
+          Position(row + 1, column),
+          Position(row + 1, column + 1),
+        };
+        final piece = board.pieceAt(positions.first);
+        if (piece != null &&
+            positions.every(
+              (position) => board.pieceAt(position)?.kind == piece.kind,
+            )) {
+          runs.add(MatchGroup(type: piece.kind, positions: positions));
+        }
+      }
     }
 
     return _mergeIntersections(runs);

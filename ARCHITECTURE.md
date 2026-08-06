@@ -27,6 +27,8 @@ The domain layer owns board truth, moves, matches, cascades, scoring, goals, blo
 
 Input is converted to an adjacent swap request. `TurnEngine` validates and resolves the move into immutable frames: swap, matched positions, removal snapshot, gravity snapshot, refill snapshot, and repeats until stable. The Flame layer uses `TurnInputGate` to reject concurrent input, animates those frames in order, synchronizes to the final snapshot, then unlocks input even if animation fails. A stable dead board is shuffled by the domain.
 
+`SpecialResolver` is the single authority for special creation, activation expansion, and pair combinations. It returns a set of cleared cells, created pieces, and uniquely activated origins; it never animates. `TurnEngine` folds that plan into the normal bounded cascade frames. This prevents duplicate activation and lets later objectives provide a higher-priority target selector for Peanut Spinner without coupling special rules to Flame.
+
 ## Save data
 
 Shared Preferences stores a versioned JSON document containing the highest unlocked level, stars and best score by level, booster inventory, sound/music/haptic/reduced-motion settings, and save version. Parsing uses safe defaults; explicit migrations upgrade older versions.

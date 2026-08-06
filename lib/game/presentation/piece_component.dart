@@ -46,6 +46,16 @@ class PieceComponent extends PositionComponent {
       radius,
       Paint()..color = _colors[piece.kind.id] ?? const Color(0xFFE968A8),
     );
+    if (piece.isSpecial) {
+      canvas.drawCircle(
+        center,
+        radius * 0.82,
+        Paint()
+          ..color = const Color(0xCCFFF4B8)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = size.x * 0.08,
+      );
+    }
     canvas.drawCircle(
       center - Offset(size.x * 0.1, size.x * 0.1),
       radius * 0.25,
@@ -62,8 +72,15 @@ class PieceComponent extends PositionComponent {
       );
     }
 
-    final label =
-        _labels[piece.kind.id] ?? piece.kind.id.substring(0, 1).toUpperCase();
+    final label = switch (piece.specialKind) {
+      SpecialKind.sugarBeam =>
+        piece.beamOrientation == BeamOrientation.horizontal ? '—' : '|',
+      SpecialKind.goldenRecipeSpark => '★',
+      SpecialKind.ovenBurst => '✦',
+      SpecialKind.peanutSpinner => '↻',
+      null =>
+        _labels[piece.kind.id] ?? piece.kind.id.substring(0, 1).toUpperCase(),
+    };
     final painter = TextPainter(
       text: TextSpan(
         text: label,

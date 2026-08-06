@@ -12,11 +12,14 @@ class MoveValidator {
         !board.contains(second) ||
         !first.isOrthogonallyAdjacentTo(second) ||
         board.pieceAt(first) == null ||
-        board.pieceAt(second) == null ||
-        board.pieceAt(first) == board.pieceAt(second)) {
+        board.pieceAt(second) == null) {
       return false;
     }
 
+    if (board.pieceAt(first)!.isSpecial || board.pieceAt(second)!.isSpecial) {
+      return true;
+    }
+    if (board.pieceAt(first) == board.pieceAt(second)) return false;
     board.swap(first, second);
     final createsMatch = matchFinder
         .find(board)

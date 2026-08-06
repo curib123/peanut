@@ -4,6 +4,7 @@ import 'board_shuffler.dart';
 import 'match_finder.dart';
 import 'move_validator.dart';
 import 'position.dart';
+import 'special_resolver.dart';
 
 class CascadeFrame {
   CascadeFrame({
@@ -47,12 +48,14 @@ class TurnEngine {
     required this.shuffler,
     this.matchFinder = const MatchFinder(),
     this.moveValidator = const MoveValidator(),
+    this.specialResolver = const SpecialResolver(),
   });
 
   final BoardResolver resolver;
   final BoardShuffler shuffler;
   final MatchFinder matchFinder;
   final MoveValidator moveValidator;
+  final SpecialResolver specialResolver;
 
   TurnResolution resolveSwap(
     Board board,
@@ -67,18 +70,36 @@ class TurnEngine {
     board.swap(first, second);
     final afterSwap = board.copy();
     final cascades = <CascadeFrame>[];
+    var pendingSpecial = specialResolver.activationForSwap(
+      board,
+      first,
+      second,
+    );
     while (cascades.length < maxCascades) {
-      final matches = matchFinder.find(board);
-      if (matches.isEmpty) break;
-      final matched = {for (final match in matches) ...match.positions};
-      resolver.remove(board, matched);
+      final SpecialPlan plan;
+      if (pendingSpecial != null) {
+        plan = pendingSpecial;
+        pendingSpecial = null;
+      } else {
+        final matches = matchFinder.find(board);
+        if (matches.isEmpty) break;
+        plan = specialResolver.resolveMatches(
+          board,
+          matches,
+          preferredPosition: cascades.isEmpty ? second : null,
+        );
+      }
+      resolver.remove(board, plan.cleared);
+      for (final creation in plan.created.entries) {
+        board.setPiece(creation.key, creation.value);
+      }
       final afterRemoval = board.copy();
       resolver.applyGravity(board);
       final afterGravity = board.copy();
       resolver.refill(board);
       cascades.add(
         CascadeFrame(
-          matched: matched,
+          matched: plan.cleared,
           afterRemoval: afterRemoval,
           afterGravity: afterGravity,
           afterRefill: board.copy(),

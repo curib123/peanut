@@ -40,7 +40,10 @@ class BoardGenerator {
         }
       }
       final board = Board(cells);
-      if (moveValidator.hasValidMove(board)) return board;
+      if (matchFinder.find(board).isEmpty &&
+          moveValidator.hasValidMove(board)) {
+        return board;
+      }
     }
     throw StateError(
       'Could not generate a playable board in $maxAttempts attempts.',

@@ -7,4 +7,5 @@ export 'match_finder.dart';
 export 'move_validator.dart';
 export 'piece.dart';
 export 'position.dart';
+export 'special_resolver.dart';
 export 'turn_engine.dart';
