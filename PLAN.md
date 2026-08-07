@@ -133,6 +133,82 @@ Capture matching before/after screenshots at common phone and tablet sizes for e
 
 Acceptance: no letters or placeholder geometry remain on pieces; all normal pieces, specials, blockers, goals, boosters, characters, effects, backgrounds, and major UI surfaces use the approved original art direction; all six worlds are distinct and cohesive; the board is instantly readable; narrow-phone crowding and empty-space problems are resolved; touch targets and contrast meet requirements; reduced motion remains complete; assets load without flashes or missing images; gameplay results and saves are unchanged; analyzer and all tests pass; Android release and web builds succeed; and the final screenshot set is approved against the Phase 10 baseline.
 
+## Phase 12 - Capture, analysis, and enhancement audit
+
+Capture the complete working game after Phase 11 and analyze what still needs to be added, enhanced, simplified, or fixed before the final adventure presentation. This is an evidence-gathering and prioritization phase: do not hide defects with mockups, and do not mark an item complete without checking the real running Android/web experience.
+
+### 12.1 - Complete state capture
+
+Create reproducible phone and tablet captures for splash, home, settings, every world section, locked/unlocked/completed level nodes, pre-level goals, booster selection, first-time tutorials, standard gameplay, every normal piece, every special, special combinations, each blocker and damage layer, pause, shuffle, low moves, victory, failure, star awards, unlock celebration, reset confirmation, loading, offline, empty, and error/fallback states.
+
+Record both still screenshots and short interaction clips. Include representative Levels 1, 5, 10, 20, 30, 40, 50, and 60; small and large screens; fresh and advanced saves; sound/haptics on and off; reduced motion; and at least one sustained session that moves from the adventure map into gameplay and back with a newly unlocked level.
+
+### 12.2 - Visual and interaction analysis
+
+Review every capture for hierarchy, composition, art consistency, palette, contrast, legibility, world identity, cropping, safe areas, typography, text overflow, button states, touch targets, board readability, goal clarity, blocker state clarity, animation timing, effect density, audio/visual synchronization, loading flashes, empty space, visual repetition, frame pacing, memory use, and package-size impact.
+
+Compare the experience with the quality expectations of leading polished match-3 games while evaluating Puff & Crunch on its own original art, mechanics, characters, terminology, and layouts. Do not copy screenshots or reproduce a competitor's exact interface.
+
+### 12.3 - Gameplay and progression analysis
+
+Audit onboarding, difficulty curve, objective explanations, move pressure, booster discovery, special-combination teaching, retry flow, reward feedback, star thresholds, level unlock visibility, world transitions, return-to-map position, save recovery, and the sense of forward adventure. Identify missing content and unclear mechanics as well as bugs.
+
+### 12.4 - Evidence-backed backlog
+
+Create a Phase 12 review report with annotated captures and one prioritized backlog. Each item must include evidence, affected screen/level, severity, player impact, proposed correction, dependency, validation method, and status. Sort into:
+
+1. Critical functional defects and data-loss risks.
+2. Gameplay readability and accessibility blockers.
+3. Performance, loading, memory, and package-size problems.
+4. Progression, onboarding, and navigation friction.
+5. Art inconsistency and missing assets/states.
+6. Animation, audio, haptic, and delight improvements.
+7. Optional future content and retention ideas.
+
+Acceptance: the capture set covers every required state and representative level; Android and web are both reviewed; defects are reproducible; every recommendation links to visible evidence; accessibility and performance measurements are recorded; the backlog has an explicit priority/order; quick fixes made during the audit have regression tests; analyzer/tests/builds pass; and Phase 13 receives a clear approved input specification rather than assumptions.
+
+## Phase 13 - AI-generated vertical world adventure
+
+Transform the home/progression experience into a premium vertically scrolling adventure journey. The level journey becomes the main home experience: players open directly into a living connected world map, see their current location and next goal immediately, scroll through completed and upcoming levels, and watch the route continue naturally into newly unlocked worlds.
+
+Use the sense of discovery, layered depth, clarity, and reward pacing associated with polished map-based match-3 adventures such as Candy Crush as a quality reference only. Create original Puff & Crunch geography, level-node shapes, landmarks, paths, characters, props, compositions, colors, animations, and interface components; do not copy competitor maps, layouts, icons, characters, world themes, or artwork.
+
+### 13.1 - Vertical journey structure
+
+Replace the plain level grid and separate static home with one responsive vertical journey containing all 60 launch levels. Arrange levels along a readable winding path with visible connections, completed stars, current-level emphasis, locked states, milestone nodes, reward moments, world gates, and clear forward direction. Preserve direct settings access and provide a compact persistent status area without obscuring the journey.
+
+Opening the journey restores the player's previous scroll position unless a level or world was just unlocked. After victory, return to the completed node, animate earned stars and rewards, extend the route, unlock the next node, and automatically reveal the new destination without disorienting the player. World transitions must feel continuous rather than like unrelated grids.
+
+### 13.2 - Connected world design
+
+Join Sunrise Bakery, Peanut Grove, Egg Cloud Kitchen, Sugar Harbor, Festival Oven, and Starlight Bake-Off into one coherent island adventure. Each ten-level region needs an original entrance, exit, landmark, path material, terrain, vegetation/props, atmospheric palette, and transition zone that visually blends into the next region. Use landmark levels and gates to signal major progression moments.
+
+Design the content architecture so later permanent and event worlds can append above the existing journey without renumbering saves or rebuilding the entire map. Locked future regions may be teased honestly but must not imply playable content that does not exist.
+
+### 13.3 - AI-generated environmental artwork
+
+Use image generation to create original high-resolution master art for each world's background, transition scenes, landmarks, foreground decorations, clouds, particles, ambient creatures, bakery props, and celebratory moments. Produce a shared art-direction sheet and connected map storyboard before final generation so perspective, scale, lighting, horizon, path alignment, and color transitions remain consistent across world boundaries.
+
+Split approved masters into optimized foreground, midground, and background layers with safe overlap and responsive crop zones. Record prompts, seeds/reference inputs when available, asset ownership notes, source dimensions, export settings, and runtime filenames. Export efficient WebP/PNG layers and sprite sheets; retain working masters outside the runtime bundle when they are not needed by the app.
+
+### 13.4 - Parallax, cinemagraph, and looping life
+
+Give each region a subtle living environment using bounded layered parallax and seamless AI-assisted looping elements. Candidate motion includes drifting clouds, moving oven glow, sparkling sugar, swaying palms, floating flour dust, harbor water shimmer, festival lights, distant steam, and starlight twinkle. Prefer small isolated loops, sprite atlases, shader effects, or lightweight encoded clips over animating an entire full-resolution screen.
+
+Loops must be seamless, quiet behind UI, free of visible AI morphing, and tested at their loop boundary. Pause offscreen worlds and application-background motion, cap simultaneous animated layers, precache the next region, and provide static poster-frame alternatives for reduced motion, battery saver, unsupported web codecs, slow devices, and asset failures. Ambient audio must respect the existing music/sound settings.
+
+### 13.5 - Adventure interaction and UI
+
+Create polished original nodes, star plaques, world ribbons, gates, route segments, treasure/reward markers, avatar position, current-level beacon, locked overlays, progress counters, and scroll controls. Add a reliable "return to current level" control and semantic labels for accessible navigation. Node hit areas must remain at least 48 logical pixels even when artwork is visually smaller.
+
+Use restrained depth reactions while scrolling: foreground drift, landmark reveal, subtle character response, node pulse, route illumination, and world-gate celebration. Do not let motion fight scrolling or obscure level state. Reduced motion replaces travel/reveal animation with immediate positioning and short opacity changes.
+
+### 13.6 - Performance, validation, and release
+
+Virtualize/cull offscreen map sections, avoid decoding all world masters at startup, bound texture memory, reuse loop controllers, and test fast scrolling between the bottom and top of the journey. Measure first meaningful paint, time to current-level positioning, scroll frame pacing, peak memory, image decode spikes, bundle growth, and battery-sensitive animation behavior on Android and web.
+
+Acceptance: the journey is the primary home/progression surface; all 60 nodes form one clear connected vertical route; each world is original, recognizable, and blends into the next; winning reveals the next level/world correctly; return position and save compatibility work; AI-generated backgrounds and loops have recorded provenance and optimized fallbacks; parallax/loops are seamless and pause when offscreen; reduced motion uses static alternatives; map scrolling remains responsive on target phone and web sizes; no copied commercial artwork or layout is included; annotated screenshots and a short journey video are approved; analyzer/tests pass; and Android release and web builds succeed.
+
 ## Final completion checklist
 
 - All phase acceptance criteria pass.
@@ -141,3 +217,5 @@ Acceptance: no letters or placeholder geometry remain on pieces; all normal piec
 - All 60 levels and declared assets validate.
 - Documentation, notices, and exact verification results are current.
 - Phase 11 visual-direction, accessibility, screenshot, and release-build acceptance criteria pass.
+- Phase 12 capture coverage, analysis report, prioritized backlog, and regression evidence are complete.
+- Phase 13 connected vertical journey, AI-generated environments, looping fallbacks, performance targets, and release checks pass.

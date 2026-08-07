@@ -92,6 +92,8 @@ Current phase: Phase 11 (ready to begin)
 ## Remaining
 
 - Phase 11 complete AI-generated visual overhaul: real illustrated pieces, premium match-3 UI, effects, and six world backgrounds
+- Phase 12 full-state capture, issue analysis, and prioritized enhancement audit
+- Phase 13 AI-generated connected vertical world adventure with parallax and seamless ambient loops
 
 ## Tests
 
