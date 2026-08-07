@@ -170,8 +170,12 @@ class BoardComponent extends PositionComponent
       await _rebuildFalling(cascade.afterGravity, duration);
       await _rebuildFalling(cascade.afterRefill, duration);
     }
-    _rebuild(resolution.finalBoard);
-    if (resolution.wasShuffled) await game.audio.play('shuffle');
+    if (resolution.wasShuffled) {
+      await game.audio.play('shuffle');
+      await _animateReshuffle(resolution.finalBoard, duration);
+    } else {
+      _rebuild(resolution.finalBoard);
+    }
     await refreshBlockers();
   }
 
@@ -284,6 +288,25 @@ class BoardComponent extends PositionComponent
     if (effects.isNotEmpty) unawaited(game.audio.play('fall'));
     await Future.wait(effects);
     if (effects.isNotEmpty) unawaited(game.audio.play('land'));
+  }
+
+  Future<void> _animateReshuffle(domain.Board board, double duration) async {
+    final effects = <Future<void>>[];
+    for (final piece in _pieces.values) {
+      final fade = OpacityEffect.fadeOut(
+        EffectController(duration: duration * .7, curve: Curves.easeIn),
+      );
+      final shrink = ScaleEffect.to(
+        Vector2.all(.72),
+        EffectController(duration: duration * .7, curve: Curves.easeIn),
+      );
+      piece
+        ..add(fade)
+        ..add(shrink);
+      effects.addAll([fade.completed, shrink.completed]);
+    }
+    await Future.wait(effects);
+    await _rebuildFalling(board, duration * 1.25);
   }
 
   List<Future<void>> _replacePieces(

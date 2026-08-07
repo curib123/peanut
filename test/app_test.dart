@@ -61,6 +61,7 @@ void main() {
     );
     expect(lockedLevel.color, Colors.transparent);
     expect(lockedInkWell.onTap, isNull);
+    expect(find.byKey(const Key('level-21')), findsNothing);
 
     await tester.tap(find.byKey(const Key('level-1')));
     await tester.pumpAndSettle();

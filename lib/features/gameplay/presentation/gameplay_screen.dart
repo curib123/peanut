@@ -78,28 +78,6 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FutureBuilder<WorldPresentationCatalog>(
-              future: WorldPresentationCatalog.load(),
-              builder: (context, snapshot) => Text(
-                snapshot.data?.worldForLevel(widget.level).name ??
-                    'Island Bakery',
-              ),
-            ),
-            Text('Level ${widget.level}', style: const TextStyle(fontSize: 12)),
-          ],
-        ),
-        actions: [
-          IconButton(
-            tooltip: 'Pause',
-            onPressed: _togglePause,
-            icon: const Icon(Icons.pause_rounded),
-          ),
-        ],
-      ),
       body: FutureBuilder<_GameplayLoad>(
         future: _gameFuture,
         builder: (context, snapshot) {
@@ -115,6 +93,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
           return _LoadedGameplay(
             game: loaded.game,
             level: widget.level,
+            worldName: loaded.presentation.name,
             backgroundAsset: loaded.presentation.backgroundAsset,
             paused: _paused,
             onTogglePause: _togglePause,
@@ -129,6 +108,7 @@ class _LoadedGameplay extends StatelessWidget {
   const _LoadedGameplay({
     required this.game,
     required this.level,
+    required this.worldName,
     required this.backgroundAsset,
     required this.paused,
     required this.onTogglePause,
@@ -136,6 +116,7 @@ class _LoadedGameplay extends StatelessWidget {
 
   final IslandMatchGame game;
   final int level;
+  final String worldName;
   final String backgroundAsset;
   final bool paused;
   final VoidCallback onTogglePause;
@@ -145,27 +126,26 @@ class _LoadedGameplay extends StatelessWidget {
     valueListenable: game.hud,
     builder: (context, hud, child) => Stack(
       children: [
+        Positioned.fill(child: Image.asset(backgroundAsset, fit: BoxFit.cover)),
+        const Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0x22FFF4D6), Color(0x663D1F13)],
+              ),
+            ),
+          ),
+        ),
         Column(
           children: [
+            const SizedBox(height: 94),
             _GameHud(hud: hud),
             Expanded(
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    backgroundAsset,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.center,
-                  ),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Color(0x22FFF4D6), Color(0x663D1F13)],
-                      ),
-                    ),
-                  ),
                   Semantics(
                     label: 'Playable eight by eight match board',
                     child: GameWidget(game: game),
@@ -174,6 +154,56 @@ class _LoadedGameplay extends StatelessWidget {
               ),
             ),
           ],
+        ),
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+              child: GlassPanel(
+                radius: 24,
+                tint: const Color(0xB83A1C12),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                child: Row(
+                  children: [
+                    IconButton(
+                      tooltip: 'Back',
+                      color: Colors.white,
+                      onPressed: () => context.pop(),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            worldName,
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(color: Colors.white),
+                          ),
+                          Text(
+                            'Level $level',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Pause',
+                      color: Colors.white,
+                      onPressed: onTogglePause,
+                      icon: const Icon(Icons.pause_rounded),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
         if (game.level?.tutorial.isNotEmpty == true && hud.score == 0)
           _TutorialBanner(step: game.level!.tutorial.first),

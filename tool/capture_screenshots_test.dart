@@ -60,6 +60,23 @@ void main() {
       matchesGoldenFile('../docs/screenshots/03-level-map.png'),
     );
 
+    await tester.scrollUntilVisible(
+      find.text('A secret world is hidden above'),
+      650,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pump(const Duration(milliseconds: 500));
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../docs/screenshots/12-secret-world-cloud.png'),
+    );
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('level-1')),
+      -650,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+
     await tester.tap(find.byKey(const Key('level-1')));
     await tester.pumpAndSettle();
     await tester.runAsync(

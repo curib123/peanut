@@ -65,6 +65,10 @@ class _LevelMapScreenState extends ConsumerState<LevelMapScreen>
           }
           final visibleWorld =
               catalog.worlds[_visibleWorld.clamp(0, catalog.worlds.length - 1)];
+          final availableWorld = catalog.worldForLevel(
+            save.highestUnlockedLevel.clamp(1, catalog.lastLevel),
+          );
+          final visibleLastLevel = availableWorld.lastLevel;
           return TickerMode(
             enabled: !save.settings.reducedMotion,
             child: Stack(
@@ -125,9 +129,16 @@ class _LevelMapScreenState extends ConsumerState<LevelMapScreen>
                 SafeArea(
                   child: ListView.builder(
                     controller: _scroll,
+                    reverse: true,
                     padding: const EdgeInsets.fromLTRB(28, 72, 28, 80),
-                    itemCount: catalog.lastLevel,
+                    itemCount: visibleLastLevel + 1,
                     itemBuilder: (context, index) {
+                      if (index == visibleLastLevel) {
+                        return _SecretCloud(
+                          animation: _ambient,
+                          finalWorld: visibleLastLevel == catalog.lastLevel,
+                        );
+                      }
                       final level = index + 1;
                       final world = catalog.worldForLevel(level);
                       final unlocked = level <= save.highestUnlockedLevel;
@@ -187,6 +198,58 @@ class _LevelMapScreenState extends ConsumerState<LevelMapScreen>
       ),
     );
   }
+}
+
+class _SecretCloud extends StatelessWidget {
+  const _SecretCloud({required this.animation, required this.finalWorld});
+
+  final Animation<double> animation;
+  final bool finalWorld;
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: animation,
+    builder: (context, child) {
+      final phase = animation.value * math.pi * 2;
+      return Transform.translate(
+        offset: Offset(math.sin(phase) * 12, math.cos(phase) * 5),
+        child: child,
+      );
+    },
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 44),
+      child: Column(
+        children: [
+          const Icon(Icons.cloud_rounded, color: Color(0xE8FFFFFF), size: 116),
+          Transform.translate(
+            offset: const Offset(0, -56),
+            child: const Icon(
+              Icons.lock_rounded,
+              color: AppColors.cocoa,
+              size: 30,
+            ),
+          ),
+          Text(
+            finalWorld
+                ? 'The island summit awaits'
+                : 'A secret world is hidden above',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              shadows: const [Shadow(color: Colors.black54, blurRadius: 8)],
+            ),
+          ),
+          if (!finalWorld)
+            const Text(
+              'Complete this world to clear the clouds',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+        ],
+      ),
+    ),
+  );
 }
 
 class _AmbientPainter extends CustomPainter {

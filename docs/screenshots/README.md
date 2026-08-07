@@ -13,6 +13,7 @@ These phone-sized captures are the verified Phase 12 full-state visual audit set
 9. `09-blockers.png` - blocker-heavy Sunrise Bakery gameplay
 10. `10-sugar-harbor.png` - later-world background and gameplay presentation
 11. `11-special-pieces.png` - all five special recipe sprites on one board
+12. `12-secret-world-cloud.png` - upward journey gate hiding the next world until completion
 
 Regenerate the set on Windows with:
 

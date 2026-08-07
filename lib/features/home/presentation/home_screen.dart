@@ -88,6 +88,26 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
+                          const SizedBox(height: 18),
+                          const Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 10,
+                            runSpacing: 8,
+                            children: [
+                              _FeatureChip(
+                                icon: Icons.route_rounded,
+                                label: '120 levels',
+                              ),
+                              _FeatureChip(
+                                icon: Icons.public_rounded,
+                                label: '6 worlds',
+                              ),
+                              _FeatureChip(
+                                icon: Icons.auto_awesome_rounded,
+                                label: 'Daily magic',
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 32),
                           GamePrimaryButton(
                             onPressed: () => context.push('/map'),
@@ -106,6 +126,35 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class _FeatureChip extends StatelessWidget {
+  const _FeatureChip({required this.icon, required this.label});
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+    decoration: BoxDecoration(
+      color: Colors.white.withValues(alpha: .14),
+      borderRadius: BorderRadius.circular(99),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: const Color(0xFFFFD76A), size: 17),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class _SettingsButton extends StatelessWidget {
