@@ -147,7 +147,7 @@ class _LoadedGameplay extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Color(0x77FFF4D6), Color(0xAA3D1F13)],
+                        colors: [Color(0x22FFF4D6), Color(0x663D1F13)],
                       ),
                     ),
                   ),

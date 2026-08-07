@@ -68,6 +68,7 @@ flutter:
     - assets/images/pieces/
     - assets/images/specials/
     - assets/images/blockers/
+    - assets/images/effects/
     - assets/images/worlds/
     - assets/audio/sfx/
     - assets/svg/pieces/

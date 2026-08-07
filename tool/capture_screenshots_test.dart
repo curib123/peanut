@@ -64,7 +64,7 @@ void main() {
       ),
     );
     await tester.runAsync(
-      () => Future<void>.delayed(const Duration(seconds: 2)),
+      () => Future<void>.delayed(const Duration(seconds: 4)),
     );
     for (var frame = 0; frame < 120; frame++) {
       await tester.pump(const Duration(milliseconds: 16));
@@ -100,6 +100,7 @@ Future<void> _preloadGameSprites() => Flame.images.loadAll(const [
   'specials/golden_recipe_spark.png',
   'specials/oven_burst.png',
   'specials/peanut_spinner.png',
+  'effects/match_burst_sheet.png',
 ]);
 
 Future<void> _loadFonts() async {

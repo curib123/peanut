@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:puff_and_crunch/services/assets/game_asset_catalog.dart';
@@ -13,10 +15,10 @@ void main() {
         .where((path) => path.startsWith('assets/'))
         .toList();
 
-    expect(assets, hasLength(126));
+    expect(assets, hasLength(127));
     expect(assets.where((path) => path.endsWith('.svg')), hasLength(33));
     expect(assets.where((path) => path.endsWith('.wav')), hasLength(8));
-    expect(assets.where((path) => path.endsWith('.png')), hasLength(19));
+    expect(assets.where((path) => path.endsWith('.png')), hasLength(20));
     expect(assets.where((path) => path.endsWith('.webp')), hasLength(6));
     expect(assets.where((path) => path.endsWith('.json')), hasLength(60));
 
@@ -51,8 +53,25 @@ void main() {
       ]) {
         expect(assets, contains('assets/images/worlds/$id.webp'));
       }
+      expect(
+        assets,
+        contains('assets/images/effects/match_burst_sheet.png'),
+      );
     },
   );
+
+  test('match burst sheet keeps the expected eight-frame grid', () async {
+    final bytes = await rootBundle.load(
+      'assets/images/effects/match_burst_sheet.png',
+    );
+    final codec = await ui.instantiateImageCodec(bytes.buffer.asUint8List());
+    final frame = await codec.getNextFrame();
+    expect(frame.image.width, 1536);
+    expect(frame.image.height, 1024);
+    expect(frame.image.width ~/ 4, 384);
+    expect(frame.image.height ~/ 2, 512);
+    codec.dispose();
+  });
 
   test('missing SVG returns a renderable original fallback', () async {
     final svg = await GameAssetCatalog.loadSvg('assets/svg/missing.svg');

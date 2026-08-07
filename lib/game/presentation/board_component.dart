@@ -8,7 +8,9 @@ import 'package:flutter/animation.dart';
 
 import '../domain/match3.dart' as domain;
 import 'island_match_game.dart';
+import 'match_burst_component.dart';
 import 'piece_component.dart';
+import 'polished_sprite_component.dart';
 
 class BoardComponent extends PositionComponent
     with TapCallbacks, DragCallbacks, HasGameReference<IslandMatchGame> {
@@ -18,7 +20,7 @@ class BoardComponent extends PositionComponent
   domain.Board _board;
   final domain.BlockerGrid blockers;
   final Map<domain.Position, PieceComponent> _pieces = {};
-  final List<SpriteComponent> _blockerSprites = [];
+  final List<PolishedSpriteComponent> _blockerSprites = [];
   domain.Position? _selected;
   domain.Position? _dragStart;
   Vector2 _dragDelta = Vector2.zero();
@@ -189,11 +191,13 @@ class BoardComponent extends PositionComponent
           domain.BlockerKind.ovenStone => 'oven_stone',
           domain.BlockerKind.bakersTwine => 'bakers_twine',
         };
-        final component = SpriteComponent(
+        final component = PolishedSpriteComponent(
           sprite: await Sprite.load('blockers/$id.png'),
           position: _cellPosition(entry.key),
           size: Vector2.all(cellExtent),
           priority: 10,
+          reducedMotion: game.reducedMotion,
+          idleStrength: .45,
         );
         _blockerSprites.add(component);
         add(component);
@@ -224,6 +228,13 @@ class BoardComponent extends PositionComponent
       );
       particle.add(OpacityEffect.fadeOut(EffectController(duration: .28)));
     }
+    add(
+      MatchBurstComponent(
+        position: _cellPosition(position) + Vector2.all(cellExtent / 2),
+        size: Vector2(cellExtent * 1.7, cellExtent * 1.35),
+        reducedMotion: game.reducedMotion,
+      ),
+    );
   }
 
   void resizeBoard(Vector2 newSize) {
@@ -296,6 +307,7 @@ class BoardComponent extends PositionComponent
             ? destination - Vector2(0, extent * 0.65)
             : destination,
         extent: extent,
+        reducedMotion: game.reducedMotion,
       );
       _pieces[position] = component;
       add(component);

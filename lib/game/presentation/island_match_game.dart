@@ -66,6 +66,7 @@ class IslandMatchGame extends FlameGame {
       'specials/golden_recipe_spark.png',
       'specials/oven_burst.png',
       'specials/peanut_spinner.png',
+      'effects/match_burst_sheet.png',
     ]);
     _turnEngine = TurnEngine(
       resolver: BoardResolver(seed: _seed + 1),

@@ -60,3 +60,5 @@ The repository resolves all 60 launch levels through world-based asset paths whi
 ## Phase 11 presentation assets
 
 AI-generated runtime art is isolated from domain logic. `PieceComponent` resolves a stable piece/special ID to a preloaded transparent sprite and falls back to text-free geometry on asset failure. `BoardComponent` renders the bakery tray and blocker sprite layer from the session's live `BlockerGrid`; turn resolution remains authoritative. Flutter screen layers choose the world background from the numeric level without changing content or save data. The connected map reads only unlock/star state from `ProgressController`, so later parallax and virtualization work can replace its composition without migrating progression.
+
+Static piece and blocker PNGs are animated by reusable Flame presentation components: breathing/bob and movement tweens, alpha-clipped gradient shine, bounded particles, and an eight-frame AI-generated match-burst sprite sheet. Reduced-motion mode freezes decorative loops and uses a brief static burst frame without changing gameplay timing or state.

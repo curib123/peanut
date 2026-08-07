@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/painting.dart';
@@ -9,10 +11,13 @@ class PieceComponent extends PositionComponent {
     required this.piece,
     required super.position,
     required double extent,
+    this.reducedMotion = false,
   }) : super(size: Vector2.all(extent), anchor: Anchor.topLeft);
 
   final Piece piece;
+  final bool reducedMotion;
   Sprite? _sprite;
+  double _elapsed = 0;
   bool _isSelected = false;
 
   bool get isSelected => _isSelected;
@@ -51,6 +56,12 @@ class PieceComponent extends PositionComponent {
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+    if (!reducedMotion) _elapsed += dt;
+  }
+
+  @override
   void render(Canvas canvas) {
     super.render(canvas);
     final center = Offset(size.x / 2, size.y / 2);
@@ -65,11 +76,40 @@ class PieceComponent extends PositionComponent {
     );
     final sprite = _sprite;
     if (sprite != null) {
+      final phase = math.sin(_elapsed * 2.35 + piece.kind.id.hashCode % 17);
+      final bob = reducedMotion ? 0.0 : phase * size.x * .022;
+      final breathe = reducedMotion ? 1.0 : 1 + phase * .014;
+      final bounds = Rect.fromLTWH(0, 0, size.x, size.y);
+      canvas.save();
+      canvas.translate(size.x / 2, size.y / 2 + bob);
+      canvas.scale(breathe, breathe);
+      canvas.translate(-size.x / 2, -size.y / 2);
+      canvas.saveLayer(bounds, Paint());
       sprite.render(
         canvas,
         position: Vector2.all(size.x * .03),
         size: Vector2.all(size.x * .94),
       );
+      if (!reducedMotion) {
+        final sweep = ((_elapsed * .24) % 1.7) - .35;
+        canvas.drawRect(
+          bounds,
+          Paint()
+            ..shader = LinearGradient(
+              begin: Alignment(-1.5 + sweep * 2, -1),
+              end: Alignment(-.7 + sweep * 2, 1),
+              colors: const [
+                Color(0x00FFFFFF),
+                Color(0x99FFFFFF),
+                Color(0x00FFFFFF),
+              ],
+              stops: const [.4, .5, .6],
+            ).createShader(bounds)
+            ..blendMode = BlendMode.srcATop,
+        );
+      }
+      canvas.restore();
+      canvas.restore();
     } else {
       canvas.drawRRect(
         RRect.fromRectAndRadius(

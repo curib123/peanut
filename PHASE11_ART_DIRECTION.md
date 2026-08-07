@@ -34,6 +34,21 @@ One high-resolution portrait bakery-island adventure master plus a consistent si
 
 Runtime outputs: `assets/images/worlds/sunrise_adventure.png` and six optimized WebP world scenes.
 
+### Animated-effects prompt
+
+One eight-frame 4x2 magical bakery sparkle burst sheet, progressing from a golden pinpoint through a peanut-gold and sugar-blue starburst into fading crumbs and glints. Frames use common center registration and a flat chroma background for alpha extraction.
+
+Runtime output: `assets/images/effects/match_burst_sheet.png` (1536x1024 RGBA).
+
+## Modern animation stack
+
+- Every regular and special piece uses its PNG sprite with a restrained breathing/bob tween.
+- A moving gradient shader is alpha-clipped to the sprite for a polished traveling shine.
+- Selection, swapping, falling, landing squash, rejection shake, match scale-out, and cascade callouts remain code-driven tweens.
+- Every match combines the eight-frame sprite-sheet burst with bounded colored particle crumbs.
+- Blocker sprites share a subtler idle tween, warm glow, and traveling shader treatment.
+- Reduced-motion mode freezes idle motion and shine and substitutes a single brief burst frame while retaining clear state feedback.
+
 ## Runtime rules
 
 - Critical piece and special sprites preload before the Flame board mounts.
