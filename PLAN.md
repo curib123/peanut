@@ -74,6 +74,25 @@ Run formatting, analyzer, unit/widget/integration tests, debug Android and relea
 
 Acceptance: all checks and builds pass; 60 levels load; saving, reduced motion, and special combinations work; README has setup/build commands; no copyrighted commercial assets are included.
 
+## Phase 11 - Peanut Kisses-inspired visual enhancement
+
+Refresh the complete visual system with art style and color as the highest priority. Build an original Peanut Kisses-inspired palette around warm peanut gold, bakery cream, cocoa brown, energetic brand red, toasted orange, and restrained sugar-white highlights. Define semantic design tokens for backgrounds, surfaces, text, actions, success, warnings, locked states, board cells, pieces, blockers, specials, and effects so every screen uses one coherent theme with accessible contrast.
+
+Redesign the home, world map, pre-level panel, gameplay HUD, board, pause/settings dialogs, victory/failure overlays, buttons, cards, stars, and loading states. Replace placeholder-looking shapes and letter labels with polished original soft 3D bakery illustrations, bold rounded typography, consistent outlines, warm shadows, glossy highlights, and clear silhouettes. Give each world its own scenery and accent variation while retaining the shared core palette and making the gameplay board the strongest focal point.
+
+Prioritize the work in this order:
+
+1. Approve a color-token sheet and representative home/gameplay visual direction.
+2. Apply the global theme, typography, spacing, elevation, buttons, cards, and navigation styling.
+3. Upgrade the board, pieces, specials, blockers, goals, boosters, HUD, and selection/readability states.
+4. Upgrade the six world environments, map journey, characters, overlays, and progression celebrations.
+5. Add responsive composition, reduced-motion equivalents, accessibility contrast checks, and low-end-device optimization.
+6. Capture before/after screenshots at common phone sizes and complete a consistency/accessibility review.
+
+All artwork must remain newly created for Puff and Crunch. The design may use the Peanut Kisses brand's warm, cheerful color character as inspiration, but it must not copy packaging layouts, logos, mascots, protected artwork, or trade dress.
+
+Acceptance: the approved palette and semantic tokens are used throughout; no placeholder letters remain on game pieces; all six worlds are visually distinct but cohesive; text and controls meet WCAG AA contrast where applicable; touch targets remain at least 48 logical pixels; reduced-motion behavior remains complete; gameplay is readable at a glance; assets have safe fallbacks; analyzer/tests pass; Android release and web builds succeed; and screenshot review shows a consistently polished Peanut Kisses-inspired identity across every primary screen.
+
 ## Final completion checklist
 
 - All phase acceptance criteria pass.
@@ -81,3 +100,4 @@ Acceptance: all checks and builds pass; 60 levels load; saving, reduced motion, 
 - Android and web artifacts build successfully.
 - All 60 levels and declared assets validate.
 - Documentation, notices, and exact verification results are current.
+- Phase 11 visual-direction, accessibility, screenshot, and release-build acceptance criteria pass.
