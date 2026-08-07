@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import '../../game/domain/content.dart';
+import 'world_presentation_catalog.dart';
 
 class BundledLevelRepository {
   const BundledLevelRepository({this.bundle});
@@ -10,10 +11,10 @@ class BundledLevelRepository {
   final AssetBundle? bundle;
 
   Future<LevelDefinition> load(int number) async {
-    if (number < 1 || number > 60) {
-      throw ContentException('Launch level must be 1 through 60.');
-    }
-    final world = worldForLevel(number);
+    if (number < 1) throw ContentException('Level number must be positive.');
+    final world = (await WorldPresentationCatalog.load(
+      bundle: bundle,
+    )).worldForLevel(number).id;
     final source = await (bundle ?? rootBundle).loadString(
       'assets/levels/$world/level_$number.json',
     );
@@ -29,24 +30,4 @@ class BundledLevelRepository {
 
   Future<List<LevelDefinition>> loadLaunchLevels() async =>
       Future.wait([for (var number = 1; number <= 60; number++) load(number)]);
-
-  static String worldForLevel(int number) => switch ((number - 1) ~/ 10) {
-    0 => 'sunrise_bakery',
-    1 => 'peanut_grove',
-    2 => 'egg_cloud_kitchen',
-    3 => 'sugar_harbor',
-    4 => 'festival_oven',
-    5 => 'starlight_bake_off',
-    _ => throw ContentException('Launch level must be 1 through 60.'),
-  };
-
-  static String worldNameForLevel(int number) => switch ((number - 1) ~/ 10) {
-    0 => 'Sunrise Bakery',
-    1 => 'Peanut Grove',
-    2 => 'Egg Cloud Kitchen',
-    3 => 'Sugar Harbor',
-    4 => 'Festival Oven',
-    5 => 'Starlight Bake-Off',
-    _ => 'New Island',
-  };
 }

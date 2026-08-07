@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "main": {
+    "backgroundAsset": "assets/images/worlds/sunrise_adventure.png",
+    "musicAsset": "main_theme.wav"
+  },
+  "worlds": [
+    {
+      "id": "sunrise_bakery",
+      "name": "Sunrise Bakery",
+      "order": 1,
+      "firstLevel": 1,
+      "lastLevel": 10,
+      "backgroundAsset": "assets/images/worlds/sunrise_bakery.webp",
+      "musicAsset": "sunrise_bakery.wav"
+    },
+    {
+      "id": "peanut_grove",
+      "name": "Peanut Grove",
+      "order": 2,
+      "firstLevel": 11,
+      "lastLevel": 20,
+      "backgroundAsset": "assets/images/worlds/peanut_grove.webp",
+      "musicAsset": "peanut_grove.wav"
+    },
+    {
+      "id": "egg_cloud_kitchen",
+      "name": "Egg Cloud Kitchen",
+      "order": 3,
+      "firstLevel": 21,
+      "lastLevel": 30,
+      "backgroundAsset": "assets/images/worlds/egg_cloud_kitchen.webp",
+      "musicAsset": "egg_cloud_kitchen.wav"
+    },
+    {
+      "id": "sugar_harbor",
+      "name": "Sugar Harbor",
+      "order": 4,
+      "firstLevel": 31,
+      "lastLevel": 40,
+      "backgroundAsset": "assets/images/worlds/sugar_harbor.webp",
+      "musicAsset": "sugar_harbor.wav"
+    },
+    {
+      "id": "festival_oven",
+      "name": "Festival Oven",
+      "order": 5,
+      "firstLevel": 41,
+      "lastLevel": 50,
+      "backgroundAsset": "assets/images/worlds/festival_oven.webp",
+      "musicAsset": "festival_oven.wav"
+    },
+    {
+      "id": "starlight_bake_off",
+      "name": "Starlight Bake-Off",
+      "order": 6,
+      "firstLevel": 51,
+      "lastLevel": 60,
+      "backgroundAsset": "assets/images/worlds/starlight_bake_off.webp",
+      "musicAsset": "starlight_bake_off.wav"
+    }
+  ]
+}

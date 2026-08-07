@@ -47,7 +47,8 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: PuffAndCrunchApp()));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Play'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await _pumpUntilFound(tester, find.byKey(const Key('level-2')));
 
     final lockedLevel = tester.widget<FilledButton>(
       find.byKey(const Key('level-2')),
@@ -61,7 +62,12 @@ void main() {
 
     await tester.tap(find.text('Start Level'));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(seconds: 3)),
+    );
+    for (var frame = 0; frame < 60; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
     expect(find.text('Level 1'), findsWidgets);
     expect(find.text('Moves: 18'), findsWidgets);
     expect(find.text('Score: 0'), findsOneWidget);
@@ -73,4 +79,13 @@ void main() {
     await tester.pump();
     expect(find.text('Paused'), findsNothing);
   });
+}
+
+Future<void> _pumpUntilFound(WidgetTester tester, Finder finder) async {
+  for (var attempt = 0; attempt < 20 && finder.evaluate().isEmpty; attempt++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 250)),
+    );
+    await tester.pump(const Duration(milliseconds: 16));
+  }
 }

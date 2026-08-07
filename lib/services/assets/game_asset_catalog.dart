@@ -16,20 +16,6 @@ abstract final class GameAssetCatalog {
     'cocoa_crumb',
   ];
 
-  static const worldIds = <String>[
-    'sunrise_bakery',
-    'peanut_grove',
-    'egg_cloud_kitchen',
-    'sugar_harbor',
-    'festival_oven',
-    'starlight_bake_off',
-  ];
-
-  static String worldBackgroundForLevel(int level) {
-    final index = ((level.clamp(1, 60) - 1) ~/ 10).clamp(0, 5);
-    return 'assets/images/worlds/${worldIds[index]}.webp';
-  }
-
   static const svgDirectories = <String>[
     'pieces',
     'specials',

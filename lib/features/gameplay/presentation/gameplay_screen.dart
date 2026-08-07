@@ -7,8 +7,8 @@ import '../../../game/domain/level_session.dart';
 import '../../../game/domain/content.dart';
 import '../../../game/presentation/island_match_game.dart';
 import '../../../services/content/bundled_level_repository.dart';
+import '../../../services/content/world_presentation_catalog.dart';
 import '../../../services/audio/game_audio_service.dart';
-import '../../../services/assets/game_asset_catalog.dart';
 import '../../progress/application/progress_controller.dart';
 
 class GameplayScreen extends ConsumerStatefulWidget {
@@ -21,7 +21,7 @@ class GameplayScreen extends ConsumerStatefulWidget {
 }
 
 class _GameplayScreenState extends ConsumerState<GameplayScreen> {
-  late final Future<IslandMatchGame> _gameFuture;
+  late final Future<_GameplayLoad> _gameFuture;
   IslandMatchGame? _game;
   bool _paused = false;
 
@@ -36,8 +36,11 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     final settings = ref.read(progressControllerProvider).data.settings;
     _gameFuture = const BundledLevelRepository().load(widget.level).then((
       level,
-    ) {
-      return _game = IslandMatchGame(
+    ) async {
+      final presentation = (await WorldPresentationCatalog.load()).world(
+        level.worldId,
+      );
+      final game = _game = IslandMatchGame(
         level: level,
         animationDuration: reducedMotion ? 0.04 : 0.18,
         reducedMotion: reducedMotion,
@@ -45,6 +48,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
         haptics: GameHapticsService(enabled: settings.hapticsEnabled),
         onLevelEnded: _onLevelEnded,
       );
+      return _GameplayLoad(game: game, presentation: presentation);
     });
   }
 
@@ -76,7 +80,13 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(BundledLevelRepository.worldNameForLevel(widget.level)),
+            FutureBuilder<WorldPresentationCatalog>(
+              future: WorldPresentationCatalog.load(),
+              builder: (context, snapshot) => Text(
+                snapshot.data?.worldForLevel(widget.level).name ??
+                    'Island Bakery',
+              ),
+            ),
             Text('Level ${widget.level}', style: const TextStyle(fontSize: 12)),
           ],
         ),
@@ -88,7 +98,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
           ),
         ],
       ),
-      body: FutureBuilder<IslandMatchGame>(
+      body: FutureBuilder<_GameplayLoad>(
         future: _gameFuture,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -96,13 +106,14 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
               child: Text('This recipe could not be loaded.'),
             );
           }
-          final game = snapshot.data;
-          if (game == null) {
+          final loaded = snapshot.data;
+          if (loaded == null) {
             return const Center(child: CircularProgressIndicator());
           }
           return _LoadedGameplay(
-            game: game,
+            game: loaded.game,
             level: widget.level,
+            backgroundAsset: loaded.presentation.backgroundAsset,
             paused: _paused,
             onTogglePause: _togglePause,
           );
@@ -116,12 +127,14 @@ class _LoadedGameplay extends StatelessWidget {
   const _LoadedGameplay({
     required this.game,
     required this.level,
+    required this.backgroundAsset,
     required this.paused,
     required this.onTogglePause,
   });
 
   final IslandMatchGame game;
   final int level;
+  final String backgroundAsset;
   final bool paused;
   final VoidCallback onTogglePause;
 
@@ -138,7 +151,7 @@ class _LoadedGameplay extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.asset(
-                    GameAssetCatalog.worldBackgroundForLevel(level),
+                    backgroundAsset,
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
                   ),
@@ -194,6 +207,13 @@ class _LoadedGameplay extends StatelessWidget {
       ],
     ),
   );
+}
+
+class _GameplayLoad {
+  const _GameplayLoad({required this.game, required this.presentation});
+
+  final IslandMatchGame game;
+  final WorldPresentation presentation;
 }
 
 class _CascadeBanner extends StatelessWidget {

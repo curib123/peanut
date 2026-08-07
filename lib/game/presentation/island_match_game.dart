@@ -22,6 +22,13 @@ class IslandMatchGame extends FlameGame {
   }) : _seed = seed,
        audio = audio ?? GameAudioService.flame(),
        haptics = haptics ?? GameHapticsService(),
+       hud = ValueNotifier(
+         GameHudState(
+           moves: level?.moves ?? 20,
+           score: 0,
+           status: LevelStatus.playing,
+         ),
+       ),
        board =
            initialBoard ??
            BoardGenerator(
@@ -41,9 +48,7 @@ class IslandMatchGame extends FlameGame {
   late final LevelSession _session;
   late final BoardComponent boardComponent;
   final TurnInputGate _inputGate = TurnInputGate();
-  final ValueNotifier<GameHudState> hud = ValueNotifier(
-    const GameHudState(moves: 20, score: 0, status: LevelStatus.playing),
-  );
+  final ValueNotifier<GameHudState> hud;
   final ValueNotifier<String?> cascadeMessage = ValueNotifier(null);
 
   bool get isInputLocked => _inputGate.isLocked;

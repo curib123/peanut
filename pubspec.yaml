@@ -71,6 +71,8 @@ flutter:
     - assets/images/effects/
     - assets/images/worlds/
     - assets/audio/sfx/
+    - assets/audio/music/
+    - assets/content/
     - assets/svg/pieces/
     - assets/svg/specials/
     - assets/svg/blockers/

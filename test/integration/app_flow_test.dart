@@ -25,8 +25,13 @@ void main() {
     await tester.tap(find.byKey(const Key('level-1')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Start Level'));
-    await tester.pump(const Duration(seconds: 3));
     await tester.pump();
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(seconds: 3)),
+    );
+    for (var frame = 0; frame < 90; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
 
     expect(find.text('Level 1'), findsWidgets);
     expect(find.text('Moves: 18'), findsOneWidget);

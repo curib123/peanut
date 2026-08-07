@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../services/content/world_presentation_catalog.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -13,11 +14,15 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              'assets/images/worlds/sunrise_adventure.png',
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) =>
-                  const ColoredBox(color: AppColors.cream),
+            child: FutureBuilder<WorldPresentationCatalog>(
+              future: WorldPresentationCatalog.load(),
+              builder: (context, snapshot) => Image.asset(
+                snapshot.data?.main.backgroundAsset ??
+                    'assets/images/worlds/sunrise_adventure.png',
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) =>
+                    const ColoredBox(color: AppColors.cream),
+              ),
             ),
           ),
           Positioned.fill(
