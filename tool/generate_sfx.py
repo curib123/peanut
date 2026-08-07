@@ -43,7 +43,18 @@ def main() -> None:
     synth("button.wav", [(520, 0.07, 0.22)])
     synth("win.wav", [(523, 0.1, 0.25), (659, 0.1, 0.26), (784, 0.1, 0.27), (1047, 0.24, 0.28)])
     synth("lose.wav", [(392, 0.13, 0.22), (330, 0.13, 0.22), (262, 0.28, 0.20)])
-    print("Generated 8 original WAV sound effects.")
+    synth("select.wav", [(760, 0.035, 0.16), (940, 0.04, 0.14)])
+    synth("fall.wav", [(520, 0.035, 0.10), (430, 0.055, 0.11)])
+    synth("land.wav", [(220, 0.035, 0.13)], noise=0.08)
+    synth("shuffle.wav", [(360, 0.04, 0.16), (520, 0.04, 0.17), (740, 0.06, 0.18)], noise=0.05)
+    synth("blocker_hit.wav", [(180, 0.055, 0.21), (130, 0.075, 0.18)], noise=0.24)
+    synth("special_create.wav", [(620, 0.05, 0.18), (930, 0.07, 0.20), (1390, 0.1, 0.18)])
+    synth("sugar_beam.wav", [(440, 0.05, 0.18), (880, 0.07, 0.20), (1760, 0.13, 0.18)], noise=0.05)
+    synth("golden_spark.wav", [(990, 0.04, 0.15), (1320, 0.05, 0.18), (1980, 0.16, 0.17)])
+    synth("oven_burst.wav", [(160, 0.06, 0.25), (90, 0.14, 0.22)], noise=0.42)
+    synth("peanut_spinner.wav", [(480, 0.035, 0.15), (720, 0.035, 0.16), (960, 0.04, 0.17), (1200, 0.08, 0.18)])
+    synth("peanut_kisses.wav", [(523, 0.06, 0.18), (659, 0.06, 0.19), (784, 0.08, 0.20), (1175, 0.15, 0.20)])
+    print("Generated 19 original WAV sound effects.")
 
 
 if __name__ == "__main__":

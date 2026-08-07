@@ -65,7 +65,7 @@ void main() {
     await tester.tap(find.byKey(const Key('level-1')));
     await tester.pumpAndSettle();
     expect(find.text('Reach 1890 points'), findsOneWidget);
-    expect(find.textContaining('Swap neighboring treats'), findsOneWidget);
+    expect(find.textContaining('Bake a balanced recipe'), findsOneWidget);
 
     await tester.tap(find.text('Start Level'));
     await tester.pump();

@@ -15,9 +15,9 @@ void main() {
         .where((path) => path.startsWith('assets/'))
         .toList();
 
-    expect(assets, hasLength(196));
+    expect(assets, hasLength(207));
     expect(assets.where((path) => path.endsWith('.svg')), hasLength(33));
-    expect(assets.where((path) => path.endsWith('.wav')), hasLength(15));
+    expect(assets.where((path) => path.endsWith('.wav')), hasLength(26));
     expect(assets.where((path) => path.endsWith('.png')), hasLength(21));
     expect(assets.where((path) => path.endsWith('.webp')), hasLength(6));
     expect(assets.where((path) => path.endsWith('.json')), hasLength(121));
@@ -90,6 +90,32 @@ void main() {
     audio.soundEnabled = true;
     expect(await audio.play('match'), isTrue);
     expect(played, ['sfx/match.wav']);
+  });
+
+  test('animation and every special power have packaged sound cues', () async {
+    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final assets = manifest.listAssets().toSet();
+    for (final cue in [
+      'select',
+      'swap',
+      'invalid',
+      'match',
+      'cascade',
+      'fall',
+      'land',
+      'shuffle',
+      'blocker_hit',
+      'special_create',
+      'sugar_beam',
+      'golden_spark',
+      'oven_burst',
+      'peanut_spinner',
+      'peanut_kisses',
+      'win',
+      'lose',
+    ]) {
+      expect(assets, contains('assets/audio/sfx/$cue.wav'), reason: cue);
+    }
   });
 
   test('audio playback failures never crash gameplay', () async {

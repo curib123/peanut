@@ -148,13 +148,25 @@ class BoardComponent extends PositionComponent
       cascadeIndex++
     ) {
       final cascade = resolution.cascades[cascadeIndex];
-      await game.audio.play(
-        cascade.activatedSpecials.isNotEmpty
-            ? 'special'
-            : cascadeIndex == 0
-            ? 'match'
-            : 'cascade',
-      );
+      final activatedKinds = cascade.activatedSpecials
+          .map((position) => cascade.beforeClear.pieceAt(position)?.specialKind)
+          .whereType<domain.SpecialKind>()
+          .toSet();
+      if (activatedKinds.isNotEmpty) {
+        await game.audio.play(_specialSound(activatedKinds.first));
+      } else {
+        await game.audio.play(cascadeIndex == 0 ? 'match' : 'cascade');
+      }
+      final createdSpecial = cascade.matched.any((position) {
+        final before = cascade.beforeClear.pieceAt(position);
+        final after = cascade.afterRemoval.pieceAt(position);
+        return after?.isSpecial == true &&
+            before?.specialKind != after?.specialKind;
+      });
+      if (createdSpecial) unawaited(game.audio.play('special_create'));
+      if (_hitsBlocker(cascade.matched)) {
+        unawaited(game.audio.play('blocker_hit'));
+      }
       final effects = <Future<void>>[];
       for (final position in cascade.matched) {
         final piece = _pieces[position];
@@ -173,6 +185,7 @@ class BoardComponent extends PositionComponent
       await _rebuildFalling(cascade.afterRefill, duration);
     }
     _rebuild(resolution.finalBoard);
+    if (resolution.wasShuffled) await game.audio.play('shuffle');
     await refreshBlockers();
   }
 
@@ -282,7 +295,9 @@ class BoardComponent extends PositionComponent
       animateFall: true,
       duration: duration,
     );
+    if (effects.isNotEmpty) unawaited(game.audio.play('fall'));
     await Future.wait(effects);
+    if (effects.isNotEmpty) unawaited(game.audio.play('land'));
   }
 
   List<Future<void>> _replacePieces(
@@ -344,6 +359,26 @@ class BoardComponent extends PositionComponent
   void _select(domain.Position? position) {
     if (_selected != null) _pieces[_selected]?.isSelected = false;
     _selected = position;
-    if (position != null) _pieces[position]?.isSelected = true;
+    if (position != null) {
+      _pieces[position]?.isSelected = true;
+      unawaited(game.audio.play('select'));
+    }
   }
+
+  bool _hitsBlocker(Set<domain.Position> cleared) => cleared.any(
+    (cell) => blockers.states.keys.any(
+      (blocked) =>
+          (blocked.row - cell.row).abs() +
+              (blocked.column - cell.column).abs() <=
+          1,
+    ),
+  );
+
+  String _specialSound(domain.SpecialKind kind) => switch (kind) {
+    domain.SpecialKind.sugarBeam => 'sugar_beam',
+    domain.SpecialKind.goldenRecipeSpark => 'golden_spark',
+    domain.SpecialKind.ovenBurst => 'oven_burst',
+    domain.SpecialKind.peanutSpinner => 'peanut_spinner',
+    domain.SpecialKind.peanutKisses => 'peanut_kisses',
+  };
 }
