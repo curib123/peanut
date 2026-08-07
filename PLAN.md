@@ -76,22 +76,62 @@ Acceptance: all checks and builds pass; 60 levels load; saving, reduced motion, 
 
 ## Phase 11 - Peanut Kisses-inspired visual enhancement
 
-Refresh the complete visual system with art style and color as the highest priority. Build an original Peanut Kisses-inspired palette around warm peanut gold, bakery cream, cocoa brown, energetic brand red, toasted orange, and restrained sugar-white highlights. Define semantic design tokens for backgrounds, surfaces, text, actions, success, warnings, locked states, board cells, pieces, blockers, specials, and effects so every screen uses one coherent theme with accessible contrast.
+Rebuild the complete presentation as a modern premium match-3 game. Art style and color are the first priority, followed by board readability, satisfying motion, and interface polish. Use the warm character of the Peanut Kisses palette - peanut gold, bakery cream, cocoa brown, energetic red, toasted orange, and sugar-white highlights - inside an original Puff & Crunch identity. Aim for the dimensional richness, gloss, clarity, depth, and playful polish players expect from leading games such as Candy Crush, without copying any protected artwork, candy shapes, characters, maps, layouts, effects, typography, branding, or trade dress.
 
-Redesign the home, world map, pre-level panel, gameplay HUD, board, pause/settings dialogs, victory/failure overlays, buttons, cards, stars, and loading states. Replace placeholder-looking shapes and letter labels with polished original soft 3D bakery illustrations, bold rounded typography, consistent outlines, warm shadows, glossy highlights, and clear silhouettes. Give each world its own scenery and accent variation while retaining the shared core palette and making the gameplay board the strongest focal point.
+### 11.1 - Art-direction approval gate
 
-Prioritize the work in this order:
+Before rebuilding screens, use image generation to create original style explorations and contact sheets for the home screen, gameplay board, pieces, specials, blockers, UI controls, and one world background. Establish semantic color tokens, lighting direction, material rules, outline weight, corner language, shadows, highlights, texture, perspective, and typography. Compare the concepts at phone size and approve one cohesive direction before producing the full asset set.
 
-1. Approve a color-token sheet and representative home/gameplay visual direction.
-2. Apply the global theme, typography, spacing, elevation, buttons, cards, and navigation styling.
-3. Upgrade the board, pieces, specials, blockers, goals, boosters, HUD, and selection/readability states.
-4. Upgrade the six world environments, map journey, characters, overlays, and progression celebrations.
-5. Add responsive composition, reduced-motion equivalents, accessibility contrast checks, and low-end-device optimization.
-6. Capture before/after screenshots at common phone sizes and complete a consistency/accessibility review.
+Target style: cheerful polished 2.5D/3D illustration, rounded toy-like volume, appetizing bakery materials, clean silhouettes, controlled glossy highlights, soft ambient shadows, rich depth, modern composition, and strong color separation. Avoid flat programmer art, plain circles, generic clip art, excessive outlines, muddy brown screens, empty cream space, and inconsistent rendering styles.
 
-All artwork must remain newly created for Puff and Crunch. The design may use the Peanut Kisses brand's warm, cheerful color character as inspiration, but it must not copy packaging layouts, logos, mascots, protected artwork, or trade dress.
+### 11.2 - Real illustrated game pieces
 
-Acceptance: the approved palette and semantic tokens are used throughout; no placeholder letters remain on game pieces; all six worlds are visually distinct but cohesive; text and controls meet WCAG AA contrast where applicable; touch targets remain at least 48 logical pixels; reduced-motion behavior remains complete; gameplay is readable at a glance; assets have safe fallbacks; analyzer/tests pass; Android release and web builds succeed; and screenshot review shows a consistently polished Peanut Kisses-inspired identity across every primary screen.
+Remove every letter from normal pieces. Generate and integrate transparent-background production artwork that reads by shape alone:
+
+- Peanut: a recognizable warm roasted peanut shell with friendly curves and textured dimples.
+- Egg: a glossy cream-and-gold egg ingredient with a distinct silhouette.
+- Sugar Crystal: a faceted translucent crystal with icy blue-white sparkle.
+- Caramel Ribbon: a curled amber caramel strip with soft shine and depth.
+- Coconut Cream: a white coconut-cream swirl with a coconut-shell accent.
+- Cocoa Crumb: a rich cocoa cookie/crumb cluster with an irregular crunchy silhouette.
+
+Every piece needs a consistent camera angle, lighting direction, footprint, padding, shadow, highlight, saturation, and transparent edge treatment. Provide selected, matched, falling, disabled, and reduced-motion presentation states without adding text labels. Pieces must remain distinguishable in grayscale and for common color-vision deficiencies.
+
+### 11.3 - Specials, blockers, goals, and boosters
+
+Generate visually unmistakable original artwork for Sugar Beams in both orientations, Golden Recipe Spark, Oven Burst, Peanut Spinner, Sugar Frosting layers, Peanut Crates, Sticky Caramel, Chocolate Crumbs, Oven Stones, Baker's Twine, recipe baskets, cream, ovens, every goal icon, and all boosters. Specials should feel more luminous and energetic than normal pieces; blockers must clearly show their remaining layers or state through visible damage and material changes rather than letters or counters alone.
+
+Add purpose-built effect assets for glints, trails, crumbs, sugar dust, caramel splashes, impact rings, beam sweeps, special combinations, collection flights, blocker damage, star fills, unlocks, and victory celebrations. Effects must stay bounded and have reduced-motion alternatives.
+
+### 11.4 - Board and gameplay interface
+
+Replace the plain board with a dimensional bakery tray that has readable cells, subtle depth, soft inset shadows, valid-cell masks, blocker layering, selection glow, swap feedback, hint treatment, and clear inactive holes. Keep the art behind pieces quiet enough for instant move recognition.
+
+Redesign the gameplay HUD into compact polished goal, score, move, booster, pause, and progress components. Remove large empty areas, fix narrow-phone app-bar crowding, keep the board prominent, and make tutorial prompts helpful without covering play. Redesign pause, victory, failure, move-bonus, star-fill, and unlock overlays with premium illustrated panels and responsive animations.
+
+### 11.5 - Complete modern UI system
+
+Redesign the splash, home, settings, world map, level nodes, world headers, pre-level goals, booster selection, gameplay, dialogs, loading, empty, locked, victory, and failure states. Replace generic Material defaults with an original cohesive component kit: dimensional buttons, cards, tabs, toggles, badges, counters, progress bars, stars, icons, modal frames, and navigation controls.
+
+Use bold rounded readable typography, clear hierarchy, consistent spacing, minimum 48-pixel touch targets, WCAG AA contrast where applicable, safe-area handling, and responsive layouts for small phones through tablets. Interaction states must include normal, pressed, selected, disabled, focused, locked, loading, and success feedback.
+
+### 11.6 - AI-generated world artwork
+
+Generate original layered backgrounds, map scenery, decorative props, landmarks, and loading art for Sunrise Bakery, Peanut Grove, Egg Cloud Kitchen, Sugar Harbor, Festival Oven, and Starlight Bake-Off. Each world needs a distinct palette, atmosphere, landmark, path treatment, and level-node decoration while sharing the master art direction. Backgrounds must support responsive cropping, foreground/midground/background parallax where appropriate, and readable UI placement.
+
+Generate original character and mascot poses for welcome, tutorial, celebration, concern, victory, and failure. Do not use the Peanut Kisses logo, packaging, mascot, proprietary product illustrations, or any Candy Crush assets or recognizable copies.
+
+### 11.7 - Asset production and integration
+
+Create an inventory and naming specification before generation. Produce high-resolution master images, then export optimized runtime WebP/PNG assets at required densities with transparency, safe padding, deterministic filenames, and source prompts recorded for reproducibility. Remove obsolete placeholder assets only after every reference has migrated. Provide safe fallbacks and precache critical gameplay assets so pieces never appear late or blank.
+
+Integrate the artwork into real components; no sample-only mockups. Preserve all gameplay logic, hit boxes, deterministic results, save compatibility, audio settings, and accessibility behavior. Measure memory, decode time, frame pacing, package-size impact, and particle counts on representative low-end settings.
+
+### 11.8 - Review and release acceptance
+
+Capture matching before/after screenshots at common phone and tablet sizes for every primary state. Review the complete app for art consistency, cropping, text overflow, safe areas, contrast, color-blind readability, touch size, animation pacing, reduced motion, loading behavior, and asset fallbacks. Manually inspect Levels 1, 10, 30, and 60 with normal pieces, blockers, goals, and special combinations visible.
+
+Acceptance: no letters or placeholder geometry remain on pieces; all normal pieces, specials, blockers, goals, boosters, characters, effects, backgrounds, and major UI surfaces use the approved original art direction; all six worlds are distinct and cohesive; the board is instantly readable; narrow-phone crowding and empty-space problems are resolved; touch targets and contrast meet requirements; reduced motion remains complete; assets load without flashes or missing images; gameplay results and saves are unchanged; analyzer and all tests pass; Android release and web builds succeed; and the final screenshot set is approved against the Phase 10 baseline.
 
 ## Final completion checklist
 

@@ -91,7 +91,7 @@ Current phase: Phase 11 (ready to begin)
 
 ## Remaining
 
-- Phase 11 Peanut Kisses-inspired visual enhancement
+- Phase 11 complete AI-generated visual overhaul: real illustrated pieces, premium match-3 UI, effects, and six world backgrounds
 
 ## Tests
 
