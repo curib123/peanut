@@ -18,7 +18,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Puff & Crunch'), findsOneWidget);
-    await tester.tap(find.text('Play'));
+    await tester.tap(find.text('Play Adventure'));
     await tester.pumpAndSettle();
     expect(find.text('Island Recipe Journey'), findsOneWidget);
 

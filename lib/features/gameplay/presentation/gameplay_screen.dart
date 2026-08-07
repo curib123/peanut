@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../game/domain/level_session.dart';
 import '../../../game/domain/content.dart';
 import '../../../game/presentation/island_match_game.dart';
+import '../../../core/widgets/game_primary_button.dart';
 import '../../../services/content/bundled_level_repository.dart';
 import '../../../services/content/world_presentation_catalog.dart';
 import '../../../services/audio/game_audio_service.dart';
@@ -296,7 +297,11 @@ class _VictoryOverlay extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 20),
-                FilledButton(onPressed: onPrimary, child: Text(primaryLabel)),
+                GamePrimaryButton(
+                  label: primaryLabel,
+                  onPressed: onPrimary,
+                  compact: true,
+                ),
               ],
             ),
           ),
@@ -403,7 +408,11 @@ class _StatusOverlay extends StatelessWidget {
                 Text(message!),
               ],
               const SizedBox(height: 20),
-              FilledButton(onPressed: onPrimary, child: Text(primaryLabel)),
+              GamePrimaryButton(
+                label: primaryLabel,
+                onPressed: onPrimary,
+                compact: true,
+              ),
               if (onExit != null)
                 TextButton(onPressed: onExit, child: const Text('Level Map')),
             ],

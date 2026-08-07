@@ -17,7 +17,7 @@ void main() {
 
     expect(find.text('Puff & Crunch'), findsOneWidget);
     expect(find.text('Island Match'), findsOneWidget);
-    expect(find.text('Play'), findsOneWidget);
+    expect(find.text('Play Adventure'), findsOneWidget);
   });
 
   testWidgets('settings persist and reset requires confirmation', (
@@ -46,14 +46,21 @@ void main() {
   testWidgets('map opens pre-level and gameplay screens', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: PuffAndCrunchApp()));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Play'));
+    await tester.tap(find.text('Play Adventure'));
     await tester.pump();
     await _pumpUntilFound(tester, find.byKey(const Key('level-2')));
 
-    final lockedLevel = tester.widget<FilledButton>(
+    final lockedLevel = tester.widget<Material>(
       find.byKey(const Key('level-2')),
     );
-    expect(lockedLevel.onPressed, isNull);
+    final lockedInkWell = tester.widget<InkWell>(
+      find.descendant(
+        of: find.byKey(const Key('level-2')),
+        matching: find.byType(InkWell),
+      ),
+    );
+    expect(lockedLevel.color, Colors.transparent);
+    expect(lockedInkWell.onTap, isNull);
 
     await tester.tap(find.byKey(const Key('level-1')));
     await tester.pumpAndSettle();

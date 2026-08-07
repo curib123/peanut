@@ -13,42 +13,68 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          _SettingSwitch(
-            title: 'Sound effects',
-            value: settings.soundEnabled,
-            onChanged: (value) => controller.updateSettings(
-              settings.copyWith(soundEnabled: value),
+          Text('Experience', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 10),
+          Card(
+            margin: EdgeInsets.zero,
+            child: Column(
+              children: [
+                _SettingSwitch(
+                  icon: Icons.volume_up_rounded,
+                  title: 'Sound effects',
+                  value: settings.soundEnabled,
+                  onChanged: (value) => controller.updateSettings(
+                    settings.copyWith(soundEnabled: value),
+                  ),
+                ),
+                const Divider(height: 1, indent: 58),
+                _SettingSwitch(
+                  icon: Icons.music_note_rounded,
+                  title: 'Music',
+                  value: settings.musicEnabled,
+                  onChanged: (value) => controller.updateSettings(
+                    settings.copyWith(musicEnabled: value),
+                  ),
+                ),
+                const Divider(height: 1, indent: 58),
+                _SettingSwitch(
+                  icon: Icons.vibration_rounded,
+                  title: 'Haptic feedback',
+                  value: settings.hapticsEnabled,
+                  onChanged: (value) => controller.updateSettings(
+                    settings.copyWith(hapticsEnabled: value),
+                  ),
+                ),
+                const Divider(height: 1, indent: 58),
+                _SettingSwitch(
+                  icon: Icons.motion_photos_off_rounded,
+                  title: 'Reduced motion',
+                  subtitle: 'Uses shorter, simpler gameplay movement.',
+                  value: settings.reducedMotion,
+                  onChanged: (value) => controller.updateSettings(
+                    settings.copyWith(reducedMotion: value),
+                  ),
+                ),
+              ],
             ),
           ),
-          _SettingSwitch(
-            title: 'Music',
-            value: settings.musicEnabled,
-            onChanged: (value) => controller.updateSettings(
-              settings.copyWith(musicEnabled: value),
+          const SizedBox(height: 24),
+          Text('Save data', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 10),
+          Card(
+            margin: EdgeInsets.zero,
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 8,
+              ),
+              leading: const Icon(Icons.restart_alt_rounded),
+              title: const Text('Reset progress'),
+              subtitle: const Text('Stars, scores, unlocks, and boosters'),
+              onTap: () => _confirmReset(context, controller),
             ),
-          ),
-          _SettingSwitch(
-            title: 'Haptic feedback',
-            value: settings.hapticsEnabled,
-            onChanged: (value) => controller.updateSettings(
-              settings.copyWith(hapticsEnabled: value),
-            ),
-          ),
-          _SettingSwitch(
-            title: 'Reduced motion',
-            subtitle: 'Uses shorter, simpler gameplay movement.',
-            value: settings.reducedMotion,
-            onChanged: (value) => controller.updateSettings(
-              settings.copyWith(reducedMotion: value),
-            ),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.restart_alt_rounded),
-            title: const Text('Reset progress'),
-            subtitle: const Text('Stars, scores, unlocks, and boosters'),
-            onTap: () => _confirmReset(context, controller),
           ),
         ],
       ),
@@ -82,6 +108,7 @@ class SettingsScreen extends ConsumerWidget {
 
 class _SettingSwitch extends StatelessWidget {
   const _SettingSwitch({
+    required this.icon,
     required this.title,
     required this.value,
     required this.onChanged,
@@ -89,12 +116,14 @@ class _SettingSwitch extends StatelessWidget {
   });
 
   final String title;
+  final IconData icon;
   final String? subtitle;
   final bool value;
   final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) => SwitchListTile(
+    secondary: Icon(icon),
     title: Text(title),
     subtitle: subtitle == null ? null : Text(subtitle!),
     value: value,

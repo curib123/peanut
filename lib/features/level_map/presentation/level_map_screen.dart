@@ -167,53 +167,68 @@ class _LevelNode extends StatelessWidget {
     child: SizedBox(
       width: 94,
       height: 94,
-      child: FilledButton(
+      child: Material(
         key: Key('level-$level'),
-        onPressed: onPressed,
-        style: FilledButton.styleFrom(
-          padding: EdgeInsets.zero,
-          shape: const CircleBorder(),
-          backgroundColor: current
-              ? const Color(0xFFFF5D47)
-              : const Color(0xFFFFC94A),
-          disabledBackgroundColor: const Color(0xFF8E8176),
-          side: BorderSide(
-            color: current ? Colors.white : const Color(0xFFFFF0C0),
-            width: current ? 5 : 3,
-          ),
-          shadowColor: Colors.black,
-          elevation: 9,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              unlocked ? Icons.cookie_rounded : Icons.lock_rounded,
-              color: unlocked ? AppColors.cocoa : Colors.white70,
-              size: 24,
-            ),
-            Text(
-              '$level',
-              style: const TextStyle(
-                color: AppColors.cocoa,
-                fontWeight: FontWeight.w900,
-                fontSize: 22,
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          customBorder: const CircleBorder(),
+          child: Ink(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: unlocked
+                  ? LinearGradient(
+                      colors: current
+                          ? const [Color(0xFFFF745C), Color(0xFFFFA83D)]
+                          : const [Color(0xFFFFD65B), Color(0xFFFFA832)],
+                    )
+                  : const LinearGradient(
+                      colors: [Color(0xFF9E948B), Color(0xFF756B64)],
+                    ),
+              border: Border.all(
+                color: current ? Colors.white : const Color(0xFFFFEDB2),
+                width: current ? 4 : 3,
               ),
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(
-                3,
-                (index) => Icon(
-                  index < stars
-                      ? Icons.star_rounded
-                      : Icons.star_outline_rounded,
-                  size: 14,
-                  color: index < stars ? Colors.white : Colors.white60,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x66000000),
+                  blurRadius: 10,
+                  offset: Offset(0, 5),
                 ),
-              ),
+              ],
             ),
-          ],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  unlocked ? Icons.cookie_rounded : Icons.lock_rounded,
+                  color: unlocked ? AppColors.cocoa : Colors.white70,
+                  size: 24,
+                ),
+                Text(
+                  '$level',
+                  style: TextStyle(
+                    color: unlocked ? AppColors.cocoa : Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 22,
+                  ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    3,
+                    (index) => Icon(
+                      index < stars
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
+                      size: 14,
+                      color: index < stars ? Colors.white : Colors.white60,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     ),

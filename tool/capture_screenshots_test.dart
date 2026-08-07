@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flame/flame.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,8 @@ import 'package:puff_and_crunch/app/app.dart';
 import 'package:puff_and_crunch/app/router.dart';
 import 'package:puff_and_crunch/core/theme/app_theme.dart';
 import 'package:puff_and_crunch/features/gameplay/presentation/gameplay_screen.dart';
+import 'package:puff_and_crunch/game/domain/match3.dart';
+import 'package:puff_and_crunch/game/presentation/island_match_game.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -48,6 +51,10 @@ void main() {
 
     await tester.tap(find.byKey(const Key('level-1')));
     await tester.pumpAndSettle();
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(seconds: 1)),
+    );
+    await tester.pump();
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../docs/screenshots/04-pre-level.png'),
@@ -85,7 +92,141 @@ void main() {
       find.byType(MaterialApp),
       matchesGoldenFile('../docs/screenshots/06-paused.png'),
     );
+
+    tester
+        .widget<IconButton>(
+          find.widgetWithIcon(IconButton, Icons.pause_rounded),
+        )
+        .onPressed!();
+    await tester.pump();
+    final gameWidget = tester.widget<GameWidget>(
+      find.byWidgetPredicate((widget) => widget is GameWidget),
+    );
+    final game = gameWidget.game as IslandMatchGame;
+    game.hud.value = const GameHudState(
+      moves: 6,
+      score: 11200,
+      status: LevelStatus.won,
+    );
+    await tester.pump(const Duration(milliseconds: 600));
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../docs/screenshots/07-victory.png'),
+    );
+
+    game.hud.value = const GameHudState(
+      moves: 0,
+      score: 2400,
+      status: LevelStatus.lost,
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../docs/screenshots/08-failure.png'),
+    );
+
+    await _pumpGameplay(tester, level: 10);
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../docs/screenshots/09-blockers.png'),
+    );
+
+    await _pumpGameplay(tester, level: 31);
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../docs/screenshots/10-sugar-harbor.png'),
+    );
+
+    await _pumpSpecialShowcase(tester);
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../docs/screenshots/11-special-pieces.png'),
+    );
   });
+}
+
+Future<void> _pumpSpecialShowcase(WidgetTester tester) async {
+  final board =
+      Board([
+          for (var row = 0; row < 6; row++)
+            [
+              for (var column = 0; column < 6; column++)
+                Piece(PieceKind.regularValues[(row * 2 + column) % 6]),
+            ],
+        ])
+        ..setPiece(
+          const Position(0, 0),
+          const Piece(
+            PieceKind.peanut,
+            specialKind: SpecialKind.sugarBeam,
+            beamOrientation: BeamOrientation.horizontal,
+          ),
+        )
+        ..setPiece(
+          const Position(0, 1),
+          const Piece(
+            PieceKind.egg,
+            specialKind: SpecialKind.goldenRecipeSpark,
+          ),
+        )
+        ..setPiece(
+          const Position(0, 2),
+          const Piece(
+            PieceKind.sugarCrystal,
+            specialKind: SpecialKind.ovenBurst,
+          ),
+        )
+        ..setPiece(
+          const Position(0, 3),
+          const Piece(
+            PieceKind.caramelRibbon,
+            specialKind: SpecialKind.peanutSpinner,
+          ),
+        )
+        ..setPiece(
+          const Position(0, 4),
+          const Piece(PieceKind.peanut, specialKind: SpecialKind.peanutKisses),
+        );
+  final game = IslandMatchGame(initialBoard: board, reducedMotion: true);
+  await tester.pumpWidget(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Special Recipe Pieces')),
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/worlds/festival_oven.webp'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: GameWidget(game: game),
+        ),
+      ),
+    ),
+  );
+  await tester.runAsync(() => Future<void>.delayed(const Duration(seconds: 2)));
+  for (var frame = 0; frame < 60; frame++) {
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+}
+
+Future<void> _pumpGameplay(WidgetTester tester, {required int level}) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        home: GameplayScreen(key: ValueKey('capture-$level'), level: level),
+      ),
+    ),
+  );
+  await tester.pump();
+  await tester.runAsync(() => Future<void>.delayed(const Duration(seconds: 3)));
+  for (var frame = 0; frame < 90; frame++) {
+    await tester.pump(const Duration(milliseconds: 16));
+  }
 }
 
 Future<void> _preloadGameSprites() => Flame.images.loadAll(const [
@@ -102,6 +243,12 @@ Future<void> _preloadGameSprites() => Flame.images.loadAll(const [
   'specials/peanut_spinner.png',
   'specials/peanut_kisses.png',
   'effects/match_burst_sheet.png',
+  'blockers/sugar_frosting.png',
+  'blockers/peanut_crate.png',
+  'blockers/sticky_caramel.png',
+  'blockers/chocolate_crumbs.png',
+  'blockers/oven_stone.png',
+  'blockers/bakers_twine.png',
 ]);
 
 Future<void> _loadFonts() async {
