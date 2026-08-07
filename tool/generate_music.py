@@ -7,7 +7,7 @@ import wave
 from pathlib import Path
 
 SAMPLE_RATE = 22_050
-DURATION = 16
+DURATION = 24
 OUTPUT = Path("assets/audio/music")
 
 TRACKS = {
@@ -21,19 +21,47 @@ TRACKS = {
 }
 
 
-def sample(track: str, notes: list[float], warmth: float, index: int) -> float:
+def voice(frequency: float, time: float, brightness: float = 0.25) -> float:
+    return (
+        math.sin(2 * math.pi * frequency * time)
+        + math.sin(4 * math.pi * frequency * time) * brightness
+        + math.sin(6 * math.pi * frequency * time) * brightness * 0.24
+    )
+
+
+def sample(track: str, notes: list[float], warmth: float, index: int) -> tuple[float, float]:
     t = index / SAMPLE_RATE
-    beat = int(t * 2) % 8
-    note = notes[(beat + (beat // 4)) % len(notes)]
-    phase = (t * 2) % 1
-    envelope = math.sin(math.pi * phase) ** 2
-    bell = math.sin(2 * math.pi * note * phase * .5) * envelope
-    base = round(notes[0] * .5 * DURATION) / DURATION
-    soft = math.sin(2 * math.pi * base * t) * .28
-    sparkle = math.sin(2 * math.pi * note * phase) * envelope * .18
-    pulse = math.sin(2 * math.pi * 2 * t) * .06
-    character = (sum(ord(char) for char in track) % 7) * .004
-    return (bell * .34 + soft * warmth + sparkle + pulse + character) * .42
+    beat_length = .5
+    beat_position = (t / beat_length) % 1
+    beat = int(t / beat_length) % 48
+    bar = beat // 4
+    chord_root = notes[(bar // 2) % len(notes)]
+
+    # Soft marimba lead with a quick, rounded decay.
+    melody_steps = (0, 2, 1, 3, 2, 1, 3, 0)
+    melody = notes[melody_steps[beat % len(melody_steps)]] * (2 if beat % 8 in (3, 7) else 1)
+    pluck_env = math.exp(-beat_position * 6.5) * math.sin(math.pi * min(1, beat_position * 5))
+    pluck = voice(melody, t, .32) * pluck_env * .20
+
+    # Warm sustained bakery-organ chord bed.
+    fade = .5 - .5 * math.cos(2 * math.pi * ((t / 4) % 1))
+    pad = sum(voice(note * .5, t, .12) for note in notes[:3]) / 3
+    pad *= (.11 + fade * .035) * warmth
+
+    # Rounded bass and tiny confectionary percussion.
+    bass_env = math.exp(-beat_position * 4.2)
+    bass = voice(chord_root * .25, t, .08) * bass_env * .16
+    shaker_phase = (t * 4) % 1
+    deterministic_noise = math.sin(index * 12.9898 + len(track) * 78.233)
+    shaker = deterministic_noise * math.exp(-shaker_phase * 18) * .025
+    chime_env = math.exp(-beat_position * 9) if beat % 8 == 7 else 0
+    chime = voice(notes[-1] * 2, t, .15) * chime_env * .08
+
+    character = (sum(ord(char) for char in track) % 9 - 4) * .004
+    left = pluck * .92 + pad + bass + shaker + chime * .45 + character
+    right = pluck * .72 + pad * 1.04 + bass + shaker * .7 + chime + character
+    master = .78
+    return left * master, right * master
 
 
 def write_track(name: str, notes: list[float], warmth: float) -> None:
@@ -41,10 +69,12 @@ def write_track(name: str, notes: list[float], warmth: float) -> None:
     total = SAMPLE_RATE * DURATION
     frames = bytearray()
     for index in range(total):
-        value = max(-1.0, min(1.0, sample(name, notes, warmth, index)))
-        frames.extend(int(value * 32767).to_bytes(2, "little", signed=True))
+        left, right = sample(name, notes, warmth, index)
+        for value in (left, right):
+            value = max(-1.0, min(1.0, value))
+            frames.extend(int(value * 32767).to_bytes(2, "little", signed=True))
     with wave.open(str(path), "wb") as output:
-        output.setnchannels(1)
+        output.setnchannels(2)
         output.setsampwidth(2)
         output.setframerate(SAMPLE_RATE)
         output.writeframes(frames)

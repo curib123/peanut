@@ -70,6 +70,7 @@ flutter:
     - assets/images/blockers/
     - assets/images/effects/
     - assets/images/worlds/
+    - assets/images/ui/
     - assets/audio/sfx/
     - assets/audio/music/
     - assets/content/

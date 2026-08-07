@@ -12,72 +12,102 @@ class SettingsScreen extends ConsumerWidget {
     final settings = ref.watch(progressControllerProvider).data.settings;
     final controller = ref.read(progressControllerProvider.notifier);
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text('Experience', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 10),
-          GlassPanel(
-            margin: EdgeInsets.zero,
-            child: Column(
-              children: [
-                _SettingSwitch(
-                  icon: Icons.volume_up_rounded,
-                  title: 'Sound effects',
-                  value: settings.soundEnabled,
-                  onChanged: (value) => controller.updateSettings(
-                    settings.copyWith(soundEnabled: value),
-                  ),
-                ),
-                const Divider(height: 1, indent: 58),
-                _SettingSwitch(
-                  icon: Icons.music_note_rounded,
-                  title: 'Music',
-                  value: settings.musicEnabled,
-                  onChanged: (value) => controller.updateSettings(
-                    settings.copyWith(musicEnabled: value),
-                  ),
-                ),
-                const Divider(height: 1, indent: 58),
-                _SettingSwitch(
-                  icon: Icons.vibration_rounded,
-                  title: 'Haptic feedback',
-                  value: settings.hapticsEnabled,
-                  onChanged: (value) => controller.updateSettings(
-                    settings.copyWith(hapticsEnabled: value),
-                  ),
-                ),
-                const Divider(height: 1, indent: 58),
-                _SettingSwitch(
-                  icon: Icons.motion_photos_off_rounded,
-                  title: 'Reduced motion',
-                  subtitle: 'Uses shorter, simpler gameplay movement.',
-                  value: settings.reducedMotion,
-                  onChanged: (value) => controller.updateSettings(
-                    settings.copyWith(reducedMotion: value),
-                  ),
-                ),
-              ],
-            ),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: const Text('Settings'),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        titleTextStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/worlds/sunrise_adventure.png'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(Color(0x883A1C12), BlendMode.darken),
           ),
-          const SizedBox(height: 24),
-          Text('Save data', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 10),
-          GlassPanel(
-            margin: EdgeInsets.zero,
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 8,
+        ),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 112, 16, 24),
+          children: [
+            Text(
+              'Experience',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+                shadows: const [Shadow(color: Colors.black54, blurRadius: 8)],
               ),
-              leading: const Icon(Icons.restart_alt_rounded),
-              title: const Text('Reset progress'),
-              subtitle: const Text('Stars, scores, unlocks, and boosters'),
-              onTap: () => _confirmReset(context, controller),
             ),
-          ),
-        ],
+            const SizedBox(height: 10),
+            GlassPanel(
+              margin: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  _SettingSwitch(
+                    icon: Icons.volume_up_rounded,
+                    title: 'Sound effects',
+                    value: settings.soundEnabled,
+                    onChanged: (value) => controller.updateSettings(
+                      settings.copyWith(soundEnabled: value),
+                    ),
+                  ),
+                  const Divider(height: 1, indent: 58),
+                  _SettingSwitch(
+                    icon: Icons.music_note_rounded,
+                    title: 'Music',
+                    value: settings.musicEnabled,
+                    onChanged: (value) => controller.updateSettings(
+                      settings.copyWith(musicEnabled: value),
+                    ),
+                  ),
+                  const Divider(height: 1, indent: 58),
+                  _SettingSwitch(
+                    icon: Icons.vibration_rounded,
+                    title: 'Haptic feedback',
+                    value: settings.hapticsEnabled,
+                    onChanged: (value) => controller.updateSettings(
+                      settings.copyWith(hapticsEnabled: value),
+                    ),
+                  ),
+                  const Divider(height: 1, indent: 58),
+                  _SettingSwitch(
+                    icon: Icons.motion_photos_off_rounded,
+                    title: 'Reduced motion',
+                    subtitle: 'Uses shorter, simpler gameplay movement.',
+                    value: settings.reducedMotion,
+                    onChanged: (value) => controller.updateSettings(
+                      settings.copyWith(reducedMotion: value),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Save data',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+                shadows: const [Shadow(color: Colors.black54, blurRadius: 8)],
+              ),
+            ),
+            const SizedBox(height: 10),
+            GlassPanel(
+              margin: EdgeInsets.zero,
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 8,
+                ),
+                leading: const Icon(Icons.restart_alt_rounded),
+                title: const Text('Reset progress'),
+                subtitle: const Text('Stars, scores, unlocks, and boosters'),
+                onTap: () => _confirmReset(context, controller),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

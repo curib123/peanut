@@ -120,6 +120,10 @@ Current phase: Phase 13 (completed)
 - Reversed the adventure path into an upward climb and hid future worlds behind looping secret-cloud gates until the current 20-level world is complete
 - Added home feature highlights and a visible fade-and-fall animation when a dead board automatically rearranges into a playable layout
 - Replaced the level-selection connector lines with an original AI-generated golden bakery road sprite, mirrored between alternating level nodes
+- Added a production sprite-driven UI kit with an original peanut-baker logo, bakery panel, primary action button, and round level-node asset
+- Reworked home, settings, map nodes, gameplay headers, HUD, dialogs, and primary actions to layer Flutter text over raster game artwork
+- Made decorative map art pointer-transparent, preserved large semantic tap targets, and retained tap/drag coverage for the board and level selection
+- Rebuilt all seven background tracks as richer 24-second stereo loops with layered plucks, warm pads, bass, percussion, and world-specific harmony
 
 ## In Progress
 
@@ -139,9 +143,9 @@ Current phase: Phase 13 (completed)
 - `flutter build apk --debug`: passed (`build/app/outputs/flutter-apk/app-debug.apk`, 157,010,839 bytes)
 - Android debug APK SHA-256: `BA2FC7F66D9B49A80EF2CBDFFF258503BF3245CC91778FE7CBF49761735742D0`
 - `flutter build web --release`: passed (`build/web`, `main.dart.js` 2,961,872 bytes)
-- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 68,351,612 bytes)
-- Android release APK SHA-256: `60A1C17BBAFEF757D66AA4BA4CFC26B1452675F3896651B4631E581F6D7E122E`
-- Production asset catalog: 208 files, including 26 WAV, 22 PNG, 6 WebP, and 121 JSON files
+- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 82,197,658 bytes)
+- Android release APK SHA-256: `02007F15BDD535BFCFF4F2ADEDAF72F4C31364F9D7334E40B94C5E206466F14F`
+- Production asset catalog: 212 files, including 26 WAV, 26 PNG, 6 WebP, and 121 JSON files
 - Unresolved TODO audit: no project-owned TODOs; only Flutter-generated Linux/Windows runner comments remain
 
 ## Known Issues

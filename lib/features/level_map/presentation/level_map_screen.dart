@@ -156,13 +156,15 @@ class _LevelMapScreenState extends ConsumerState<LevelMapScreen>
                                   right: 20,
                                   top: -8,
                                   bottom: -8,
-                                  child: Transform.flip(
-                                    flipX: index.isOdd,
-                                    child: Image.asset(
-                                      'assets/images/worlds/level_road_segment.png',
-                                      fit: BoxFit.fill,
-                                      filterQuality: FilterQuality.high,
-                                      semanticLabel: 'Golden bakery road',
+                                  child: IgnorePointer(
+                                    child: Transform.flip(
+                                      flipX: index.isOdd,
+                                      child: Image.asset(
+                                        'assets/images/worlds/level_road_segment.png',
+                                        fit: BoxFit.fill,
+                                        filterQuality: FilterQuality.high,
+                                        semanticLabel: 'Golden bakery road',
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -342,57 +344,78 @@ class _LevelNode extends StatelessWidget {
         child: InkWell(
           onTap: onPressed,
           customBorder: const CircleBorder(),
-          child: Ink(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: unlocked
-                  ? LinearGradient(
-                      colors: current
-                          ? const [Color(0xE8FF745C), Color(0xE8FFA83D)]
-                          : const [Color(0xD9FFD65B), Color(0xD9FFA832)],
-                    )
-                  : const LinearGradient(
-                      colors: [Color(0xC99E948B), Color(0xC9756B64)],
-                    ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x66000000),
-                  blurRadius: 10,
-                  offset: Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  unlocked ? Icons.cookie_rounded : Icons.lock_rounded,
-                  color: unlocked ? AppColors.cocoa : Colors.white70,
-                  size: 24,
-                ),
-                Text(
-                  '$level',
-                  style: TextStyle(
-                    color: unlocked ? AppColors.cocoa : Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 22,
-                  ),
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List.generate(
-                    3,
-                    (index) => Icon(
-                      index < stars
-                          ? Icons.star_rounded
-                          : Icons.star_outline_rounded,
-                      size: 14,
-                      color: index < stars ? Colors.white : Colors.white60,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: ColorFiltered(
+                    colorFilter: unlocked
+                        ? const ColorFilter.mode(
+                            Colors.transparent,
+                            BlendMode.dst,
+                          )
+                        : const ColorFilter.matrix(<double>[
+                            .34,
+                            .34,
+                            .34,
+                            0,
+                            0,
+                            .34,
+                            .34,
+                            .34,
+                            0,
+                            0,
+                            .34,
+                            .34,
+                            .34,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            1,
+                            0,
+                          ]),
+                    child: Image.asset(
+                      'assets/images/ui/round_button.png',
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    unlocked ? (current ? 'GO' : 'LEVEL') : 'LOCKED',
+                    style: TextStyle(
+                      color: unlocked ? AppColors.cocoa : Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: .5,
+                    ),
+                  ),
+                  Text(
+                    '$level',
+                    style: TextStyle(
+                      color: unlocked ? AppColors.cocoa : Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 22,
+                    ),
+                  ),
+                  Text(
+                    '${List.filled(stars, '*').join()}${List.filled(3 - stars, '-').join()}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                      height: .9,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

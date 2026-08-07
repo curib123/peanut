@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class GlassPanel extends StatelessWidget {
@@ -19,37 +17,41 @@ class GlassPanel extends StatelessWidget {
   final Color tint;
 
   @override
-  Widget build(BuildContext context) => Container(
-    margin: margin,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(radius),
-      boxShadow: const [
-        BoxShadow(
-          color: Color(0x40000000),
-          blurRadius: 24,
-          offset: Offset(0, 12),
-        ),
-      ],
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                tint.withValues(alpha: .68),
-                tint.withValues(alpha: .40),
-              ],
+  Widget build(BuildContext context) => Padding(
+    padding: margin ?? EdgeInsets.zero,
+    child: Stack(
+      children: [
+        Positioned.fill(
+          child: IgnorePointer(
+            child: Image.asset(
+              'assets/images/ui/bakery_panel.png',
+              fit: BoxFit.fill,
+              filterQuality: FilterQuality.high,
             ),
           ),
-          child: child,
         ),
-      ),
+        Padding(
+          padding: padding ?? const EdgeInsets.all(28),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              textTheme: Theme.of(context).textTheme.apply(
+                bodyColor: Colors.white,
+                displayColor: Colors.white,
+              ),
+              iconTheme: const IconThemeData(color: Color(0xFFFFD76A)),
+              dividerColor: const Color(0x66FFF1CF),
+              listTileTheme: const ListTileThemeData(
+                textColor: Colors.white,
+                iconColor: Color(0xFFFFD76A),
+              ),
+            ),
+            child: DefaultTextStyle.merge(
+              style: const TextStyle(color: Colors.white),
+              child: child,
+            ),
+          ),
+        ),
+      ],
     ),
   );
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -177,29 +176,19 @@ class _BakeryMark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'Peanut Kisses baker mascot',
-      child: Container(
-        width: 122,
-        height: 122,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: AppColors.coconut.withValues(alpha: .94),
-          shape: BoxShape.circle,
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x42000000),
-              blurRadius: 22,
-              offset: Offset(0, 10),
-            ),
-          ],
-        ),
-        child: SvgPicture.asset(
-          'assets/svg/characters/peanut_baker.svg',
-          placeholderBuilder: (_) => const Icon(
-            Icons.bakery_dining_rounded,
-            size: 62,
-            color: AppColors.caramel,
-          ),
+      label: 'Puff and Crunch peanut baker logo',
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: .92, end: 1),
+        duration: const Duration(milliseconds: 900),
+        curve: Curves.elasticOut,
+        builder: (context, scale, child) =>
+            Transform.scale(scale: scale, child: child),
+        child: Image.asset(
+          'assets/images/ui/puff_crunch_logo.png',
+          width: 154,
+          height: 154,
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.high,
         ),
       ),
     );

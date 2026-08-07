@@ -377,22 +377,9 @@ class _GameHud extends StatelessWidget {
   final GameHudState hud;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => GlassPanel(
     margin: const EdgeInsets.fromLTRB(12, 8, 12, 6),
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-    decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        colors: [Color(0xD9FFF8E6), Color(0xCFFFE2A6)],
-      ),
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: const [
-        BoxShadow(
-          color: Color(0x33000000),
-          blurRadius: 10,
-          offset: Offset(0, 4),
-        ),
-      ],
-    ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -400,11 +387,15 @@ class _GameHud extends StatelessWidget {
           hud.timeRemainingSeconds == null
               ? 'Moves: ${hud.moves}'
               : 'Moves: ${hud.moves}  •  ${_clock(hud.timeRemainingSeconds!)}',
-          style: Theme.of(context).textTheme.titleLarge,
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
         Text(
           'Score: ${hud.score}',
-          style: Theme.of(context).textTheme.titleLarge,
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(color: Colors.white),
         ),
       ],
     ),
