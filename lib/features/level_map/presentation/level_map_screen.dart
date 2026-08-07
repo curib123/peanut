@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,11 +8,45 @@ import '../../../core/theme/app_colors.dart';
 import '../../../services/content/world_presentation_catalog.dart';
 import '../../progress/application/progress_controller.dart';
 
-class LevelMapScreen extends ConsumerWidget {
+class LevelMapScreen extends ConsumerStatefulWidget {
   const LevelMapScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LevelMapScreen> createState() => _LevelMapScreenState();
+}
+
+class _LevelMapScreenState extends ConsumerState<LevelMapScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ambient;
+  final ScrollController _scroll = ScrollController();
+  int _visibleWorld = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _ambient = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 14),
+    )..repeat();
+    _scroll.addListener(_trackWorld);
+  }
+
+  void _trackWorld() {
+    final next = (_scroll.offset / 2200).floor().clamp(0, 5);
+    if (next != _visibleWorld) setState(() => _visibleWorld = next);
+  }
+
+  @override
+  void dispose() {
+    _scroll
+      ..removeListener(_trackWorld)
+      ..dispose();
+    _ambient.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final save = ref.watch(progressControllerProvider).data;
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -27,89 +63,154 @@ class LevelMapScreen extends ConsumerWidget {
           if (catalog == null) {
             return const Center(child: CircularProgressIndicator());
           }
-          return Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset(
-                  catalog.main.backgroundAsset,
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                ),
-              ),
-              const Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Color(0x33000000), Color(0x99562C18)],
+          final visibleWorld =
+              catalog.worlds[_visibleWorld.clamp(0, catalog.worlds.length - 1)];
+          return TickerMode(
+            enabled: !save.settings.reducedMotion,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 900),
+                    child: SizedBox.expand(
+                      key: ValueKey(visibleWorld.id),
+                      child: AnimatedBuilder(
+                        animation: Listenable.merge([_ambient, _scroll]),
+                        builder: (context, child) {
+                          final phase = _ambient.value * math.pi * 2;
+                          final parallax = _scroll.hasClients
+                              ? -(_scroll.offset % 2200) * .018
+                              : 0.0;
+                          return Transform.translate(
+                            offset: Offset(
+                              math.sin(phase) * 7,
+                              parallax + math.cos(phase) * 5,
+                            ),
+                            child: Transform.scale(scale: 1.13, child: child),
+                          );
+                        },
+                        child: Image.asset(
+                          visibleWorld.backgroundAsset,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SafeArea(
-                child: ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(28, 72, 28, 80),
-                  itemCount: catalog.lastLevel,
-                  itemBuilder: (context, index) {
-                    final level = index + 1;
-                    final world = catalog.worldForLevel(level);
-                    final unlocked = level <= save.highestUnlockedLevel;
-                    final stars = save.starsFor(level);
-                    return Column(
-                      children: [
-                        if (level == world.firstLevel)
-                          _WorldRibbon(name: world.name, number: world.order),
-                        SizedBox(
-                          height: 108,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: index.isEven ? 56 : 132,
-                                top: 0,
-                                bottom: 0,
-                                child: Container(
-                                  width: 7,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xCCFFE3A0),
-                                    borderRadius: BorderRadius.circular(99),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Colors.black26,
-                                        blurRadius: 5,
-                                      ),
-                                    ],
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: AnimatedBuilder(
+                      animation: _ambient,
+                      builder: (context, child) => CustomPaint(
+                        painter: _AmbientPainter(
+                          progress: _ambient.value,
+                          seed: visibleWorld.order,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0x33000000), Color(0x99562C18)],
+                      ),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  child: ListView.builder(
+                    controller: _scroll,
+                    padding: const EdgeInsets.fromLTRB(28, 72, 28, 80),
+                    itemCount: catalog.lastLevel,
+                    itemBuilder: (context, index) {
+                      final level = index + 1;
+                      final world = catalog.worldForLevel(level);
+                      final unlocked = level <= save.highestUnlockedLevel;
+                      final stars = save.starsFor(level);
+                      return Column(
+                        children: [
+                          if (level == world.firstLevel)
+                            _WorldRibbon(name: world.name, number: world.order),
+                          SizedBox(
+                            height: 108,
+                            child: Stack(
+                              children: [
+                                Positioned(
+                                  left: index.isEven ? 56 : 132,
+                                  top: 0,
+                                  bottom: 0,
+                                  child: Container(
+                                    width: 7,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xCCFFE3A0),
+                                      borderRadius: BorderRadius.circular(99),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 5,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Align(
-                                alignment: index.isEven
-                                    ? Alignment.centerLeft
-                                    : Alignment.centerRight,
-                                child: _LevelNode(
-                                  level: level,
-                                  stars: stars,
-                                  unlocked: unlocked,
-                                  current: level == save.highestUnlockedLevel,
-                                  onPressed: unlocked
-                                      ? () => context.push('/level/$level')
-                                      : null,
+                                Align(
+                                  alignment: index.isEven
+                                      ? Alignment.centerLeft
+                                      : Alignment.centerRight,
+                                  child: _LevelNode(
+                                    level: level,
+                                    stars: stars,
+                                    unlocked: unlocked,
+                                    current: level == save.highestUnlockedLevel,
+                                    onPressed: unlocked
+                                        ? () => context.push('/level/$level')
+                                        : null,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),
     );
   }
+}
+
+class _AmbientPainter extends CustomPainter {
+  const _AmbientPainter({required this.progress, required this.seed});
+
+  final double progress;
+  final int seed;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final glow = Paint()..color = const Color(0x72FFE9A1);
+    for (var index = 0; index < 22; index++) {
+      final x = ((index * 83 + seed * 47) % 100) / 100 * size.width;
+      final origin = ((index * 137 + seed * 31) % 100) / 100;
+      final speed = .16 + (index % 4) * .035;
+      final y = ((origin - progress * speed) % 1) * size.height;
+      final pulse = .72 + math.sin(progress * math.pi * 2 + index) * .28;
+      canvas.drawCircle(Offset(x, y), (1.8 + index % 3) * pulse, glow);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _AmbientPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.seed != seed;
 }
 
 class _WorldRibbon extends StatelessWidget {
@@ -132,7 +233,7 @@ class _WorldRibbon extends StatelessWidget {
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Icon(Icons.landscape_rounded, color: Colors.white),
+        Icon(_worldIcon(number), color: Colors.white),
         const SizedBox(width: 10),
         Text(
           'World $number  •  $name',
@@ -144,6 +245,15 @@ class _WorldRibbon extends StatelessWidget {
       ],
     ),
   );
+
+  IconData _worldIcon(int world) => switch (world) {
+    1 => Icons.bakery_dining_rounded,
+    2 => Icons.park_rounded,
+    3 => Icons.cloud_rounded,
+    4 => Icons.sailing_rounded,
+    5 => Icons.local_fire_department_rounded,
+    _ => Icons.auto_awesome_rounded,
+  };
 }
 
 class _LevelNode extends StatelessWidget {

@@ -43,7 +43,14 @@ void main() {
     );
 
     appRouter.go('/map');
-    await tester.pumpAndSettle();
+    for (var frame = 0; frame < 30; frame++) {
+      await tester.pump(const Duration(milliseconds: 50));
+      if (find.byKey(const Key('level-1')).evaluate().isNotEmpty) break;
+    }
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(seconds: 1)),
+    );
+    await tester.pump(const Duration(seconds: 1));
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../docs/screenshots/03-level-map.png'),

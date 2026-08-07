@@ -19,7 +19,10 @@ void main() {
 
     expect(find.text('Puff & Crunch'), findsOneWidget);
     await tester.tap(find.text('Play Adventure'));
-    await tester.pumpAndSettle();
+    for (var frame = 0; frame < 30; frame++) {
+      await tester.pump(const Duration(milliseconds: 50));
+      if (find.text('Island Recipe Journey').evaluate().isNotEmpty) break;
+    }
     expect(find.text('Island Recipe Journey'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('level-1')));

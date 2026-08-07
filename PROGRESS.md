@@ -1,6 +1,6 @@
 # Current Status
 
-Current phase: Phase 13 (ready to begin)
+Current phase: Phase 13 (completed)
 
 ## Completed
 
@@ -110,6 +110,10 @@ Current phase: Phase 13 (ready to begin)
 - Preserved one match-3 engine while giving each world escalating combinations of frosting, crates, twine, baskets, cream, spreading chocolate, ovens, stones, shaped trays, and multi-goal recipes
 - Validated all 120 openings and 10,000 bounded gameplay simulations
 - Expanded the gameplay sound palette to 19 original SFX with distinct selection, fall, landing, reshuffle, blocker, special-creation, and per-power activation cues
+- Rebuilt the 120-level map as a continuous six-world adventure that cross-fades through the existing AI-generated world paintings
+- Added scroll-linked parallax, a seamless 14-second cinemagraph drift, floating ambient lights, and per-world landmark icons
+- Kept world presentation catalog-driven and disabled ambient movement when Reduced Motion is enabled
+- Phase 13 verification completed
 
 ## In Progress
 
@@ -117,7 +121,7 @@ Current phase: Phase 13 (ready to begin)
 
 ## Remaining
 
-- Phase 13 AI-generated connected vertical world adventure with parallax and seamless ambient loops
+- Define Phase 14 after reviewing the completed animated world journey
 
 ## Tests
 
@@ -129,8 +133,8 @@ Current phase: Phase 13 (ready to begin)
 - `flutter build apk --debug`: passed (`build/app/outputs/flutter-apk/app-debug.apk`, 157,010,839 bytes)
 - Android debug APK SHA-256: `BA2FC7F66D9B49A80EF2CBDFFF258503BF3245CC91778FE7CBF49761735742D0`
 - `flutter build web --release`: passed (`build/web`, `main.dart.js` 2,961,872 bytes)
-- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 67,261,565 bytes)
-- Android release APK SHA-256: `54DA900EDBD75187E6318FF9A6CC7827654B828E02970ED0B201FD097C33DC67`
+- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 67,294,897 bytes)
+- Android release APK SHA-256: `F1267ADB4352A5BBBE7CCC3586E2C66C8708F32C4D15018C0BAD3F39B64CDDE3`
 - Production asset catalog: 207 files, including 26 WAV, 21 PNG, 6 WebP, and 121 JSON files
 - Unresolved TODO audit: no project-owned TODOs; only Flutter-generated Linux/Windows runner comments remain
 
