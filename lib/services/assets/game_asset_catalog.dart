@@ -4,6 +4,31 @@ abstract final class GameAssetCatalog {
   static const homeBackground =
       'assets/images/backgrounds/peanut_kisses_island.png';
   static const mascot = 'assets/svg/characters/peanut_baker.svg';
+  static const adventureBackground =
+      'assets/images/worlds/sunrise_adventure.png';
+
+  static const pieceIds = <String>[
+    'peanut',
+    'egg',
+    'sugar_crystal',
+    'caramel_ribbon',
+    'coconut_cream',
+    'cocoa_crumb',
+  ];
+
+  static const worldIds = <String>[
+    'sunrise_bakery',
+    'peanut_grove',
+    'egg_cloud_kitchen',
+    'sugar_harbor',
+    'festival_oven',
+    'starlight_bake_off',
+  ];
+
+  static String worldBackgroundForLevel(int level) {
+    final index = ((level.clamp(1, 60) - 1) ~/ 10).clamp(0, 5);
+    return 'assets/images/worlds/${worldIds[index]}.webp';
+  }
 
   static const svgDirectories = <String>[
     'pieces',

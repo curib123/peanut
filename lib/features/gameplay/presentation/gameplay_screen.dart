@@ -8,6 +8,7 @@ import '../../../game/domain/content.dart';
 import '../../../game/presentation/island_match_game.dart';
 import '../../../services/content/bundled_level_repository.dart';
 import '../../../services/audio/game_audio_service.dart';
+import '../../../services/assets/game_asset_catalog.dart';
 import '../../progress/application/progress_controller.dart';
 
 class GameplayScreen extends ConsumerStatefulWidget {
@@ -133,9 +134,28 @@ class _LoadedGameplay extends StatelessWidget {
           children: [
             _GameHud(hud: hud),
             Expanded(
-              child: Semantics(
-                label: 'Playable eight by eight match board',
-                child: GameWidget(game: game),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    GameAssetCatalog.worldBackgroundForLevel(level),
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0x77FFF4D6), Color(0xAA3D1F13)],
+                      ),
+                    ),
+                  ),
+                  Semantics(
+                    label: 'Playable eight by eight match board',
+                    child: GameWidget(game: game),
+                  ),
+                ],
               ),
             ),
           ],
@@ -300,8 +320,22 @@ class _GameHud extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-    color: Theme.of(context).colorScheme.surface,
+    margin: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [Color(0xFFFFF8E6), Color(0xFFFFE2A6)],
+      ),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: const Color(0xFFFFBE3F), width: 2),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x33000000),
+          blurRadius: 10,
+          offset: Offset(0, 4),
+        ),
+      ],
+    ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

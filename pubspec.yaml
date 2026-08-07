@@ -65,6 +65,10 @@ flutter:
 
   assets:
     - assets/images/backgrounds/
+    - assets/images/pieces/
+    - assets/images/specials/
+    - assets/images/blockers/
+    - assets/images/worlds/
     - assets/audio/sfx/
     - assets/svg/pieces/
     - assets/svg/specials/

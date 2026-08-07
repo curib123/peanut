@@ -1,6 +1,6 @@
 # Current Status
 
-Current phase: Phase 11 (ready to begin)
+Current phase: Phase 12 (ready to begin)
 
 ## Completed
 
@@ -84,6 +84,16 @@ Current phase: Phase 11 (ready to begin)
 - Audited packaged assets and notices; all game-specific artwork/audio remains original with no commercial game assets
 - Built and verified the Android debug APK and release web bundle
 - Phase 10 verification completed
+- Replaced lettered tokens with six AI-generated, transparent illustrated ingredient pieces
+- Added AI-generated Sugar Beam, Golden Recipe Spark, Oven Burst, Peanut Spinner, and blocker artwork
+- Added six AI-generated world scenes plus a portrait bakery-adventure backdrop
+- Rebuilt the board as a modern brown-and-gold tray with illustrated blocker overlays
+- Rebuilt the level map as a connected vertical journey with world ribbons, stars, and progression states
+- Applied the new illustrated backgrounds and premium Peanut Kisses-inspired palette to home and gameplay
+- Added asset preprocessing tools, documented prompts/provenance, and runtime asset-preload coverage
+- Regenerated the Phase 11 screenshot tour
+- Built and verified the Android release APK and release web bundle
+- Phase 11 verification completed
 
 ## In Progress
 
@@ -91,20 +101,22 @@ Current phase: Phase 11 (ready to begin)
 
 ## Remaining
 
-- Phase 11 complete AI-generated visual foundation and handoff: real illustrated pieces, premium match-3 UI, capture fixtures, layered world art, reusable adventure components, effects, provenance, and measurable baselines for Phases 12-13
 - Phase 12 full-state capture, issue analysis, and prioritized enhancement audit
 - Phase 13 AI-generated connected vertical world adventure with parallax and seamless ambient loops
 
 ## Tests
 
-- `dart format --output=none --set-exit-if-changed .`: passed (53 Dart files checked)
+- `dart format --output=none --set-exit-if-changed .`: passed (54 Dart files checked)
 - `flutter analyze`: passed, no issues
-- `flutter test`: passed, 73 tests including launch-to-gameplay integration coverage
+- `flutter test`: passed, 74 tests including launch-to-gameplay and Phase 11 asset coverage
 - `dart run tool/validate_levels.dart --simulations=10000`: passed, 60 levels and 10,000 simulations
 - Generated-board validation: 1,000 deterministic 8x8 boards passed
 - `flutter build apk --debug`: passed (`build/app/outputs/flutter-apk/app-debug.apk`, 157,010,839 bytes)
 - Android debug APK SHA-256: `BA2FC7F66D9B49A80EF2CBDFFF258503BF3245CC91778FE7CBF49761735742D0`
-- `flutter build web --release`: passed (`build/web`, `main.dart.js` 2,955,612 bytes)
+- `flutter build web --release`: passed (`build/web`, `main.dart.js` 2,961,872 bytes)
+- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 61,071,938 bytes)
+- Android release APK SHA-256: `D976ADB03AB56716E595EA79465B499BCD82068AB9FB26B1D1084CF4912F8EA6`
+- Phase 11 production asset catalog: 126 files, including 19 PNG and 6 WebP additions
 - Unresolved TODO audit: no project-owned TODOs; only Flutter-generated Linux/Windows runner comments remain
 
 ## Known Issues

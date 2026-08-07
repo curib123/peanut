@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -52,6 +53,7 @@ void main() {
       matchesGoldenFile('../docs/screenshots/04-pre-level.png'),
     );
 
+    await tester.runAsync(_preloadGameSprites);
     await tester.pumpWidget(
       ProviderScope(
         child: MaterialApp(
@@ -60,6 +62,9 @@ void main() {
           home: GameplayScreen(level: 1),
         ),
       ),
+    );
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(seconds: 2)),
     );
     for (var frame = 0; frame < 120; frame++) {
       await tester.pump(const Duration(milliseconds: 16));
@@ -82,6 +87,20 @@ void main() {
     );
   });
 }
+
+Future<void> _preloadGameSprites() => Flame.images.loadAll(const [
+  'pieces/peanut.png',
+  'pieces/egg.png',
+  'pieces/sugar_crystal.png',
+  'pieces/caramel_ribbon.png',
+  'pieces/coconut_cream.png',
+  'pieces/cocoa_crumb.png',
+  'specials/sugar_beam_horizontal.png',
+  'specials/sugar_beam_vertical.png',
+  'specials/golden_recipe_spark.png',
+  'specials/oven_burst.png',
+  'specials/peanut_spinner.png',
+]);
 
 Future<void> _loadFonts() async {
   const materialPath = r'C:\src\flutter\bin\cache\artifacts\material_fonts\';

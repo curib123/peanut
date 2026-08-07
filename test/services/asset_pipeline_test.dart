@@ -13,10 +13,11 @@ void main() {
         .where((path) => path.startsWith('assets/'))
         .toList();
 
-    expect(assets, hasLength(102));
+    expect(assets, hasLength(126));
     expect(assets.where((path) => path.endsWith('.svg')), hasLength(33));
     expect(assets.where((path) => path.endsWith('.wav')), hasLength(8));
-    expect(assets.where((path) => path.endsWith('.png')), hasLength(1));
+    expect(assets.where((path) => path.endsWith('.png')), hasLength(19));
+    expect(assets.where((path) => path.endsWith('.webp')), hasLength(6));
     expect(assets.where((path) => path.endsWith('.json')), hasLength(60));
 
     for (final path in assets) {
@@ -24,6 +25,34 @@ void main() {
       expect(bytes.lengthInBytes, greaterThan(32), reason: path);
     }
   });
+
+  test(
+    'phase 11 production art covers every gameplay piece and world',
+    () async {
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      final assets = manifest.listAssets().toSet();
+      for (final id in [
+        'peanut',
+        'egg',
+        'sugar_crystal',
+        'caramel_ribbon',
+        'coconut_cream',
+        'cocoa_crumb',
+      ]) {
+        expect(assets, contains('assets/images/pieces/$id.png'));
+      }
+      for (final id in [
+        'sunrise_bakery',
+        'peanut_grove',
+        'egg_cloud_kitchen',
+        'sugar_harbor',
+        'festival_oven',
+        'starlight_bake_off',
+      ]) {
+        expect(assets, contains('assets/images/worlds/$id.webp'));
+      }
+    },
+  );
 
   test('missing SVG returns a renderable original fallback', () async {
     final svg = await GameAssetCatalog.loadSvg('assets/svg/missing.svg');

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import '../../services/audio/game_audio_service.dart';
@@ -48,11 +49,24 @@ class IslandMatchGame extends FlameGame {
   bool get isInputLocked => _inputGate.isLocked;
 
   @override
-  Color backgroundColor() => const Color(0xFFFFF4D6);
+  Color backgroundColor() => const Color(0x00000000);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    await Flame.images.loadAll(const [
+      'pieces/peanut.png',
+      'pieces/egg.png',
+      'pieces/sugar_crystal.png',
+      'pieces/caramel_ribbon.png',
+      'pieces/coconut_cream.png',
+      'pieces/cocoa_crumb.png',
+      'specials/sugar_beam_horizontal.png',
+      'specials/sugar_beam_vertical.png',
+      'specials/golden_recipe_spark.png',
+      'specials/oven_burst.png',
+      'specials/peanut_spinner.png',
+    ]);
     _turnEngine = TurnEngine(
       resolver: BoardResolver(seed: _seed + 1),
       shuffler: BoardShuffler(seed: _seed + 2),
@@ -80,7 +94,7 @@ class IslandMatchGame extends FlameGame {
       score: 0,
       status: LevelStatus.playing,
     );
-    boardComponent = BoardComponent(board: board);
+    boardComponent = BoardComponent(board: board, blockers: _session.blockers);
     add(boardComponent);
     _layout(size);
   }

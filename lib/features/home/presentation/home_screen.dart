@@ -14,7 +14,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/images/backgrounds/peanut_kisses_island.png',
+              'assets/images/worlds/sunrise_adventure.png',
               fit: BoxFit.cover,
               errorBuilder: (_, _, _) =>
                   const ColoredBox(color: AppColors.cream),
@@ -26,10 +26,7 @@ class HomeScreen extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.cream.withValues(alpha: .12),
-                    AppColors.cream.withValues(alpha: .88),
-                  ],
+                  colors: [const Color(0x11000000), const Color(0x993A1C12)],
                 ),
               ),
             ),
@@ -50,14 +47,20 @@ class HomeScreen extends StatelessWidget {
                         Text(
                           'Puff & Crunch',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.displaySmall,
+                          style: Theme.of(context).textTheme.displaySmall
+                              ?.copyWith(
+                                color: Colors.white,
+                                shadows: const [
+                                  Shadow(color: Colors.black54, blurRadius: 10),
+                                ],
+                              ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Island Match',
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(
-                                color: AppColors.caramel,
+                                color: const Color(0xFFFFD76A),
                                 letterSpacing: 2,
                               ),
                         ),
@@ -65,6 +68,11 @@ class HomeScreen extends StatelessWidget {
                         const Text(
                           'A sunny bakery adventure is warming up!',
                           textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const SizedBox(height: 32),
                         FilledButton.icon(

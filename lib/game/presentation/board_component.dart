@@ -12,10 +12,13 @@ import 'piece_component.dart';
 
 class BoardComponent extends PositionComponent
     with TapCallbacks, DragCallbacks, HasGameReference<IslandMatchGame> {
-  BoardComponent({required domain.Board board}) : _board = board.copy();
+  BoardComponent({required domain.Board board, required this.blockers})
+    : _board = board.copy();
 
   domain.Board _board;
+  final domain.BlockerGrid blockers;
   final Map<domain.Position, PieceComponent> _pieces = {};
+  final List<SpriteComponent> _blockerSprites = [];
   domain.Position? _selected;
   domain.Position? _dragStart;
   Vector2 _dragDelta = Vector2.zero();
@@ -26,19 +29,38 @@ class BoardComponent extends PositionComponent
   Future<void> onLoad() async {
     await super.onLoad();
     _rebuild(_board);
+    await refreshBlockers();
   }
 
   @override
   void render(Canvas canvas) {
     final cell = cellExtent;
-    final paint = Paint()..color = const Color(0x55FFFFFF);
+    final tray = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, size.x, size.y),
+      const Radius.circular(24),
+    );
+    canvas.drawRRect(tray, Paint()..color = const Color(0xD66B321B));
+    canvas.drawRRect(
+      tray,
+      Paint()
+        ..color = const Color(0xFFFFC85A)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 5,
+    );
     for (var row = 0; row < _board.rows; row++) {
       for (var column = 0; column < _board.columns; column++) {
         final rect = RRect.fromRectAndRadius(
-          Rect.fromLTWH(column * cell + 2, row * cell + 2, cell - 4, cell - 4),
-          const Radius.circular(10),
+          Rect.fromLTWH(column * cell + 3, row * cell + 3, cell - 6, cell - 6),
+          Radius.circular(cell * .22),
         );
-        canvas.drawRRect(rect, paint);
+        canvas.drawRRect(rect, Paint()..color = const Color(0xB8FFF2D0));
+        canvas.drawRRect(
+          rect,
+          Paint()
+            ..color = const Color(0x44FFFFFF)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.5,
+        );
       }
     }
   }
@@ -149,6 +171,36 @@ class BoardComponent extends PositionComponent
       await _rebuildFalling(cascade.afterRefill, duration);
     }
     _rebuild(resolution.finalBoard);
+    await refreshBlockers();
+  }
+
+  Future<void> refreshBlockers() async {
+    for (final component in _blockerSprites) {
+      component.removeFromParent();
+    }
+    _blockerSprites.clear();
+    for (final entry in blockers.states.entries) {
+      try {
+        final id = switch (entry.value.kind) {
+          domain.BlockerKind.sugarFrosting => 'sugar_frosting',
+          domain.BlockerKind.peanutCrate => 'peanut_crate',
+          domain.BlockerKind.stickyCaramel => 'sticky_caramel',
+          domain.BlockerKind.chocolateCrumbs => 'chocolate_crumbs',
+          domain.BlockerKind.ovenStone => 'oven_stone',
+          domain.BlockerKind.bakersTwine => 'bakers_twine',
+        };
+        final component = SpriteComponent(
+          sprite: await Sprite.load('blockers/$id.png'),
+          position: _cellPosition(entry.key),
+          size: Vector2.all(cellExtent),
+          priority: 10,
+        );
+        _blockerSprites.add(component);
+        add(component);
+      } catch (_) {
+        // The board remains playable if a presentation-only asset is missing.
+      }
+    }
   }
 
   void _burstAt(domain.Position position) {
@@ -177,6 +229,7 @@ class BoardComponent extends PositionComponent
   void resizeBoard(Vector2 newSize) {
     size = newSize;
     _rebuild(_board);
+    unawaited(refreshBlockers());
   }
 
   Future<void> _animateSwap(

@@ -12,7 +12,9 @@ class PieceComponent extends PositionComponent {
   }) : super(size: Vector2.all(extent), anchor: Anchor.topLeft);
 
   final Piece piece;
+  Sprite? _sprite;
   bool _isSelected = false;
+
   bool get isSelected => _isSelected;
   set isSelected(bool value) {
     if (_isSelected == value) return;
@@ -29,7 +31,7 @@ class PieceComponent extends PositionComponent {
     }
   }
 
-  static const _colors = {
+  static const _fallbackColors = {
     'peanut': Color(0xFFD99048),
     'egg': Color(0xFFFFE07A),
     'sugar_crystal': Color(0xFF72D5E8),
@@ -38,82 +40,64 @@ class PieceComponent extends PositionComponent {
     'cocoa_crumb': Color(0xFF75452F),
   };
 
-  static const _labels = {
-    'peanut': 'P',
-    'egg': 'E',
-    'sugar_crystal': 'S',
-    'caramel_ribbon': 'C',
-    'coconut_cream': 'N',
-    'cocoa_crumb': 'O',
-  };
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    try {
+      _sprite = await Sprite.load(_spritePath());
+    } catch (_) {
+      _sprite = null;
+    }
+  }
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
     final center = Offset(size.x / 2, size.y / 2);
-    final radius = size.x * 0.39;
-    canvas.drawCircle(
-      center + Offset(0, size.x * 0.06),
-      radius,
-      Paint()..color = const Color(0x26000000),
+    final radius = size.x * .39;
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: center + Offset(0, size.x * .32),
+        width: size.x * .58,
+        height: size.x * .13,
+      ),
+      Paint()..color = const Color(0x36000000),
     );
-    canvas.drawCircle(
-      center,
-      radius,
-      Paint()..color = _colors[piece.kind.id] ?? const Color(0xFFE968A8),
-    );
-    if (piece.isSpecial) {
-      canvas.drawCircle(
-        center,
-        radius * 0.82,
+    final sprite = _sprite;
+    if (sprite != null) {
+      sprite.render(
+        canvas,
+        position: Vector2.all(size.x * .03),
+        size: Vector2.all(size.x * .94),
+      );
+    } else {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCircle(center: center, radius: radius),
+          Radius.circular(size.x * .22),
+        ),
         Paint()
-          ..color = const Color(0xCCFFF4B8)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = size.x * 0.08,
+          ..color = _fallbackColors[piece.kind.id] ?? const Color(0xFFE968A8),
       );
     }
-    canvas.drawCircle(
-      center - Offset(size.x * 0.1, size.x * 0.1),
-      radius * 0.25,
-      Paint()..color = const Color(0x66FFFFFF),
-    );
     if (isSelected) {
       canvas.drawCircle(
         center,
         radius + 3,
         Paint()
-          ..color = const Color(0xFFFFC43D)
+          ..color = const Color(0xFFFFD65A)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 4,
       );
     }
-
-    final label = switch (piece.specialKind) {
-      SpecialKind.sugarBeam =>
-        piece.beamOrientation == BeamOrientation.horizontal ? '—' : '|',
-      SpecialKind.goldenRecipeSpark => '★',
-      SpecialKind.ovenBurst => '✦',
-      SpecialKind.peanutSpinner => '↻',
-      null =>
-        _labels[piece.kind.id] ?? piece.kind.id.substring(0, 1).toUpperCase(),
-    };
-    final painter = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: TextStyle(
-          color: piece.kind.id == 'coconut_cream'
-              ? const Color(0xFF5A3825)
-              : const Color(0xFFFFFFFF),
-          fontSize: size.x * 0.28,
-          fontFamily: 'Roboto',
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    painter.paint(
-      canvas,
-      center - Offset(painter.width / 2, painter.height / 2),
-    );
   }
+
+  String _spritePath() => switch (piece.specialKind) {
+    SpecialKind.sugarBeam =>
+      'specials/sugar_beam_${piece.beamOrientation == BeamOrientation.vertical ? 'vertical' : 'horizontal'}.png',
+    SpecialKind.goldenRecipeSpark => 'specials/golden_recipe_spark.png',
+    SpecialKind.ovenBurst => 'specials/oven_burst.png',
+    SpecialKind.peanutSpinner => 'specials/peanut_spinner.png',
+    null => 'pieces/${piece.kind.id}.png',
+  };
 }
