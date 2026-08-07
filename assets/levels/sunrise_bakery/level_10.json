@@ -1,11 +1,11 @@
 {
-  "id": "sunrise_10",
+  "id": "sunrise_bakery_10",
   "worldId": "sunrise_bakery",
   "order": 10,
   "rows": 8,
   "columns": 8,
-  "moves": 28,
-  "seed": 1110,
+  "moves": 25,
+  "seed": 2170,
   "spawnWeights": {
     "peanut": 4,
     "egg": 4,
@@ -15,28 +15,15 @@
     "cocoa_crumb": 4
   },
   "starThresholds": [
-    7000,
-    10150,
-    13300
+    2550,
+    3570,
+    4718
   ],
   "goals": [
     {
-      "id": "collect_pieces",
-      "parameters": {
-        "pieceId": "peanut",
-        "target": 28
-      }
-    },
-    {
       "id": "clear_frosting",
       "parameters": {
-        "target": 12
-      }
-    },
-    {
-      "id": "target_score",
-      "parameters": {
-        "target": 6000
+        "target": 6
       }
     }
   ],
@@ -44,107 +31,61 @@
     {
       "id": "sugar_frosting",
       "parameters": {
-        "layers": 2,
-        "row": 1,
-        "column": 1
+        "row": 2,
+        "column": 5,
+        "layers": 1
       }
     },
     {
       "id": "sugar_frosting",
       "parameters": {
-        "layers": 2,
-        "row": 1,
-        "column": 3
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 1,
-        "column": 4
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 1,
-        "column": 6
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
         "row": 3,
-        "column": 1
+        "column": 6,
+        "layers": 1
       }
     },
     {
       "id": "sugar_frosting",
       "parameters": {
-        "layers": 2,
-        "row": 3,
-        "column": 6
+        "row": 5,
+        "column": 1,
+        "layers": 1
       }
     },
     {
       "id": "sugar_frosting",
       "parameters": {
-        "layers": 2,
-        "row": 4,
-        "column": 1
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 4,
-        "column": 6
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
         "row": 6,
-        "column": 1
+        "column": 2,
+        "layers": 1
       }
     },
     {
       "id": "sugar_frosting",
       "parameters": {
-        "layers": 2,
-        "row": 6,
-        "column": 3
+        "row": 1,
+        "column": 3,
+        "layers": 1
       }
     },
     {
       "id": "sugar_frosting",
       "parameters": {
-        "layers": 2,
-        "row": 6,
-        "column": 4
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 6,
-        "column": 6
+        "row": 2,
+        "column": 4,
+        "layers": 1
       }
     }
   ],
   "tutorial": [
     {
-      "message": "Final bake: collect peanuts and clear every frosting layer!"
+      "message": "Build cascades while clearing every frosting layer."
     }
   ],
   "metadata": {
     "difficulty": 10,
-    "name": "Sunrise Celebration"
+    "name": "Sunrise Bakery Recipe 10",
+    "simulationTier": "standard",
+    "challenge": "moves"
   }
 }

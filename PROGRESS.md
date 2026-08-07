@@ -104,6 +104,11 @@ Current phase: Phase 13 (ready to begin)
 - Reworked home hierarchy, level nodes, settings groups, pre-level goals, and result actions for consistent modern presentation
 - Verified distinct world artwork, illustrated ingredients, blocker presentation, and all five special-piece sprites in the expanded screenshot tour
 - Phase 12 verification completed
+- Fixed move accounting presentation so one accepted swap costs exactly one move and automatic cascades/refills/reshuffles cost none
+- Expanded all six worlds to 20 levels each for a 120-level campaign
+- Added data-driven time trials to the second half of every world with pause-aware countdowns and time-up failure
+- Preserved one match-3 engine while giving each world escalating combinations of frosting, crates, twine, baskets, cream, spreading chocolate, ovens, stones, shaped trays, and multi-goal recipes
+- Validated all 120 openings and 10,000 bounded gameplay simulations
 
 ## In Progress
 
@@ -117,15 +122,15 @@ Current phase: Phase 13 (ready to begin)
 
 - `dart format --output=none --set-exit-if-changed lib test tool`: passed (60 Dart files checked)
 - `flutter analyze`: passed, no issues
-- `flutter test`: passed, 79 tests including scalable world presentation, packaged background/music coverage, Peanut Kisses, and launch-to-gameplay coverage
-- `dart run tool/validate_levels.dart --simulations=10000`: passed, 60 levels and 10,000 simulations
+- `flutter test`: passed, 82 tests including one-move cascade accounting, time-trial expiry, 120-level world distribution, packaged background/music coverage, Peanut Kisses, and launch-to-gameplay coverage
+- `dart run tool/validate_levels.dart --simulations=10000`: passed, 120 levels and 10,000 simulations
 - Generated-board validation: 1,000 deterministic 8x8 boards passed
 - `flutter build apk --debug`: passed (`build/app/outputs/flutter-apk/app-debug.apk`, 157,010,839 bytes)
 - Android debug APK SHA-256: `BA2FC7F66D9B49A80EF2CBDFFF258503BF3245CC91778FE7CBF49761735742D0`
 - `flutter build web --release`: passed (`build/web`, `main.dart.js` 2,961,872 bytes)
-- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 67,045,296 bytes)
-- Android release APK SHA-256: `FABB56CD554C7893FF415792F2A673E23F1B946CE84F140274A5667EE2DA59C7`
-- Production asset catalog: 136 files, including 15 WAV, 21 PNG, 6 WebP, and 61 JSON files
+- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 67,088,741 bytes)
+- Android release APK SHA-256: `9C97B98FC170735E46BDE3FA7D50480FCE024CF433F1094B615A06936A6CAB45`
+- Production asset catalog: 196 files, including 15 WAV, 21 PNG, 6 WebP, and 121 JSON files
 - Unresolved TODO audit: no project-owned TODOs; only Flutter-generated Linux/Windows runner comments remain
 
 ## Known Issues

@@ -89,6 +89,12 @@ class PreLevelScreen extends StatelessWidget {
                                   icon: Icons.swap_horiz_rounded,
                                   label: '${definition.moves} moves',
                                 ),
+                                if (definition.timeLimitSeconds != null)
+                                  _InfoPill(
+                                    icon: Icons.timer_rounded,
+                                    label:
+                                        '${definition.timeLimitSeconds}s time trial',
+                                  ),
                               ],
                             ),
                             if (definition.tutorial.isNotEmpty) ...[

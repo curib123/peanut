@@ -1,0 +1,130 @@
+{
+  "id": "egg_cloud_kitchen_13",
+  "worldId": "egg_cloud_kitchen",
+  "order": 53,
+  "rows": 8,
+  "columns": 8,
+  "moves": 26,
+  "timeLimitSeconds": 142,
+  "seed": 2901,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    5775,
+    8085,
+    10684
+  ],
+  "goals": [
+    {
+      "id": "spread_cream",
+      "parameters": {
+        "target": 21,
+        "cells": [
+          [
+            3,
+            3
+          ]
+        ]
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 3,
+        "column": 6,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 5,
+        "column": 1,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 6,
+        "column": 2,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 1,
+        "column": 3,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 2,
+        "column": 4,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 3,
+        "column": 5,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 4,
+        "column": 6,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 6,
+        "column": 1,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 1,
+        "column": 2,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 2,
+        "column": 3,
+        "layers": 1
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Connect clears to Coconut Cream and spread it across the tray."
+    }
+  ],
+  "metadata": {
+    "difficulty": 53,
+    "name": "Egg Cloud Kitchen Recipe 13",
+    "simulationTier": "standard",
+    "challenge": "time_trial"
+  }
+}

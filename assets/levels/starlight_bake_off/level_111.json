@@ -1,0 +1,129 @@
+{
+  "id": "starlight_bake_off_11",
+  "worldId": "starlight_bake_off",
+  "order": 111,
+  "rows": 8,
+  "columns": 8,
+  "moves": 28,
+  "timeLimitSeconds": 135,
+  "seed": 3887,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    10125,
+    14175,
+    18731
+  ],
+  "goals": [
+    {
+      "id": "collect_pieces",
+      "parameters": {
+        "target": 31,
+        "pieceId": "caramel_ribbon"
+      }
+    },
+    {
+      "id": "target_score",
+      "parameters": {
+        "target": 7100
+      }
+    },
+    {
+      "id": "clear_frosting",
+      "parameters": {
+        "target": 9
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 1,
+        "column": 4,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 2,
+        "column": 5,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 3,
+        "column": 6,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 5,
+        "column": 1,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 6,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 1,
+        "column": 3,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 2,
+        "column": 4,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 3,
+        "column": 5,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sticky_caramel",
+      "parameters": {
+        "row": 4,
+        "column": 6,
+        "layers": 2
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Combine specials to finish several finale goals together."
+    }
+  ],
+  "metadata": {
+    "difficulty": 111,
+    "name": "Starlight Bake-Off Recipe 11",
+    "simulationTier": "standard",
+    "challenge": "time_trial"
+  }
+}

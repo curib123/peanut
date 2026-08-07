@@ -9,10 +9,10 @@ void main() {
     final catalog = await WorldPresentationCatalog.load();
 
     expect(catalog.worlds, hasLength(6));
-    expect(catalog.lastLevel, 60);
+    expect(catalog.lastLevel, 120);
     expect(catalog.worldForLevel(1).id, 'sunrise_bakery');
-    expect(catalog.worldForLevel(60).id, 'starlight_bake_off');
-    expect(() => catalog.worldForLevel(61), throwsFormatException);
+    expect(catalog.worldForLevel(120).id, 'starlight_bake_off');
+    expect(() => catalog.worldForLevel(121), throwsFormatException);
   });
 
   test('every configured background and music file is packaged', () async {

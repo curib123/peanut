@@ -1,11 +1,11 @@
 {
-  "id": "sunrise_2",
+  "id": "sunrise_bakery_2",
   "worldId": "sunrise_bakery",
   "order": 2,
   "rows": 8,
   "columns": 8,
-  "moves": 18,
-  "seed": 1102,
+  "moves": 27,
+  "seed": 2034,
   "spawnWeights": {
     "peanut": 4,
     "egg": 4,
@@ -15,26 +15,28 @@
     "cocoa_crumb": 4
   },
   "starThresholds": [
-    1800,
-    2610,
-    3420
+    1950,
+    2730,
+    3608
   ],
   "goals": [
     {
       "id": "target_score",
       "parameters": {
-        "target": 1800
+        "target": 1980
       }
     }
   ],
   "blockers": [],
   "tutorial": [
     {
-      "message": "Matches can fall into another match. Enjoy the cascade!"
+      "message": "Bake a balanced recipe with careful special-piece play."
     }
   ],
   "metadata": {
     "difficulty": 2,
-    "name": "Morning Recipe 2"
+    "name": "Sunrise Bakery Recipe 2",
+    "simulationTier": "standard",
+    "challenge": "moves"
   }
 }

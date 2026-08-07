@@ -1,0 +1,116 @@
+{
+  "id": "sunrise_bakery_18",
+  "worldId": "sunrise_bakery",
+  "order": 18,
+  "rows": 8,
+  "columns": 8,
+  "moves": 23,
+  "timeLimitSeconds": 132,
+  "seed": 2306,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    3150,
+    4410,
+    5828
+  ],
+  "goals": [
+    {
+      "id": "clear_frosting",
+      "parameters": {
+        "target": 9
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 4,
+        "column": 1,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 5,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 6,
+        "column": 3,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 1,
+        "column": 4,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 2,
+        "column": 5,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 3,
+        "column": 6,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 5,
+        "column": 1,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 6,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 1,
+        "column": 3,
+        "layers": 2
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Build cascades while clearing every frosting layer."
+    }
+  ],
+  "metadata": {
+    "difficulty": 18,
+    "name": "Sunrise Bakery Recipe 18",
+    "simulationTier": "milestone",
+    "challenge": "time_trial"
+  }
+}

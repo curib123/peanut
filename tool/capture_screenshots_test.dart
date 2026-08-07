@@ -76,7 +76,7 @@ void main() {
     for (var frame = 0; frame < 120; frame++) {
       await tester.pump(const Duration(milliseconds: 16));
     }
-    expect(find.text('Moves: 18'), findsOneWidget);
+    expect(find.text('Moves: 27'), findsOneWidget);
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../docs/screenshots/05-gameplay.png'),
@@ -131,7 +131,7 @@ void main() {
       matchesGoldenFile('../docs/screenshots/09-blockers.png'),
     );
 
-    await _pumpGameplay(tester, level: 31);
+    await _pumpGameplay(tester, level: 61);
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../docs/screenshots/10-sugar-harbor.png'),

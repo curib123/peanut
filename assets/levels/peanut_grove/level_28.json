@@ -1,0 +1,108 @@
+{
+  "id": "peanut_grove_8",
+  "worldId": "peanut_grove",
+  "order": 28,
+  "rows": 8,
+  "columns": 8,
+  "moves": 26,
+  "seed": 2476,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    3900,
+    5460,
+    7215
+  ],
+  "goals": [
+    {
+      "id": "break_crates",
+      "parameters": {
+        "target": 8,
+        "pieceId": "peanut"
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "peanut_crate",
+      "parameters": {
+        "row": 5,
+        "column": 5,
+        "layers": 2
+      }
+    },
+    {
+      "id": "peanut_crate",
+      "parameters": {
+        "row": 6,
+        "column": 6,
+        "layers": 2
+      }
+    },
+    {
+      "id": "peanut_crate",
+      "parameters": {
+        "row": 2,
+        "column": 1,
+        "layers": 2
+      }
+    },
+    {
+      "id": "peanut_crate",
+      "parameters": {
+        "row": 3,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "peanut_crate",
+      "parameters": {
+        "row": 4,
+        "column": 3,
+        "layers": 2
+      }
+    },
+    {
+      "id": "peanut_crate",
+      "parameters": {
+        "row": 5,
+        "column": 4,
+        "layers": 2
+      }
+    },
+    {
+      "id": "peanut_crate",
+      "parameters": {
+        "row": 6,
+        "column": 5,
+        "layers": 2
+      }
+    },
+    {
+      "id": "peanut_crate",
+      "parameters": {
+        "row": 1,
+        "column": 6,
+        "layers": 2
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Match beside Peanut Crates to crack them."
+    }
+  ],
+  "metadata": {
+    "difficulty": 28,
+    "name": "Peanut Grove Recipe 8",
+    "simulationTier": "standard",
+    "challenge": "moves"
+  }
+}

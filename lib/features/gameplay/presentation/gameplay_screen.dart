@@ -199,7 +199,9 @@ class _LoadedGameplay extends StatelessWidget {
           ),
         if (hud.status == LevelStatus.lost)
           _StatusOverlay(
-            title: 'Out of Moves',
+            title: hud.timeRemainingSeconds == 0
+                ? 'Time Is Up'
+                : 'Out of Moves',
             message: 'Try a fresh recipe.',
             primaryLabel: 'Try Again',
             onPrimary: () => context.go('/level/$level'),
@@ -365,7 +367,9 @@ class _GameHud extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Moves: ${hud.moves}',
+          hud.timeRemainingSeconds == null
+              ? 'Moves: ${hud.moves}'
+              : 'Moves: ${hud.moves}  •  ${_clock(hud.timeRemainingSeconds!)}',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         Text(
@@ -375,6 +379,9 @@ class _GameHud extends StatelessWidget {
       ],
     ),
   );
+
+  String _clock(int seconds) =>
+      '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
 }
 
 class _StatusOverlay extends StatelessWidget {

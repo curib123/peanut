@@ -6,28 +6,29 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test(
-    'all ten Sunrise Bakery JSON levels load in increasing difficulty',
+    'all twenty Sunrise Bakery JSON levels load in increasing difficulty',
     () async {
       final levels = await const BundledLevelRepository().loadSunriseBakery();
 
-      expect(levels, hasLength(10));
+      expect(levels, hasLength(20));
       expect(
         levels.map((level) => level.order),
-        orderedEquals(List.generate(10, (i) => i + 1)),
+        orderedEquals(List.generate(20, (i) => i + 1)),
       );
       expect(levels.every((level) => level.tutorial.isNotEmpty), isTrue);
       expect(
         levels.map((level) => level.metadata['difficulty']),
-        orderedEquals(List.generate(10, (i) => i + 1)),
+        orderedEquals(List.generate(20, (i) => i + 1)),
       );
       expect(levels[5].playableCells.length, lessThan(64));
       expect(
-        levels[7].blockers.every(
-          (blocker) => blocker.parameters['layers'] == 2,
-        ),
+        levels.last.blockers.length,
+        greaterThan(levels[4].blockers.length),
+      );
+      expect(
+        levels.skip(10).every((level) => level.timeLimitSeconds != null),
         isTrue,
       );
-      expect(levels.last.goals, hasLength(3));
     },
   );
 

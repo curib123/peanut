@@ -1,0 +1,117 @@
+{
+  "id": "peanut_grove_11",
+  "worldId": "peanut_grove",
+  "order": 31,
+  "rows": 8,
+  "columns": 8,
+  "moves": 26,
+  "timeLimitSeconds": 155,
+  "seed": 2527,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    4125,
+    5775,
+    7631
+  ],
+  "goals": [
+    {
+      "id": "collect_pieces",
+      "parameters": {
+        "target": 27,
+        "pieceId": "peanut"
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "bakers_twine",
+      "parameters": {
+        "row": 6,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "bakers_twine",
+      "parameters": {
+        "row": 1,
+        "column": 3,
+        "layers": 2
+      }
+    },
+    {
+      "id": "bakers_twine",
+      "parameters": {
+        "row": 2,
+        "column": 4,
+        "layers": 2
+      }
+    },
+    {
+      "id": "bakers_twine",
+      "parameters": {
+        "row": 3,
+        "column": 5,
+        "layers": 2
+      }
+    },
+    {
+      "id": "bakers_twine",
+      "parameters": {
+        "row": 4,
+        "column": 6,
+        "layers": 2
+      }
+    },
+    {
+      "id": "bakers_twine",
+      "parameters": {
+        "row": 6,
+        "column": 1,
+        "layers": 2
+      }
+    },
+    {
+      "id": "bakers_twine",
+      "parameters": {
+        "row": 1,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "bakers_twine",
+      "parameters": {
+        "row": 2,
+        "column": 3,
+        "layers": 2
+      }
+    },
+    {
+      "id": "bakers_twine",
+      "parameters": {
+        "row": 3,
+        "column": 4,
+        "layers": 2
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Cut Baker’s Twine with a match on its treat."
+    }
+  ],
+  "metadata": {
+    "difficulty": 31,
+    "name": "Peanut Grove Recipe 11",
+    "simulationTier": "standard",
+    "challenge": "time_trial"
+  }
+}

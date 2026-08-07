@@ -1,11 +1,11 @@
 {
-  "id": "sunrise_1",
+  "id": "sunrise_bakery_1",
   "worldId": "sunrise_bakery",
   "order": 1,
   "rows": 8,
   "columns": 8,
-  "moves": 18,
-  "seed": 1101,
+  "moves": 27,
+  "seed": 2017,
   "spawnWeights": {
     "peanut": 4,
     "egg": 4,
@@ -15,26 +15,28 @@
     "cocoa_crumb": 4
   },
   "starThresholds": [
-    1200,
-    1740,
-    2280
+    1875,
+    2625,
+    3469
   ],
   "goals": [
     {
       "id": "target_score",
       "parameters": {
-        "target": 1200
+        "target": 1890
       }
     }
   ],
   "blockers": [],
   "tutorial": [
     {
-      "message": "Swap neighboring treats to make a row of three."
+      "message": "Bake a balanced recipe with careful special-piece play."
     }
   ],
   "metadata": {
     "difficulty": 1,
-    "name": "Morning Recipe 1"
+    "name": "Sunrise Bakery Recipe 1",
+    "simulationTier": "standard",
+    "challenge": "moves"
   }
 }

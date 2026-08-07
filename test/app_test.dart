@@ -64,7 +64,7 @@ void main() {
 
     await tester.tap(find.byKey(const Key('level-1')));
     await tester.pumpAndSettle();
-    expect(find.text('Reach 1200 points'), findsOneWidget);
+    expect(find.text('Reach 1890 points'), findsOneWidget);
     expect(find.textContaining('Swap neighboring treats'), findsOneWidget);
 
     await tester.tap(find.text('Start Level'));
@@ -76,7 +76,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 16));
     }
     expect(find.text('Level 1'), findsWidgets);
-    expect(find.text('Moves: 18'), findsWidgets);
+    expect(find.text('Moves: 27'), findsWidgets);
     expect(find.text('Score: 0'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Pause'));

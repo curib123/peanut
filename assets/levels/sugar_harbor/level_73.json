@@ -1,0 +1,125 @@
+{
+  "id": "sugar_harbor_13",
+  "worldId": "sugar_harbor",
+  "order": 73,
+  "rows": 8,
+  "columns": 8,
+  "moves": 27,
+  "timeLimitSeconds": 137,
+  "seed": 3241,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    7275,
+    10185,
+    13459
+  ],
+  "goals": [
+    {
+      "id": "clear_frosting",
+      "parameters": {
+        "target": 10,
+        "pieceId": "sugar_crystal"
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 1,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 2,
+        "column": 3,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 3,
+        "column": 4,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 4,
+        "column": 5,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 5,
+        "column": 6,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 1,
+        "column": 1,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 2,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 3,
+        "column": 3,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 4,
+        "column": 4,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 5,
+        "column": 5,
+        "layers": 2
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Wash the harbor tray clean of Sugar Frosting."
+    }
+  ],
+  "metadata": {
+    "difficulty": 73,
+    "name": "Sugar Harbor Recipe 13",
+    "simulationTier": "standard",
+    "challenge": "time_trial"
+  }
+}

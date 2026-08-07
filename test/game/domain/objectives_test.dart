@@ -2,6 +2,39 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:puff_and_crunch/game/domain/match3.dart';
 
 void main() {
+  test('one swap costs one move even when it creates cascades', () {
+    final board = boardFrom(['PEP', 'EPC', 'PES', 'SCE']);
+    final session = LevelSession(
+      turnEngine: TurnEngine(
+        resolver: BoardResolver(seed: 7),
+        shuffler: BoardShuffler(seed: 8),
+      ),
+      board: board,
+      moveLimit: 10,
+      goals: GoalTracker([
+        GoalState(kind: GoalKind.targetScore, target: 999999),
+      ]),
+    );
+    final result = session.play(const Position(0, 1), const Position(1, 1));
+    expect(result.resolution.isValid, isTrue);
+    expect(result.movesRemaining, 9);
+  });
+
+  test('time trial expires independently without consuming moves', () {
+    final session = makeSession(
+      moveLimit: 10,
+      timeLimitSeconds: 2,
+      goals: GoalTracker([
+        GoalState(kind: GoalKind.targetScore, target: 999999),
+      ]),
+    );
+    expect(session.elapseSecond(), isTrue);
+    expect(session.movesRemaining, 10);
+    expect(session.status, LevelStatus.playing);
+    expect(session.elapseSecond(), isTrue);
+    expect(session.movesRemaining, 10);
+    expect(session.status, LevelStatus.lost);
+  });
   test('all seven goal types consume their matching progress only', () {
     final goals = GoalTracker([
       GoalState(kind: GoalKind.targetScore, target: 100),
@@ -125,6 +158,7 @@ LevelSession makeSession({
   required int moveLimit,
   required GoalTracker goals,
   BlockerGrid? blockers,
+  int? timeLimitSeconds,
 }) {
   final board = boardFrom(['PEP', 'EPC', 'PES', 'SCE']);
   return LevelSession(
@@ -136,6 +170,7 @@ LevelSession makeSession({
     moveLimit: moveLimit,
     goals: goals,
     blockers: blockers,
+    timeLimitSeconds: timeLimitSeconds,
   );
 }
 

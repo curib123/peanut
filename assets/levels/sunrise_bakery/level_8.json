@@ -1,11 +1,11 @@
 {
-  "id": "sunrise_8",
+  "id": "sunrise_bakery_8",
   "worldId": "sunrise_bakery",
   "order": 8,
   "rows": 8,
   "columns": 8,
-  "moves": 24,
-  "seed": 1108,
+  "moves": 25,
+  "seed": 2136,
   "spawnWeights": {
     "peanut": 4,
     "egg": 4,
@@ -15,15 +15,15 @@
     "cocoa_crumb": 4
   },
   "starThresholds": [
-    4800,
-    6960,
-    9120
+    2400,
+    3360,
+    4440
   ],
   "goals": [
     {
       "id": "clear_frosting",
       "parameters": {
-        "target": 8
+        "target": 5
       }
     }
   ],
@@ -31,75 +31,53 @@
     {
       "id": "sugar_frosting",
       "parameters": {
-        "layers": 2,
+        "row": 2,
+        "column": 3,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 3,
+        "column": 4,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 4,
+        "column": 5,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 5,
+        "column": 6,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
         "row": 1,
-        "column": 2
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 1,
-        "column": 3
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 1,
-        "column": 4
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 1,
-        "column": 5
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 6,
-        "column": 2
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 6,
-        "column": 3
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 6,
-        "column": 4
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 2,
-        "row": 6,
-        "column": 5
+        "column": 1,
+        "layers": 1
       }
     }
   ],
   "tutorial": [
     {
-      "message": "Double frosting needs two delicious hits."
+      "message": "Build cascades while clearing every frosting layer."
     }
   ],
   "metadata": {
     "difficulty": 8,
-    "name": "Morning Recipe 8"
+    "name": "Sunrise Bakery Recipe 8",
+    "simulationTier": "standard",
+    "challenge": "moves"
   }
 }

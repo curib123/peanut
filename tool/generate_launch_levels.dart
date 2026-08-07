@@ -13,6 +13,7 @@ const _pieces = {
 };
 
 const _worlds = [
+  ('sunrise_bakery', 'Sunrise Bakery'),
   ('peanut_grove', 'Peanut Grove'),
   ('egg_cloud_kitchen', 'Egg Cloud Kitchen'),
   ('sugar_harbor', 'Sugar Harbor'),
@@ -21,15 +22,19 @@ const _worlds = [
 ];
 
 void main() {
+  final levelsRoot = Directory('assets/levels');
+  for (final entry in levelsRoot.listSync(recursive: true)) {
+    if (entry is File && entry.path.endsWith('.json')) entry.deleteSync();
+  }
   for (var worldIndex = 0; worldIndex < _worlds.length; worldIndex++) {
     final (worldId, worldName) = _worlds[worldIndex];
     final output = Directory('assets/levels/$worldId')
       ..createSync(recursive: true);
-    for (var offset = 1; offset <= 10; offset++) {
-      final number = 11 + worldIndex * 10 + offset - 1;
+    for (var offset = 1; offset <= 20; offset++) {
+      final number = worldIndex * 20 + offset;
       final level = _buildLevel(
         number,
-        worldIndex + 2,
+        worldIndex + 1,
         offset,
         worldId,
         worldName,
@@ -39,7 +44,7 @@ void main() {
       );
     }
   }
-  stdout.writeln('Generated Levels 11-60 across five worlds.');
+  stdout.writeln('Generated 120 levels across six worlds.');
 }
 
 Map<String, Object?> _buildLevel(
@@ -58,6 +63,18 @@ Map<String, Object?> _buildLevel(
   var tutorial = 'Bake a balanced recipe with careful special-piece play.';
 
   switch (world) {
+    case 1:
+      if (offset >= 5) {
+        blockers.addAll(
+          _blockers(
+            'sugar_frosting',
+            cells.take(3 + offset ~/ 3).toList(),
+            layers: offset >= 15 ? 2 : 1,
+          ),
+        );
+        goals.add(_goal('clear_frosting', 3 + offset ~/ 3));
+        tutorial = 'Build cascades while clearing every frosting layer.';
+      }
     case 2:
       if (offset >= 3) {
         blockers.addAll(
@@ -179,14 +196,18 @@ Map<String, Object?> _buildLevel(
       })
       .toSet();
   final seed = _findPlayableSeed(2000 + number * 17, playable, hardCells);
-  final baseScore = 1800 + number * 110;
+  final baseScore = 1800 + number * 75;
+  final timeLimit = offset >= 11
+      ? (165 - world * 5 - (offset - 11) * 4).clamp(85, 160)
+      : null;
   return {
     'id': '${worldId}_$offset',
     'worldId': worldId,
     'order': number,
     'rows': 8,
     'columns': 8,
-    'moves': 20 + world + offset ~/ 2,
+    'moves': (26 + world - offset ~/ 4).clamp(18, 28),
+    'timeLimitSeconds': ?timeLimit,
     'seed': seed,
     'spawnWeights': _pieces,
     'starThresholds': [
@@ -203,7 +224,8 @@ Map<String, Object?> _buildLevel(
     'metadata': {
       'difficulty': number,
       'name': '$worldName Recipe $offset',
-      'simulationTier': offset >= 8 ? 'milestone' : 'standard',
+      'simulationTier': offset >= 16 ? 'milestone' : 'standard',
+      'challenge': timeLimit == null ? 'moves' : 'time_trial',
     },
   };
 }

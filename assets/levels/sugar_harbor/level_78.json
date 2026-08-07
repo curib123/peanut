@@ -1,0 +1,149 @@
+{
+  "id": "sugar_harbor_18",
+  "worldId": "sugar_harbor",
+  "order": 78,
+  "rows": 8,
+  "columns": 8,
+  "moves": 26,
+  "timeLimitSeconds": 117,
+  "seed": 3326,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    7650,
+    10710,
+    14153
+  ],
+  "goals": [
+    {
+      "id": "collect_pieces",
+      "parameters": {
+        "target": 36,
+        "pieceId": "sugar_crystal"
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 2,
+        "column": 1,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 3,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 4,
+        "column": 3,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 5,
+        "column": 4,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 6,
+        "column": 5,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 1,
+        "column": 6,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 3,
+        "column": 1,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 4,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 5,
+        "column": 3,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 6,
+        "column": 4,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 1,
+        "column": 5,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 2,
+        "column": 6,
+        "layers": 2
+      }
+    },
+    {
+      "id": "chocolate_crumbs",
+      "parameters": {
+        "row": 4,
+        "column": 1,
+        "layers": 2
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Clear Chocolate Crumbs before they spread."
+    }
+  ],
+  "metadata": {
+    "difficulty": 78,
+    "name": "Sugar Harbor Recipe 18",
+    "simulationTier": "milestone",
+    "challenge": "time_trial"
+  }
+}

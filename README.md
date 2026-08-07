@@ -1,6 +1,6 @@
 # Puff & Crunch: Island Match
 
-Puff & Crunch is an original offline tropical-bakery match-3 game built with Flutter and Flame. It includes 60 deterministic levels across six worlds, seven objective types, six blocker families, four special pieces and their combinations, persistent progress, accessibility settings, original generated artwork, and original synthesized sound effects.
+Puff & Crunch is an original offline tropical-bakery match-3 game built with Flutter and Flame. It includes 120 deterministic levels across six 20-level worlds, move-limited and time-trial challenges, seven objective types, six blocker families, five special pieces and their combinations, persistent progress, accessibility settings, original generated artwork, and original synthesized sound effects.
 
 ## Requirements
 

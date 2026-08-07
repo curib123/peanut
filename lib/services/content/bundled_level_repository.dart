@@ -26,8 +26,8 @@ class BundledLevelRepository {
   }
 
   Future<List<LevelDefinition>> loadSunriseBakery() async =>
-      Future.wait([for (var number = 1; number <= 10; number++) load(number)]);
+      Future.wait([for (var number = 1; number <= 20; number++) load(number)]);
 
   Future<List<LevelDefinition>> loadLaunchLevels() async =>
-      Future.wait([for (var number = 1; number <= 60; number++) load(number)]);
+      Future.wait([for (var number = 1; number <= 120; number++) load(number)]);
 }

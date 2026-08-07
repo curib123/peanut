@@ -1,11 +1,11 @@
 {
-  "id": "sunrise_4",
+  "id": "sunrise_bakery_4",
   "worldId": "sunrise_bakery",
   "order": 4,
   "rows": 8,
   "columns": 8,
-  "moves": 22,
-  "seed": 1104,
+  "moves": 26,
+  "seed": 2068,
   "spawnWeights": {
     "peanut": 4,
     "egg": 4,
@@ -15,75 +15,28 @@
     "cocoa_crumb": 4
   },
   "starThresholds": [
-    2600,
-    3770,
-    4940
+    2100,
+    2940,
+    3885
   ],
   "goals": [
     {
-      "id": "clear_frosting",
+      "id": "target_score",
       "parameters": {
-        "target": 6
+        "target": 2160
       }
     }
   ],
-  "blockers": [
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 1,
-        "row": 2,
-        "column": 2
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 1,
-        "row": 2,
-        "column": 3
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 1,
-        "row": 2,
-        "column": 4
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 1,
-        "row": 5,
-        "column": 3
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 1,
-        "row": 5,
-        "column": 4
-      }
-    },
-    {
-      "id": "sugar_frosting",
-      "parameters": {
-        "layers": 1,
-        "row": 5,
-        "column": 5
-      }
-    }
-  ],
+  "blockers": [],
   "tutorial": [
     {
-      "message": "Match on Sugar Frosting to clear it."
+      "message": "Bake a balanced recipe with careful special-piece play."
     }
   ],
   "metadata": {
     "difficulty": 4,
-    "name": "Morning Recipe 4"
+    "name": "Sunrise Bakery Recipe 4",
+    "simulationTier": "standard",
+    "challenge": "moves"
   }
 }

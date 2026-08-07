@@ -1,0 +1,52 @@
+{
+  "id": "egg_cloud_kitchen_3",
+  "worldId": "egg_cloud_kitchen",
+  "order": 43,
+  "rows": 8,
+  "columns": 8,
+  "moves": 28,
+  "seed": 2731,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    5025,
+    7035,
+    9296
+  ],
+  "goals": [
+    {
+      "id": "drop_recipe_baskets",
+      "parameters": {
+        "target": 2,
+        "cells": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            5
+          ]
+        ]
+      }
+    }
+  ],
+  "blockers": [],
+  "tutorial": [
+    {
+      "message": "Clear paths below the recipe baskets so they can drop."
+    }
+  ],
+  "metadata": {
+    "difficulty": 43,
+    "name": "Egg Cloud Kitchen Recipe 3",
+    "simulationTier": "standard",
+    "challenge": "moves"
+  }
+}

@@ -5,12 +5,12 @@ import 'package:puff_and_crunch/services/content/bundled_level_repository.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('all sixty launch levels load in six ordered worlds', () async {
+  test('all 120 launch levels load in six ordered worlds', () async {
     final levels = await const BundledLevelRepository().loadLaunchLevels();
-    expect(levels, hasLength(60));
+    expect(levels, hasLength(120));
     expect(
       levels.map((level) => level.order),
-      orderedEquals(List.generate(60, (index) => index + 1)),
+      orderedEquals(List.generate(120, (index) => index + 1)),
     );
     expect(levels.map((level) => level.worldId).toSet(), {
       'sunrise_bakery',
@@ -24,9 +24,9 @@ void main() {
     expect(levels.every((level) => level.goals.isNotEmpty), isTrue);
   });
 
-  test('Levels 11-60 have valid mechanics and playable openings', () async {
+  test('all levels have valid mechanics and playable openings', () async {
     final levels = await const BundledLevelRepository().loadLaunchLevels();
-    for (final level in levels.skip(10)) {
+    for (final level in levels) {
       final blockers = BlockerGrid.fromMechanics(level.blockers);
       final board = BoardGenerator(
         seed: level.seed,
@@ -50,6 +50,22 @@ void main() {
           reason: level.id,
         );
       }
+    }
+  });
+
+  test('every world has ten move levels and ten time trials', () async {
+    final levels = await const BundledLevelRepository().loadLaunchLevels();
+    for (final worldId in levels.map((level) => level.worldId).toSet()) {
+      final world = levels.where((level) => level.worldId == worldId).toList();
+      expect(world, hasLength(20), reason: worldId);
+      expect(
+        world.where((level) => level.timeLimitSeconds == null),
+        hasLength(10),
+      );
+      expect(
+        world.where((level) => level.timeLimitSeconds != null),
+        hasLength(10),
+      );
     }
   });
 }

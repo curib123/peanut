@@ -1,11 +1,11 @@
 {
-  "id": "sunrise_5",
+  "id": "sunrise_bakery_5",
   "worldId": "sunrise_bakery",
   "order": 5,
   "rows": 8,
   "columns": 8,
-  "moves": 22,
-  "seed": 1105,
+  "moves": 26,
+  "seed": 2085,
   "spawnWeights": {
     "peanut": 4,
     "egg": 4,
@@ -15,26 +15,61 @@
     "cocoa_crumb": 4
   },
   "starThresholds": [
-    3200,
-    4640,
-    6080
+    2175,
+    3045,
+    4024
   ],
   "goals": [
     {
-      "id": "target_score",
+      "id": "clear_frosting",
       "parameters": {
-        "target": 3200
+        "target": 4
       }
     }
   ],
-  "blockers": [],
+  "blockers": [
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 1,
+        "column": 6,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 3,
+        "column": 1,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 4,
+        "column": 2,
+        "layers": 1
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 5,
+        "column": 3,
+        "layers": 1
+      }
+    }
+  ],
   "tutorial": [
     {
-      "message": "Match four in a line to bake a Sugar Beam."
+      "message": "Build cascades while clearing every frosting layer."
     }
   ],
   "metadata": {
     "difficulty": 5,
-    "name": "Morning Recipe 5"
+    "name": "Sunrise Bakery Recipe 5",
+    "simulationTier": "standard",
+    "challenge": "moves"
   }
 }

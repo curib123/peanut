@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/flame.dart';
@@ -27,6 +28,7 @@ class IslandMatchGame extends FlameGame {
            moves: level?.moves ?? 20,
            score: 0,
            status: LevelStatus.playing,
+           timeRemainingSeconds: level?.timeLimitSeconds,
          ),
        ),
        board =
@@ -50,6 +52,8 @@ class IslandMatchGame extends FlameGame {
   final TurnInputGate _inputGate = TurnInputGate();
   final ValueNotifier<GameHudState> hud;
   final ValueNotifier<String?> cascadeMessage = ValueNotifier(null);
+  double _timerAccumulator = 0;
+  bool _endReported = false;
 
   bool get isInputLocked => _inputGate.isLocked;
 
@@ -95,11 +99,13 @@ class IslandMatchGame extends FlameGame {
           : board.positions
                 .where((cell) => !level!.playableCells.contains(cell))
                 .toSet(),
+      timeLimitSeconds: level?.timeLimitSeconds,
     );
     hud.value = GameHudState(
       moves: level?.moves ?? 20,
       score: 0,
       status: LevelStatus.playing,
+      timeRemainingSeconds: level?.timeLimitSeconds,
     );
     boardComponent = BoardComponent(board: board, blockers: _session.blockers);
     add(boardComponent);
@@ -126,6 +132,9 @@ class IslandMatchGame extends FlameGame {
         );
         return false;
       }
+      // A valid player gesture always costs exactly one move. Publish it
+      // before cascade animation so automatic matches never look chargeable.
+      _publishHud();
       await audio.play('swap');
       await boardComponent.animateResolution(
         first,
@@ -140,12 +149,9 @@ class IslandMatchGame extends FlameGame {
           if (cascadeMessage.value != null) cascadeMessage.value = null;
         });
       }
-      hud.value = GameHudState(
-        moves: turn.movesRemaining,
-        score: turn.score,
-        status: turn.status,
-      );
+      _publishHud();
       if (turn.status != LevelStatus.playing) {
+        _endReported = true;
         await audio.play(turn.status == LevelStatus.won ? 'win' : 'lose');
         if (turn.status == LevelStatus.won) await haptics.celebrate();
         onLevelEnded?.call(turn.status, turn.score);
@@ -153,6 +159,36 @@ class IslandMatchGame extends FlameGame {
       return true;
     });
     return result ?? false;
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (!isLoaded ||
+        _session.status != LevelStatus.playing ||
+        _session.timeRemainingSeconds == null) {
+      return;
+    }
+    _timerAccumulator += dt;
+    while (_timerAccumulator >= 1 && _session.status == LevelStatus.playing) {
+      _timerAccumulator -= 1;
+      _session.elapseSecond();
+      _publishHud();
+      if (_session.status == LevelStatus.lost && !_endReported) {
+        _endReported = true;
+        unawaited(audio.play('lose'));
+        onLevelEnded?.call(LevelStatus.lost, _session.score);
+      }
+    }
+  }
+
+  void _publishHud() {
+    hud.value = GameHudState(
+      moves: _session.movesRemaining,
+      score: _session.score,
+      status: _session.status,
+      timeRemainingSeconds: _session.timeRemainingSeconds,
+    );
   }
 
   @override
@@ -207,9 +243,11 @@ class GameHudState {
     required this.moves,
     required this.score,
     required this.status,
+    this.timeRemainingSeconds,
   });
 
   final int moves;
   final int score;
   final LevelStatus status;
+  final int? timeRemainingSeconds;
 }

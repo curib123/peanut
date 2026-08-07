@@ -1,11 +1,11 @@
 {
-  "id": "sunrise_3",
+  "id": "sunrise_bakery_3",
   "worldId": "sunrise_bakery",
   "order": 3,
   "rows": 8,
   "columns": 8,
-  "moves": 20,
-  "seed": 1103,
+  "moves": 27,
+  "seed": 2051,
   "spawnWeights": {
     "peanut": 4,
     "egg": 4,
@@ -15,34 +15,28 @@
     "cocoa_crumb": 4
   },
   "starThresholds": [
-    2200,
-    3190,
-    4180
+    2025,
+    2835,
+    3746
   ],
   "goals": [
     {
-      "id": "collect_pieces",
+      "id": "target_score",
       "parameters": {
-        "pieceId": "peanut",
-        "target": 12
-      }
-    },
-    {
-      "id": "collect_pieces",
-      "parameters": {
-        "pieceId": "egg",
-        "target": 12
+        "target": 2070
       }
     }
   ],
   "blockers": [],
   "tutorial": [
     {
-      "message": "Collect both recipe ingredients before moves run out."
+      "message": "Bake a balanced recipe with careful special-piece play."
     }
   ],
   "metadata": {
     "difficulty": 3,
-    "name": "Morning Recipe 3"
+    "name": "Sunrise Bakery Recipe 3",
+    "simulationTier": "standard",
+    "challenge": "moves"
   }
 }

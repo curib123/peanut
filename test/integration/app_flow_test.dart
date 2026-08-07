@@ -34,7 +34,7 @@ void main() {
     }
 
     expect(find.text('Level 1'), findsWidgets);
-    expect(find.text('Moves: 18'), findsOneWidget);
+    expect(find.text('Moves: 27'), findsOneWidget);
     expect(find.text('Score: 0'), findsOneWidget);
   });
 }

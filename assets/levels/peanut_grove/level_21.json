@@ -1,0 +1,42 @@
+{
+  "id": "peanut_grove_1",
+  "worldId": "peanut_grove",
+  "order": 21,
+  "rows": 8,
+  "columns": 8,
+  "moves": 28,
+  "seed": 2357,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    3375,
+    4725,
+    6244
+  ],
+  "goals": [
+    {
+      "id": "target_score",
+      "parameters": {
+        "target": 3690
+      }
+    }
+  ],
+  "blockers": [],
+  "tutorial": [
+    {
+      "message": "Bake a balanced recipe with careful special-piece play."
+    }
+  ],
+  "metadata": {
+    "difficulty": 21,
+    "name": "Peanut Grove Recipe 1",
+    "simulationTier": "standard",
+    "challenge": "moves"
+  }
+}

@@ -35,6 +35,7 @@ class LevelDefinition {
     required this.rows,
     required this.columns,
     required this.moves,
+    this.timeLimitSeconds,
     required this.seed,
     required Map<PieceKind, int> spawnWeights,
     required List<int> starThresholds,
@@ -61,6 +62,9 @@ class LevelDefinition {
       throw ContentException('Level $id must be at least 3x3.');
     }
     if (moves < 1) throw ContentException('Level $id must have moves.');
+    if (timeLimitSeconds != null && timeLimitSeconds! < 10) {
+      throw ContentException('Level $id time limit is too short.');
+    }
     if (spawnWeights.length < 3 ||
         spawnWeights.values.any((weight) => weight < 1)) {
       throw ContentException(
@@ -96,6 +100,9 @@ class LevelDefinition {
       rows: _requiredInt(json, 'rows'),
       columns: _requiredInt(json, 'columns'),
       moves: _requiredInt(json, 'moves'),
+      timeLimitSeconds: json['timeLimitSeconds'] == null
+          ? null
+          : _asInt(json['timeLimitSeconds'], 'timeLimitSeconds'),
       seed: _requiredInt(json, 'seed'),
       spawnWeights: {
         for (final entry in rawWeights.entries)
@@ -125,6 +132,7 @@ class LevelDefinition {
   final int rows;
   final int columns;
   final int moves;
+  final int? timeLimitSeconds;
   final int seed;
   final Map<PieceKind, int> spawnWeights;
   final List<int> starThresholds;

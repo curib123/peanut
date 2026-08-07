@@ -1,0 +1,120 @@
+{
+  "id": "starlight_bake_off_8",
+  "worldId": "starlight_bake_off",
+  "order": 108,
+  "rows": 8,
+  "columns": 8,
+  "moves": 28,
+  "seed": 3836,
+  "spawnWeights": {
+    "peanut": 4,
+    "egg": 4,
+    "sugar_crystal": 4,
+    "caramel_ribbon": 4,
+    "coconut_cream": 4,
+    "cocoa_crumb": 4
+  },
+  "starThresholds": [
+    9900,
+    13860,
+    18315
+  ],
+  "goals": [
+    {
+      "id": "collect_pieces",
+      "parameters": {
+        "target": 28,
+        "pieceId": "cocoa_crumb"
+      }
+    },
+    {
+      "id": "target_score",
+      "parameters": {
+        "target": 6200
+      }
+    },
+    {
+      "id": "clear_frosting",
+      "parameters": {
+        "target": 8
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 1,
+        "column": 1,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 2,
+        "column": 2,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 3,
+        "column": 3,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 4,
+        "column": 4,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 5,
+        "column": 5,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 6,
+        "column": 6,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 2,
+        "column": 1,
+        "layers": 2
+      }
+    },
+    {
+      "id": "sugar_frosting",
+      "parameters": {
+        "row": 3,
+        "column": 2,
+        "layers": 2
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "message": "Combine specials to finish several finale goals together."
+    }
+  ],
+  "metadata": {
+    "difficulty": 108,
+    "name": "Starlight Bake-Off Recipe 8",
+    "simulationTier": "standard",
+    "challenge": "moves"
+  }
+}

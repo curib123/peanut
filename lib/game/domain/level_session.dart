@@ -34,8 +34,10 @@ class LevelSession {
     BlockerGrid? blockers,
     BoardObjectives? boardObjectives,
     Set<Position> inaccessibleCells = const {},
+    int? timeLimitSeconds,
   }) : assert(moveLimit > 0),
        movesRemaining = moveLimit,
+       timeRemainingSeconds = timeLimitSeconds,
        blockers = blockers ?? BlockerGrid(),
        inaccessibleCells = Set.unmodifiable(inaccessibleCells),
        boardObjectives = boardObjectives ?? BoardObjectives() {
@@ -54,8 +56,17 @@ class LevelSession {
   final Set<Position> inaccessibleCells;
   final BoardObjectives boardObjectives;
   int movesRemaining;
+  int? timeRemainingSeconds;
   int score = 0;
   LevelStatus status = LevelStatus.playing;
+
+  bool elapseSecond() {
+    final remaining = timeRemainingSeconds;
+    if (status != LevelStatus.playing || remaining == null) return false;
+    timeRemainingSeconds = remaining - 1;
+    if (timeRemainingSeconds == 0) status = LevelStatus.lost;
+    return true;
+  }
 
   LevelTurnResult play(Position first, Position second) {
     if (status != LevelStatus.playing) {

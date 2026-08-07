@@ -12,8 +12,8 @@ void main(List<String> arguments) {
           .where((file) => file.path.endsWith('.json'))
           .toList()
         ..sort((a, b) => _number(a).compareTo(_number(b)));
-  if (files.length != 60) {
-    throw StateError('Expected 60 levels, found ${files.length}.');
+  if (files.length != 120) {
+    throw StateError('Expected 120 levels, found ${files.length}.');
   }
 
   var simulations = 0;
@@ -70,7 +70,7 @@ void main(List<String> arguments) {
     simulations++;
   }
   stdout.writeln(
-    'Validated 60 levels and $simulations bounded gameplay simulations.',
+    'Validated 120 levels and $simulations bounded gameplay simulations.',
   );
 }
 
