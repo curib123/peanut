@@ -22,6 +22,8 @@ Original magical bakery specials: horizontal and vertical Sugar Beams, Golden Re
 
 Runtime outputs: `assets/images/specials/*.png` (384x384 RGBA).
 
+The Peanut Kisses recipe special was added as a matching 384x384 RGBA sprite: a heart-shaped peanut, egg-cream, caramel, and sugar-crystal confection. It is created only when one cascade contains peanut, egg, and sugar-crystal matches, then clears those three ingredient families when activated.
+
 ### Blocker prompt
 
 Six tactile obstacles: layered Sugar Frosting, Peanut Crate, Sticky Caramel, Chocolate Crumbs, Oven Stone, and Baker's Twine. Cohesive damage-ready material rendering, shape-readable without text, flat green chroma background.

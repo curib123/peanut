@@ -100,6 +100,7 @@ Future<void> _preloadGameSprites() => Flame.images.loadAll(const [
   'specials/golden_recipe_spark.png',
   'specials/oven_burst.png',
   'specials/peanut_spinner.png',
+  'specials/peanut_kisses.png',
   'effects/match_burst_sheet.png',
 ]);
 

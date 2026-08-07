@@ -99,6 +99,37 @@ class SpecialResolver {
         created[creation.$1] = creation.$2;
       }
     }
+    final recipeTypes = matches.map((match) => match.type).toSet();
+    if (recipeTypes.containsAll({
+      PieceKind.peanut,
+      PieceKind.egg,
+      PieceKind.sugarCrystal,
+    })) {
+      final recipePositions = <Position>{
+        for (final match in matches)
+          if (match.type == PieceKind.peanut ||
+              match.type == PieceKind.egg ||
+              match.type == PieceKind.sugarCrystal)
+            ...match.positions,
+      };
+      final available =
+          recipePositions.difference(created.keys.toSet()).toList()..sort(
+            (a, b) => a.row != b.row
+                ? a.row.compareTo(b.row)
+                : a.column.compareTo(b.column),
+          );
+      if (available.isNotEmpty) {
+        final position =
+            preferredPosition != null && available.contains(preferredPosition)
+            ? preferredPosition
+            : available.first;
+        cleared.remove(position);
+        created[position] = const Piece(
+          PieceKind.peanut,
+          specialKind: SpecialKind.peanutKisses,
+        );
+      }
+    }
     final expanded = _expand(board, cleared);
     return SpecialPlan(
       cleared: expanded.cleared.difference(created.keys.toSet()),
@@ -207,6 +238,13 @@ class SpecialResolver {
           _spinnerTarget(board, position),
           1,
         ),
+        SpecialKind.peanutKisses =>
+          board.positions
+              .where(
+                (target) =>
+                    _isPeanutKissesIngredient(board.pieceAt(target)?.kind),
+              )
+              .toSet(),
       };
       for (final target in effect) {
         if (cleared.add(target)) queue.add(target);
@@ -262,4 +300,9 @@ class SpecialResolver {
     SpecialKind a,
     SpecialKind b,
   ) => (first == a && second == b) || (first == b && second == a);
+
+  bool _isPeanutKissesIngredient(PieceKind? kind) =>
+      kind == PieceKind.peanut ||
+      kind == PieceKind.egg ||
+      kind == PieceKind.sugarCrystal;
 }

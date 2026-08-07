@@ -138,6 +138,7 @@ class PieceComponent extends PositionComponent {
     SpecialKind.goldenRecipeSpark => 'specials/golden_recipe_spark.png',
     SpecialKind.ovenBurst => 'specials/oven_burst.png',
     SpecialKind.peanutSpinner => 'specials/peanut_spinner.png',
+    SpecialKind.peanutKisses => 'specials/peanut_kisses.png',
     null => 'pieces/${piece.kind.id}.png',
   };
 }

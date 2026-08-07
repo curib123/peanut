@@ -95,6 +95,7 @@ Current phase: Phase 12 (ready to begin)
 - Built and verified the Android release APK and release web bundle
 - Phase 11 verification completed
 - Added the modern animation stack across every piece and blocker: sprite-sheet bursts, code tweens, particles, alpha-clipped shine/glow shaders, and reduced-motion alternatives
+- Added the Peanut Kisses recipe special: simultaneous peanut, egg, and sugar-crystal matches create it, and activation clears those three ingredient families through the existing bounded cascade pipeline
 
 ## In Progress
 
@@ -109,15 +110,15 @@ Current phase: Phase 12 (ready to begin)
 
 - `dart format --output=none --set-exit-if-changed .`: passed (54 Dart files checked)
 - `flutter analyze`: passed, no issues
-- `flutter test`: passed, 75 tests including launch-to-gameplay, Phase 11 asset coverage, and sprite-sheet grid validation
+- `flutter test`: passed, 77 tests including Peanut Kisses creation/activation, launch-to-gameplay, asset coverage, and sprite-sheet grid validation
 - `dart run tool/validate_levels.dart --simulations=10000`: passed, 60 levels and 10,000 simulations
 - Generated-board validation: 1,000 deterministic 8x8 boards passed
 - `flutter build apk --debug`: passed (`build/app/outputs/flutter-apk/app-debug.apk`, 157,010,839 bytes)
 - Android debug APK SHA-256: `BA2FC7F66D9B49A80EF2CBDFFF258503BF3245CC91778FE7CBF49761735742D0`
 - `flutter build web --release`: passed (`build/web`, `main.dart.js` 2,961,872 bytes)
-- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 61,800,381 bytes)
-- Android release APK SHA-256: `F57A9BE83A6F14764E91F372E94A92D2B1D96C4C33EE9BA1EC71B4EB83D46022`
-- Production asset catalog: 127 files, including 20 PNG and 6 WebP additions
+- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 61,988,445 bytes)
+- Android release APK SHA-256: `2EE7E73A9949B1A6C0DAF3812208044C039F849AAD51CD603BB269177AE566A9`
+- Production asset catalog: 128 files, including 21 PNG and 6 WebP additions
 - Unresolved TODO audit: no project-owned TODOs; only Flutter-generated Linux/Windows runner comments remain
 
 ## Known Issues

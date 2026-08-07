@@ -65,6 +65,36 @@ void main() {
 
       expect(plan.created.values.single.specialKind, SpecialKind.peanutSpinner);
     });
+
+    test('peanut, egg, and sugar matches create one Peanut Kisses', () {
+      final plan = resolver.resolveMatches(plainBoard(), [
+        matchGroup(
+          PieceKind.peanut,
+          MatchOrientation.horizontal,
+          row: 0,
+          length: 3,
+        ),
+        matchGroup(
+          PieceKind.egg,
+          MatchOrientation.horizontal,
+          row: 1,
+          length: 3,
+        ),
+        matchGroup(
+          PieceKind.sugarCrystal,
+          MatchOrientation.horizontal,
+          row: 2,
+          length: 3,
+        ),
+      ], preferredPosition: const Position(1, 1));
+
+      expect(plan.created, hasLength(1));
+      expect(
+        plan.created[const Position(1, 1)]?.specialKind,
+        SpecialKind.peanutKisses,
+      );
+      expect(plan.cleared, hasLength(8));
+    });
   });
 
   group('individual activation', () {
@@ -124,6 +154,31 @@ void main() {
 
       expect(plan.cleared, contains(const Position(5, 5)));
       expect(plan.activated, contains(const Position(5, 5)));
+    });
+
+    test('Peanut Kisses clears peanut, egg, and sugar ingredients', () {
+      final board = plainBoard()
+        ..setPiece(const Position(3, 3), kisses())
+        ..setPiece(const Position(0, 0), const Piece(PieceKind.peanut))
+        ..setPiece(const Position(0, 1), const Piece(PieceKind.egg))
+        ..setPiece(const Position(0, 2), const Piece(PieceKind.sugarCrystal))
+        ..setPiece(const Position(0, 3), const Piece(PieceKind.caramelRibbon));
+      final plan = resolver.activationForSwap(
+        board,
+        const Position(3, 3),
+        const Position(3, 4),
+      )!;
+
+      expect(
+        plan.cleared,
+        containsAll([
+          const Position(0, 0),
+          const Position(0, 1),
+          const Position(0, 2),
+        ]),
+      );
+      expect(plan.cleared, isNot(contains(const Position(0, 3))));
+      expect(plan.activated, contains(const Position(3, 3)));
     });
   });
 
@@ -264,3 +319,6 @@ Piece burst() =>
 
 Piece spinner() =>
     const Piece(PieceKind.peanut, specialKind: SpecialKind.peanutSpinner);
+
+Piece kisses() =>
+    const Piece(PieceKind.peanut, specialKind: SpecialKind.peanutKisses);

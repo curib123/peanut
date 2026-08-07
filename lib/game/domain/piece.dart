@@ -29,7 +29,13 @@ class PieceKind {
   String toString() => 'PieceKind($id)';
 }
 
-enum SpecialKind { sugarBeam, goldenRecipeSpark, ovenBurst, peanutSpinner }
+enum SpecialKind {
+  sugarBeam,
+  goldenRecipeSpark,
+  ovenBurst,
+  peanutSpinner,
+  peanutKisses,
+}
 
 enum BeamOrientation { horizontal, vertical }
 
