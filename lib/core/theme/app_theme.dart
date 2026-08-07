@@ -13,6 +13,7 @@ abstract final class AppTheme {
     );
 
     return ThemeData(
+      fontFamily: 'Roboto',
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.cream,
       useMaterial3: true,

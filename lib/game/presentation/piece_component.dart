@@ -105,6 +105,7 @@ class PieceComponent extends PositionComponent {
               ? const Color(0xFF5A3825)
               : const Color(0xFFFFFFFF),
           fontSize: size.x * 0.28,
+          fontFamily: 'Roboto',
           fontWeight: FontWeight.w900,
         ),
       ),
