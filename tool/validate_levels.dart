@@ -3,7 +3,8 @@ import 'dart:io';
 
 import 'package:puff_and_crunch/game/domain/match3.dart';
 
-void main() {
+void main(List<String> arguments) {
+  final requestedSimulations = _simulationCount(arguments);
   final files =
       Directory('assets/levels')
           .listSync(recursive: true)
@@ -51,17 +52,42 @@ void main() {
     if (_validSwap(board, blocked) == null) {
       throw StateError('${level.id} opens without a move.');
     }
+  }
 
-    if (level.order >= 11) {
-      for (var run = 0; run < 4; run++) {
-        _simulate(level, run, blocked);
-        simulations++;
+  for (var run = 0; run < requestedSimulations; run++) {
+    final file = files[run % files.length];
+    final decoded = jsonDecode(file.readAsStringSync()) as Map<String, Object?>;
+    final level = LevelDefinition.fromJson(decoded);
+    final blockerGrid = BlockerGrid.fromMechanics(level.blockers);
+    final blocked = <Position>{...blockerGrid.blockingPositions};
+    for (var row = 0; row < level.rows; row++) {
+      for (var column = 0; column < level.columns; column++) {
+        final cell = Position(row, column);
+        if (!level.playableCells.contains(cell)) blocked.add(cell);
       }
     }
+    _simulate(level, run ~/ files.length, blocked);
+    simulations++;
   }
   stdout.writeln(
     'Validated 60 levels and $simulations bounded gameplay simulations.',
   );
+}
+
+int _simulationCount(List<String> arguments) {
+  const option = '--simulations=';
+  final value = arguments
+      .where((argument) => argument.startsWith(option))
+      .map((argument) => int.tryParse(argument.substring(option.length)))
+      .firstOrNull;
+  if (value == null &&
+      arguments.any((argument) => argument.startsWith(option))) {
+    throw const FormatException('--simulations must be a positive integer.');
+  }
+  if ((value ?? 200) < 1) {
+    throw const FormatException('--simulations must be a positive integer.');
+  }
+  return value ?? 200;
 }
 
 void _simulate(LevelDefinition level, int run, Set<Position> blocked) {

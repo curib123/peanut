@@ -1,6 +1,6 @@
 # Current Status
 
-Current phase: Phase 10 (ready to begin); Phase 11 visual enhancement planned
+Current phase: Phase 11 (ready to begin)
 
 ## Completed
 
@@ -76,6 +76,14 @@ Current phase: Phase 10 (ready to begin); Phase 11 visual enhancement planned
 - Wired all eight original sound effects into gameplay with failure-safe playback
 - Added settings-aware haptics and reduced-motion alternatives
 - Phase 9 verification completed
+- Replaced the starter README with setup, verification, build, artifact, signing, and asset-regeneration instructions
+- Added integration-style launch-to-gameplay coverage across routing, content loading, and Flame startup
+- Removed project-owned Android template TODOs and confirmed the unique `com.curibgames.puff_and_crunch` application ID
+- Expanded level validation to accept explicit simulation campaigns and passed 10,000 runs across all 60 levels
+- Verified Levels 1, 5, 10, blocker-heavy Level 10, combination-focused Level 60, and the full catalog
+- Audited packaged assets and notices; all game-specific artwork/audio remains original with no commercial game assets
+- Built and verified the Android debug APK and release web bundle
+- Phase 10 verification completed
 
 ## In Progress
 
@@ -83,18 +91,21 @@ Current phase: Phase 10 (ready to begin); Phase 11 visual enhancement planned
 
 ## Remaining
 
-- Phase 10 testing and release
 - Phase 11 Peanut Kisses-inspired visual enhancement
 
 ## Tests
 
-- `dart format --output=none --set-exit-if-changed .`: passed (52 Dart files checked)
+- `dart format --output=none --set-exit-if-changed .`: passed (53 Dart files checked)
 - `flutter analyze`: passed, no issues
-- `flutter test`: passed, 72 tests
-- `dart run tool/validate_levels.dart`: passed, 60 levels and 200 simulations
+- `flutter test`: passed, 73 tests including launch-to-gameplay integration coverage
+- `dart run tool/validate_levels.dart --simulations=10000`: passed, 60 levels and 10,000 simulations
 - Generated-board validation: 1,000 deterministic 8x8 boards passed
-- `flutter build web --debug`: passed (`build/web`)
+- `flutter build apk --debug`: passed (`build/app/outputs/flutter-apk/app-debug.apk`, 157,010,839 bytes)
+- Android debug APK SHA-256: `BA2FC7F66D9B49A80EF2CBDFFF258503BF3245CC91778FE7CBF49761735742D0`
+- `flutter build web --release`: passed (`build/web`, `main.dart.js` 2,955,612 bytes)
+- Unresolved TODO audit: no project-owned TODOs; only Flutter-generated Linux/Windows runner comments remain
 
 ## Known Issues
 
-- Windows Developer Mode is disabled; future desktop plugin builds may require enabling it. Phase 0 analysis and tests are unaffected.
+- Windows Developer Mode is disabled; desktop plugin builds may require enabling it. Android and web release checks are unaffected.
+- Local release APKs use the development signing key; store publication must inject a private production signing configuration.
