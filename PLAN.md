@@ -131,7 +131,34 @@ Integrate the artwork into real components; no sample-only mockups. Preserve all
 
 Capture matching before/after screenshots at common phone and tablet sizes for every primary state. Review the complete app for art consistency, cropping, text overflow, safe areas, contrast, color-blind readability, touch size, animation pacing, reduced motion, loading behavior, and asset fallbacks. Manually inspect Levels 1, 10, 30, and 60 with normal pieces, blockers, goals, and special combinations visible.
 
-Acceptance: no letters or placeholder geometry remain on pieces; all normal pieces, specials, blockers, goals, boosters, characters, effects, backgrounds, and major UI surfaces use the approved original art direction; all six worlds are distinct and cohesive; the board is instantly readable; narrow-phone crowding and empty-space problems are resolved; touch targets and contrast meet requirements; reduced motion remains complete; assets load without flashes or missing images; gameplay results and saves are unchanged; analyzer and all tests pass; Android release and web builds succeed; and the final screenshot set is approved against the Phase 10 baseline.
+### 11.9 - Phase 12 capture-readiness
+
+Build Phase 11 so every important visual and interaction state can be reproduced on demand instead of waiting for random gameplay. Add development-only capture fixtures or deterministic routes for fresh progress, advanced progress, locked/unlocked/completed nodes, every piece and special, blocker layers, goals, booster states, tutorials, low moves, shuffle, pause, victory, failure, star awards, unlocks, loading, offline, and asset-fallback behavior. Keep fixtures outside production behavior and ensure they cannot alter real saves.
+
+Create stable screenshot viewport presets and a short-tour capture workflow for common phone and tablet sizes. Record Phase 11 baseline measurements for startup, asset precache, image decoding, board frame pacing, peak texture memory, package size, and reduced-motion behavior. Maintain an asset inventory containing runtime path, purpose, owning component, master source, generation prompt/reference, dimensions, format, file size, transparency, fallback, and preload priority. These outputs become direct evidence for Phase 12 rather than requiring the audit to reconstruct missing context.
+
+### 11.10 - Phase 13 adventure-readiness
+
+Do not bake world artwork into single inflexible screenshots. Author every world with reusable, separable foreground, midground, background, landmark, transition, path, node, atmosphere, and optional loop layers. Define safe crop zones, overlap margins, anchor points, horizon/perspective guides, scroll extents, parallax depth values, static reduced-motion frames, and color-transition rules. Produce adjacent-world transition studies so Phase 13 can connect the six regions into one continuous vertical journey without regenerating the complete art set.
+
+Refactor visual components around reusable semantic primitives instead of screen-specific coordinates: `WorldSection`, `LevelNode`, `RouteSegment`, `WorldGate`, `Landmark`, `AmbientLayer`, `GoalBadge`, `RewardMarker`, and responsive illustrated panels. Keep level order, lock state, stars, current position, and navigation driven by saved domain data. The Phase 11 level map may remain functionally simple, but its assets and components must already support virtualization, offscreen culling, restored scroll position, appendable future worlds, parallax offsets, and animation pause/resume hooks.
+
+Reserve performance budgets for the later journey: critical gameplay pieces and UI load first; world scenery loads by region; loops are optional enhancements; no full-resolution master is shipped when a smaller runtime export is sufficient. Establish one shared motion policy covering normal, reduced-motion, battery-conscious, offscreen, paused, and unsupported-codec states. Phase 13 must be able to add a cinemagraph or seamless loop without changing progression logic or losing a static fallback.
+
+### 11.11 - Required handoff package
+
+Phase 11 is not complete until it hands Phase 12 and Phase 13:
+
+- Approved art-direction board, color tokens, typography, lighting/material rules, and UI component sheet.
+- Final normal-piece, special, blocker, goal, booster, character, effect, and UI asset inventories.
+- Six world style boards plus connected transition concepts and separated layer specifications.
+- Deterministic capture fixtures, viewport matrix, baseline screenshots, and short-tour recording workflow.
+- Performance, memory, package-size, accessibility, and reduced-motion baselines.
+- Asset provenance, generation prompts/references, licenses/ownership notes, masters, runtime exports, and fallback mapping.
+- A component/API map showing how progression data drives nodes, routes, world gates, landmarks, and ambient layers.
+- Known limitations and deliberately deferred work, explicitly routed into the Phase 12 audit or Phase 13 implementation backlog.
+
+Acceptance: no letters or placeholder geometry remain on pieces; all normal pieces, specials, blockers, goals, boosters, characters, effects, backgrounds, and major UI surfaces use the approved original art direction; all six worlds are distinct and cohesive; the board is instantly readable; narrow-phone crowding and empty-space problems are resolved; touch targets and contrast meet requirements; reduced motion remains complete; assets load without flashes or missing images; gameplay results and saves are unchanged; analyzer and all tests pass; Android release and web builds succeed; the final screenshot set is approved against the Phase 10 baseline; deterministic capture fixtures and measurement baselines are ready for Phase 12; and the layered assets, reusable components, transition studies, fallbacks, provenance, and handoff documents are sufficient for Phase 13 to build the connected vertical adventure without redoing Phase 11.
 
 ## Phase 12 - Capture, analysis, and enhancement audit
 
