@@ -119,6 +119,7 @@ Current phase: Phase 13 (completed)
 - Extended world artwork behind a compact glass gameplay header with modern world, level, back, and pause controls
 - Reversed the adventure path into an upward climb and hid future worlds behind looping secret-cloud gates until the current 20-level world is complete
 - Added home feature highlights and a visible fade-and-fall animation when a dead board automatically rearranges into a playable layout
+- Replaced the level-selection connector lines with an original AI-generated golden bakery road sprite, mirrored between alternating level nodes
 
 ## In Progress
 
@@ -138,9 +139,9 @@ Current phase: Phase 13 (completed)
 - `flutter build apk --debug`: passed (`build/app/outputs/flutter-apk/app-debug.apk`, 157,010,839 bytes)
 - Android debug APK SHA-256: `BA2FC7F66D9B49A80EF2CBDFFF258503BF3245CC91778FE7CBF49761735742D0`
 - `flutter build web --release`: passed (`build/web`, `main.dart.js` 2,961,872 bytes)
-- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 67,295,161 bytes)
-- Android release APK SHA-256: `2E17CA16977C115C1E4604404CFA19743625B256F0D3A734DF53FD3E17EB7A02`
-- Production asset catalog: 207 files, including 26 WAV, 21 PNG, 6 WebP, and 121 JSON files
+- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 68,351,612 bytes)
+- Android release APK SHA-256: `60A1C17BBAFEF757D66AA4BA4CFC26B1452675F3896651B4631E581F6D7E122E`
+- Production asset catalog: 208 files, including 26 WAV, 22 PNG, 6 WebP, and 121 JSON files
 - Unresolved TODO audit: no project-owned TODOs; only Flutter-generated Linux/Windows runner comments remain
 
 ## Known Issues

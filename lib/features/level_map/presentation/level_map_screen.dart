@@ -151,21 +151,18 @@ class _LevelMapScreenState extends ConsumerState<LevelMapScreen>
                             height: 108,
                             child: Stack(
                               children: [
-                                Positioned(
-                                  left: index.isEven ? 56 : 132,
-                                  top: 0,
-                                  bottom: 0,
-                                  child: Container(
-                                    width: 7,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xCCFFE3A0),
-                                      borderRadius: BorderRadius.circular(99),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.black26,
-                                          blurRadius: 5,
-                                        ),
-                                      ],
+                                Positioned.fill(
+                                  left: 20,
+                                  right: 20,
+                                  top: -8,
+                                  bottom: -8,
+                                  child: Transform.flip(
+                                    flipX: index.isOdd,
+                                    child: Image.asset(
+                                      'assets/images/worlds/level_road_segment.png',
+                                      fit: BoxFit.fill,
+                                      filterQuality: FilterQuality.high,
+                                      semanticLabel: 'Golden bakery road',
                                     ),
                                   ),
                                 ),

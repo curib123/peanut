@@ -15,10 +15,10 @@ void main() {
         .where((path) => path.startsWith('assets/'))
         .toList();
 
-    expect(assets, hasLength(207));
+    expect(assets, hasLength(208));
     expect(assets.where((path) => path.endsWith('.svg')), hasLength(33));
     expect(assets.where((path) => path.endsWith('.wav')), hasLength(26));
-    expect(assets.where((path) => path.endsWith('.png')), hasLength(21));
+    expect(assets.where((path) => path.endsWith('.png')), hasLength(22));
     expect(assets.where((path) => path.endsWith('.webp')), hasLength(6));
     expect(assets.where((path) => path.endsWith('.json')), hasLength(121));
 
@@ -53,6 +53,7 @@ void main() {
       ]) {
         expect(assets, contains('assets/images/worlds/$id.webp'));
       }
+      expect(assets, contains('assets/images/worlds/level_road_segment.png'));
       expect(assets, contains('assets/images/effects/match_burst_sheet.png'));
       expect(assets, contains('assets/images/specials/peanut_kisses.png'));
     },
