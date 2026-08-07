@@ -7,6 +7,7 @@ import '../../../game/domain/level_session.dart';
 import '../../../game/domain/content.dart';
 import '../../../game/presentation/island_match_game.dart';
 import '../../../core/widgets/game_primary_button.dart';
+import '../../../core/widgets/glass_panel.dart';
 import '../../../services/content/bundled_level_repository.dart';
 import '../../../services/content/world_presentation_catalog.dart';
 import '../../../services/audio/game_audio_service.dart';
@@ -230,8 +231,8 @@ class _CascadeBanner extends StatelessWidget {
         duration: const Duration(milliseconds: 220),
         builder: (context, value, child) =>
             Transform.scale(scale: value, child: child),
-        child: Card(
-          color: Theme.of(context).colorScheme.tertiaryContainer,
+        child: GlassPanel(
+          tint: Theme.of(context).colorScheme.tertiaryContainer,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
             child: Text(message, style: Theme.of(context).textTheme.titleLarge),
@@ -265,7 +266,7 @@ class _VictoryOverlay extends StatelessWidget {
     return ColoredBox(
       color: const Color(0x99000000),
       child: Center(
-        child: Card(
+        child: GlassPanel(
           child: Padding(
             padding: const EdgeInsets.all(28),
             child: Column(
@@ -323,8 +324,8 @@ class _TutorialBanner extends StatelessWidget {
     right: 20,
     bottom: 18,
     child: IgnorePointer(
-      child: Card(
-        color: Theme.of(context).colorScheme.primaryContainer,
+      child: GlassPanel(
+        tint: Theme.of(context).colorScheme.primaryContainer,
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(
@@ -351,10 +352,9 @@ class _GameHud extends StatelessWidget {
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
     decoration: BoxDecoration(
       gradient: const LinearGradient(
-        colors: [Color(0xFFFFF8E6), Color(0xFFFFE2A6)],
+        colors: [Color(0xD9FFF8E6), Color(0xCFFFE2A6)],
       ),
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: const Color(0xFFFFBE3F), width: 2),
       boxShadow: const [
         BoxShadow(
           color: Color(0x33000000),
@@ -403,7 +403,7 @@ class _StatusOverlay extends StatelessWidget {
   Widget build(BuildContext context) => ColoredBox(
     color: const Color(0x99000000),
     child: Center(
-      child: Card(
+      child: GlassPanel(
         child: Padding(
           padding: const EdgeInsets.all(28),
           child: Column(

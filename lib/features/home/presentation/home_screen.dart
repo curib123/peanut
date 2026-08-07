@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/game_primary_button.dart';
+import '../../../core/widgets/glass_panel.dart';
 import '../../../services/content/world_presentation_catalog.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -45,19 +46,10 @@ class HomeScreen extends StatelessWidget {
                   alignment: const Alignment(0, .28),
                   child: Padding(
                     padding: const EdgeInsets.all(24),
-                    child: Container(
+                    child: GlassPanel(
                       padding: const EdgeInsets.fromLTRB(24, 28, 24, 26),
-                      decoration: BoxDecoration(
-                        color: const Color(0xB33A1C12),
-                        borderRadius: BorderRadius.circular(32),
-                        border: Border.all(
-                          color: const Color(0x99FFE49A),
-                          width: 2,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(color: Colors.black38, blurRadius: 24),
-                        ],
-                      ),
+                      radius: 32,
+                      tint: const Color(0xCC3A1C12),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -144,7 +136,6 @@ class _BakeryMark extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.coconut.withValues(alpha: .94),
           shape: BoxShape.circle,
-          border: Border.all(color: AppColors.gold, width: 5),
           boxShadow: const [
             BoxShadow(
               color: Color(0x42000000),

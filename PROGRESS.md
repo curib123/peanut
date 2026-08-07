@@ -114,6 +114,8 @@ Current phase: Phase 13 (completed)
 - Added scroll-linked parallax, a seamless 14-second cinemagraph drift, floating ambient lights, and per-world landmark icons
 - Kept world presentation catalog-driven and disabled ambient movement when Reduced Motion is enabled
 - Phase 13 verification completed
+- Applied a reusable glassmorphism system across home, settings, pre-level, HUD, tutorials, cascades, result overlays, dialogs, map ribbons, nodes, and primary actions
+- Removed heavy border outlines from cards, buttons, map nodes, recipe pills, gameplay tray cells, and piece selection while preserving clear depth through blur, translucency, gradients, and soft shadows
 
 ## In Progress
 
@@ -133,8 +135,8 @@ Current phase: Phase 13 (completed)
 - `flutter build apk --debug`: passed (`build/app/outputs/flutter-apk/app-debug.apk`, 157,010,839 bytes)
 - Android debug APK SHA-256: `BA2FC7F66D9B49A80EF2CBDFFF258503BF3245CC91778FE7CBF49761735742D0`
 - `flutter build web --release`: passed (`build/web`, `main.dart.js` 2,961,872 bytes)
-- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 67,294,897 bytes)
-- Android release APK SHA-256: `F1267ADB4352A5BBBE7CCC3586E2C66C8708F32C4D15018C0BAD3F39B64CDDE3`
+- `flutter build apk --release`: passed (`build/app/outputs/flutter-apk/app-release.apk`, 67,262,129 bytes)
+- Android release APK SHA-256: `20C27B8FF31C98071ACF286897BD7A55D0DF36E2DC9A460C3CADD4A4B878CF84`
 - Production asset catalog: 207 files, including 26 WAV, 21 PNG, 6 WebP, and 121 JSON files
 - Unresolved TODO audit: no project-owned TODOs; only Flutter-generated Linux/Windows runner comments remain
 

@@ -36,15 +36,14 @@ class GamePrimaryButton extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFFFD35A), Color(0xFFFFA72F)],
+                colors: [Color(0xE8FFD35A), Color(0xE8FFA72F)],
               ),
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: const Color(0xFFFFE9A6), width: 2),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x55000000),
-                  blurRadius: 12,
-                  offset: Offset(0, 6),
+                  color: Color(0x44000000),
+                  blurRadius: 20,
+                  offset: Offset(0, 10),
                 ),
               ],
             ),

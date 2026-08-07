@@ -224,10 +224,9 @@ class _WorldRibbon extends StatelessWidget {
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
     decoration: BoxDecoration(
       gradient: const LinearGradient(
-        colors: [AppColors.coral, AppColors.caramel],
+        colors: [Color(0xE8F06B55), Color(0xE8D9822B)],
       ),
       borderRadius: BorderRadius.circular(22),
-      border: Border.all(color: const Color(0xFFFFE7A6), width: 3),
       boxShadow: const [BoxShadow(color: Colors.black38, blurRadius: 12)],
     ),
     child: Row(
@@ -289,16 +288,12 @@ class _LevelNode extends StatelessWidget {
               gradient: unlocked
                   ? LinearGradient(
                       colors: current
-                          ? const [Color(0xFFFF745C), Color(0xFFFFA83D)]
-                          : const [Color(0xFFFFD65B), Color(0xFFFFA832)],
+                          ? const [Color(0xE8FF745C), Color(0xE8FFA83D)]
+                          : const [Color(0xD9FFD65B), Color(0xD9FFA832)],
                     )
                   : const LinearGradient(
-                      colors: [Color(0xFF9E948B), Color(0xFF756B64)],
+                      colors: [Color(0xC99E948B), Color(0xC9756B64)],
                     ),
-              border: Border.all(
-                color: current ? Colors.white : const Color(0xFFFFEDB2),
-                width: current ? 4 : 3,
-              ),
               boxShadow: const [
                 BoxShadow(
                   color: Color(0x66000000),

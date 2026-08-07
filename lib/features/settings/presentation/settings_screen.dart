@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/widgets/glass_panel.dart';
 import '../../progress/application/progress_controller.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -17,7 +18,7 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           Text('Experience', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 10),
-          Card(
+          GlassPanel(
             margin: EdgeInsets.zero,
             child: Column(
               children: [
@@ -63,7 +64,7 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           Text('Save data', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 10),
-          Card(
+          GlassPanel(
             margin: EdgeInsets.zero,
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(

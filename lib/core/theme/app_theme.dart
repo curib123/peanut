@@ -19,7 +19,7 @@ abstract final class AppTheme {
       useMaterial3: true,
       appBarTheme: const AppBarTheme(
         centerTitle: false,
-        backgroundColor: AppColors.coconut,
+        backgroundColor: Color(0xB8FFF9ED),
         foregroundColor: AppColors.cocoa,
         elevation: 0,
         titleTextStyle: TextStyle(
@@ -30,16 +30,13 @@ abstract final class AppTheme {
         ),
       ),
       cardTheme: CardThemeData(
-        color: AppColors.coconut.withValues(alpha: .96),
-        elevation: 10,
+        color: AppColors.coconut.withValues(alpha: .72),
+        elevation: 0,
         shadowColor: const Color(0x55000000),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-          side: const BorderSide(color: Color(0xFFFFD66B), width: 2),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: AppColors.coconut,
+        backgroundColor: const Color(0xE6FFF9ED),
         elevation: 16,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       ),

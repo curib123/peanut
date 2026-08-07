@@ -41,28 +41,14 @@ class BoardComponent extends PositionComponent
       Rect.fromLTWH(0, 0, size.x, size.y),
       const Radius.circular(24),
     );
-    canvas.drawRRect(tray, Paint()..color = const Color(0xD66B321B));
-    canvas.drawRRect(
-      tray,
-      Paint()
-        ..color = const Color(0xFFFFC85A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 5,
-    );
+    canvas.drawRRect(tray, Paint()..color = const Color(0xA66B321B));
     for (var row = 0; row < _board.rows; row++) {
       for (var column = 0; column < _board.columns; column++) {
         final rect = RRect.fromRectAndRadius(
           Rect.fromLTWH(column * cell + 3, row * cell + 3, cell - 6, cell - 6),
           Radius.circular(cell * .22),
         );
-        canvas.drawRRect(rect, Paint()..color = const Color(0xB8FFF2D0));
-        canvas.drawRRect(
-          rect,
-          Paint()
-            ..color = const Color(0x44FFFFFF)
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.5,
-        );
+        canvas.drawRRect(rect, Paint()..color = const Color(0x99FFF2D0));
       }
     }
   }

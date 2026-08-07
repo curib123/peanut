@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../game/domain/content.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/game_primary_button.dart';
+import '../../../core/widgets/glass_panel.dart';
 import '../../../services/content/bundled_level_repository.dart';
 import '../../../services/content/world_presentation_catalog.dart';
 
@@ -47,7 +48,7 @@ class PreLevelScreen extends StatelessWidget {
                     ),
                   ),
                   Center(
-                    child: Card(
+                    child: GlassPanel(
                       margin: const EdgeInsets.all(22),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(24, 24, 24, 26),
@@ -166,7 +167,7 @@ class _InfoPill extends StatelessWidget {
     decoration: BoxDecoration(
       color: const Color(0xFFFFE5A6),
       borderRadius: BorderRadius.circular(99),
-      border: Border.all(color: const Color(0xFFFFC34E)),
+      boxShadow: const [BoxShadow(color: Color(0x22000000), blurRadius: 10)],
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,

@@ -120,16 +120,6 @@ class PieceComponent extends PositionComponent {
           ..color = _fallbackColors[piece.kind.id] ?? const Color(0xFFE968A8),
       );
     }
-    if (isSelected) {
-      canvas.drawCircle(
-        center,
-        radius + 3,
-        Paint()
-          ..color = const Color(0xFFFFD65A)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 4,
-      );
-    }
   }
 
   String _spritePath() => switch (piece.specialKind) {

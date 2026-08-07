@@ -30,6 +30,10 @@ void main() {
 
     await tester.pumpWidget(const ProviderScope(child: PuffAndCrunchApp()));
     await tester.pumpAndSettle();
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(seconds: 1)),
+    );
+    await tester.pump();
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../docs/screenshots/01-home.png'),
