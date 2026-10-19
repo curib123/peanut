@@ -559,8 +559,12 @@ class _LevelNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
+    container: true,
+    excludeSemantics: true,
     label: unlocked ? 'Level $level, $stars stars' : 'Level $level, locked',
     button: true,
+    enabled: unlocked,
+    onTap: onPressed,
     child: SizedBox(
       width: 94,
       height: 94,

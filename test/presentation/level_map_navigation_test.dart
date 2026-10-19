@@ -1,3 +1,5 @@
+import 'dart:ui' show SemanticsAction, SemanticsFlag;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -101,6 +103,25 @@ void main() {
     expect(find.byKey(const Key('level-1')).hitTestable(), findsOneWidget);
     expect(find.byKey(const Key('level-2')).hitTestable(), findsOneWidget);
   });
+
+  testWidgets(
+    'level semantics stay within the visible node and expose its action',
+    (tester) async {
+      final handle = tester.ensureSemantics();
+      await _showMap(tester, highestLevel: 1);
+      final node = tester.getSemantics(find.byKey(const Key('level-1')));
+      expect(node.rect.size, const Size(94, 94));
+      expect(node.label, 'Level 1, 0 stars');
+      expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+      final locked = tester.getSemantics(find.byKey(const Key('level-2')));
+      expect(
+        locked.getSemanticsData().hasFlag(SemanticsFlag.isEnabled),
+        isFalse,
+      );
+      expect(locked.getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
+      handle.dispose();
+    },
+  );
 }
 
 Finder _background(String world) => find.byWidgetPredicate((widget) {
