@@ -26,7 +26,7 @@ class PieceComponent extends PositionComponent {
     _isSelected = value;
     removeWhere((component) => component is ScaleEffect);
     scale = Vector2.all(1);
-    if (value) {
+    if (value && !reducedMotion) {
       add(
         ScaleEffect.to(
           Vector2.all(1.09),
@@ -66,6 +66,27 @@ class PieceComponent extends PositionComponent {
     super.render(canvas);
     final center = Offset(size.x / 2, size.y / 2);
     final radius = size.x * .39;
+    if (_isSelected || piece.isSpecial) {
+      final bounds = Rect.fromLTWH(
+        size.x * .03,
+        size.y * .03,
+        size.x * .94,
+        size.y * .94,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(bounds, Radius.circular(size.x * .22)),
+        Paint()..color = Color(_isSelected ? 0x66FFE195 : 0x22FFCB65),
+      );
+      if (_isSelected) {
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(bounds, Radius.circular(size.x * .22)),
+          Paint()
+            ..color = const Color(0xFFFFE3A0)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2.5,
+        );
+      }
+    }
     canvas.drawOval(
       Rect.fromCenter(
         center: center + Offset(0, size.x * .32),
@@ -84,20 +105,21 @@ class PieceComponent extends PositionComponent {
       canvas.translate(size.x / 2, size.y / 2 + bob);
       canvas.scale(breathe, breathe);
       canvas.translate(-size.x / 2, -size.y / 2);
-      canvas.saveLayer(bounds, Paint());
+      final sweep = (_elapsed + (piece.kind.id.hashCode % 11) * .37) % 7;
+      final showShine = !reducedMotion && sweep < .85;
+      if (showShine) canvas.saveLayer(bounds, Paint());
       sprite.render(
         canvas,
         position: Vector2.all(size.x * .03),
         size: Vector2.all(size.x * .94),
       );
-      if (!reducedMotion) {
-        final sweep = ((_elapsed * .24) % 1.7) - .35;
+      if (showShine) {
         canvas.drawRect(
           bounds,
           Paint()
             ..shader = LinearGradient(
-              begin: Alignment(-1.5 + sweep * 2, -1),
-              end: Alignment(-.7 + sweep * 2, 1),
+              begin: Alignment(-1.5 + sweep * 3.2, -1),
+              end: Alignment(-.7 + sweep * 3.2, 1),
               colors: const [
                 Color(0x00FFFFFF),
                 Color(0x99FFFFFF),
@@ -108,7 +130,7 @@ class PieceComponent extends PositionComponent {
             ..blendMode = BlendMode.srcATop,
         );
       }
-      canvas.restore();
+      if (showShine) canvas.restore();
       canvas.restore();
     } else {
       canvas.drawRRect(

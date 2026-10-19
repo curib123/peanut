@@ -246,17 +246,18 @@ class IslandMatchGame extends FlameGame {
   }
 
   void _layout(Vector2 canvasSize) {
-    final availableWidth = canvasSize.x - 24;
-    final availableHeight = canvasSize.y - 24;
-    final extent = availableWidth < availableHeight
-        ? availableWidth
-        : availableHeight;
+    final availableWidth = (canvasSize.x - 24).clamp(1.0, double.infinity);
+    final availableHeight = (canvasSize.y - 24).clamp(1.0, double.infinity);
+    final widthPerCell = availableWidth / board.columns;
+    final heightPerCell = availableHeight / board.rows;
+    final cell = widthPerCell < heightPerCell ? widthPerCell : heightPerCell;
+    final boardSize = Vector2(cell * board.columns, cell * board.rows);
     boardComponent
       ..position = Vector2(
-        (canvasSize.x - extent) / 2,
-        (canvasSize.y - extent) / 2,
+        (canvasSize.x - boardSize.x) / 2,
+        (canvasSize.y - boardSize.y) / 2,
       )
-      ..resizeBoard(Vector2.all(extent));
+      ..resizeBoard(boardSize);
   }
 }
 

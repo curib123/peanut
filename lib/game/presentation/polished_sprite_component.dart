@@ -41,16 +41,17 @@ class PolishedSpriteComponent extends SpriteComponent {
         ..color = const Color(0x22FFD56A)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
     );
-    canvas.saveLayer(bounds, Paint());
+    final sweep = (_time + position.x * .019) % 8;
+    final showShine = !reducedMotion && sweep < .8;
+    if (showShine) canvas.saveLayer(bounds, Paint());
     super.render(canvas);
-    if (!reducedMotion) {
-      final sweep = ((_time * .26) % 1.6) - .3;
+    if (showShine) {
       canvas.drawRect(
         bounds,
         Paint()
           ..shader = LinearGradient(
-            begin: Alignment(-1.4 + sweep * 2, -1),
-            end: Alignment(-.8 + sweep * 2, 1),
+            begin: Alignment(-1.4 + sweep * 3.4, -1),
+            end: Alignment(-.8 + sweep * 3.4, 1),
             colors: const [
               Color(0x00FFFFFF),
               Color(0x88FFFFFF),
@@ -61,7 +62,7 @@ class PolishedSpriteComponent extends SpriteComponent {
           ..blendMode = BlendMode.srcATop,
       );
     }
-    canvas.restore();
+    if (showShine) canvas.restore();
     canvas.restore();
   }
 }
