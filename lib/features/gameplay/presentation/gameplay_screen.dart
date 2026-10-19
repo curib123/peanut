@@ -301,6 +301,7 @@ class _LoadedGameplay extends StatelessWidget {
         if (paused)
           _StatusOverlay(
             title: 'Paused',
+            message: 'Your recipe will wait for you.',
             primaryLabel: 'Resume',
             onPrimary: onTogglePause,
             onExit: () => context.go('/map'),
@@ -321,7 +322,8 @@ class _LoadedGameplay extends StatelessWidget {
             title: hud.timeRemainingSeconds == 0
                 ? 'Time Is Up'
                 : 'Out of Moves',
-            message: 'Try a fresh recipe.',
+            message:
+                'A fresh batch, a new strategy. Give this recipe another try.',
             primaryLabel: 'Try Again',
             onPrimary: () => context.go('/level/$level'),
             onExit: () => context.go('/map'),
@@ -609,10 +611,40 @@ class _StatusOverlay extends StatelessWidget {
           child: GlassPanel(
             padding: const EdgeInsets.all(24),
             child: Padding(
-              padding: const EdgeInsets.all(28),
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Container(
+                    width: 76,
+                    height: 76,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFFAA7241), Color(0xFF5C3026)],
+                      ),
+                      border: Border.all(color: const Color(0x99FFD994)),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x44501810),
+                          blurRadius: 20,
+                          offset: Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: ExcludeSemantics(
+                      child: Icon(
+                        title == 'Paused'
+                            ? Icons.coffee_rounded
+                            : Icons.menu_book_rounded,
+                        color: const Color(0xFFFFE4AC),
+                        size: 36,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   Text(
                     title,
                     textAlign: TextAlign.center,
@@ -623,7 +655,14 @@ class _StatusOverlay extends StatelessWidget {
                   ),
                   if (message != null) ...[
                     const SizedBox(height: 8),
-                    Text(message!),
+                    Text(
+                      message!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Color(0xFFE9D4BE),
+                        height: 1.4,
+                      ),
+                    ),
                   ],
                   const SizedBox(height: 20),
                   GamePrimaryButton(
