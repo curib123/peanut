@@ -32,6 +32,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen>
   bool _paused = false;
   late final ProgressController _progress;
   late final int _highestUnlockedAtStart;
+  final GlobalKey _boardKey = GlobalKey(debugLabel: 'live-game-board');
 
   @override
   void initState() {
@@ -118,6 +119,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen>
             return const Center(child: CircularProgressIndicator());
           }
           return _LoadedGameplay(
+            boardKey: _boardKey,
             game: loaded.game,
             level: widget.level,
             worldName: loaded.presentation.name,
@@ -133,6 +135,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen>
 
 class _LoadedGameplay extends StatelessWidget {
   const _LoadedGameplay({
+    required this.boardKey,
     required this.game,
     required this.level,
     required this.worldName,
@@ -142,6 +145,7 @@ class _LoadedGameplay extends StatelessWidget {
   });
 
   final IslandMatchGame game;
+  final GlobalKey boardKey;
   final int level;
   final String worldName;
   final String backgroundAsset;
@@ -235,7 +239,7 @@ class _LoadedGameplay extends StatelessWidget {
                           child: Center(
                             child: AspectRatio(
                               aspectRatio: game.board.columns / game.board.rows,
-                              child: GameWidget(game: game),
+                              child: GameWidget(key: boardKey, game: game),
                             ),
                           ),
                         );
@@ -297,6 +301,7 @@ class _LoadedGameplay extends StatelessWidget {
           _VictoryOverlay(
             title: 'Perfect Batch!',
             stars: game.level?.starsForCompletedScore(hud.score) ?? 1,
+            reducedMotion: game.reducedMotion,
             score: hud.score,
             movesRemaining: hud.moves,
             primaryLabel: 'Level Map',
@@ -351,6 +356,7 @@ class _VictoryOverlay extends StatelessWidget {
   const _VictoryOverlay({
     required this.title,
     required this.stars,
+    required this.reducedMotion,
     required this.score,
     required this.movesRemaining,
     required this.primaryLabel,
@@ -358,6 +364,7 @@ class _VictoryOverlay extends StatelessWidget {
   });
   final String title;
   final int stars;
+  final bool reducedMotion;
   final int score;
   final int movesRemaining;
   final String primaryLabel;
@@ -393,7 +400,9 @@ class _VictoryOverlay extends StatelessWidget {
                         3,
                         (index) => TweenAnimationBuilder<double>(
                           tween: Tween(begin: 0, end: 1),
-                          duration: Duration(milliseconds: 250 + index * 170),
+                          duration: reducedMotion
+                              ? Duration.zero
+                              : Duration(milliseconds: 250 + index * 170),
                           builder: (context, value, child) => Transform.scale(
                             scale: value,
                             child: Icon(
@@ -410,7 +419,9 @@ class _VictoryOverlay extends StatelessWidget {
                     Text('Score: $score'),
                     Text(
                       '+${movesRemaining * 100} unused-move bonus',
-                      style: Theme.of(context).textTheme.bodySmall,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: const Color(0xFFFFDF9D),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     GamePrimaryButton(

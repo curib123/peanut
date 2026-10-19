@@ -87,6 +87,28 @@ void main() {
     expect(find.text('RECIPE GOALS'), findsOneWidget);
   });
 
+  testWidgets('rotating a live game preserves its engine and board', (
+    tester,
+  ) async {
+    await showScreen(
+      tester,
+      const GameplayScreen(level: 13),
+      const Size(390, 844),
+    );
+    final finder = find.byWidgetPredicate((widget) => widget is GameWidget);
+    final game = tester.widget<GameWidget>(finder).game as IslandMatchGame;
+    final moves = game.hud.value.moves;
+    await tester.binding.setSurfaceSize(const Size(844, 390));
+    await tester.pump();
+    expect(tester.widget<GameWidget>(finder).game, same(game));
+    expect(game.isActive, isTrue);
+    expect(game.hud.value.moves, moves);
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    await tester.pump();
+    expect(game.isActive, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('backgrounding a level pauses the game until explicit resume', (
     tester,
   ) async {
