@@ -29,6 +29,10 @@ class IslandMatchGame extends FlameGame {
            score: 0,
            status: LevelStatus.playing,
            timeRemainingSeconds: level?.timeLimitSeconds,
+           goals: _goalSnapshots(
+             level?.goals.map(GoalState.fromMechanic) ??
+                 [GoalState(kind: GoalKind.targetScore, target: 5000)],
+           ),
          ),
        ),
        board =
@@ -54,8 +58,21 @@ class IslandMatchGame extends FlameGame {
   final ValueNotifier<String?> cascadeMessage = ValueNotifier(null);
   double _timerAccumulator = 0;
   bool _endReported = false;
+  bool _ready = false;
+  bool _removed = false;
+  final Completer<void> _removal = Completer<void>();
+  Timer? _cascadeMessageTimer;
 
-  bool get isInputLocked => _inputGate.isLocked;
+  bool get isActive => _ready && !_removed;
+
+  BoardObjectives get boardObjectives => _session.boardObjectives;
+
+  bool get isInputLocked =>
+      !isActive ||
+      !boardComponent.isMounted ||
+      paused ||
+      _session.status != LevelStatus.playing ||
+      _inputGate.isLocked;
 
   @override
   Color backgroundColor() => const Color(0x00000000);
@@ -63,6 +80,7 @@ class IslandMatchGame extends FlameGame {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    if (_removed) return;
     await Flame.images.loadAll(const [
       'pieces/peanut.png',
       'pieces/egg.png',
@@ -78,6 +96,7 @@ class IslandMatchGame extends FlameGame {
       'specials/peanut_kisses.png',
       'effects/match_burst_sheet.png',
     ]);
+    if (_removed) return;
     _turnEngine = TurnEngine(
       resolver: BoardResolver(seed: _seed + 1),
       shuffler: BoardShuffler(seed: _seed + 2),
@@ -106,65 +125,74 @@ class IslandMatchGame extends FlameGame {
       score: 0,
       status: LevelStatus.playing,
       timeRemainingSeconds: level?.timeLimitSeconds,
+      goals: _goalSnapshots(_session.goals.goals),
     );
     boardComponent = BoardComponent(board: board, blockers: _session.blockers);
     add(boardComponent);
     _layout(size);
+    _ready = true;
   }
 
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
-    if (isLoaded && boardComponent.isMounted) _layout(size);
+    if (isActive && boardComponent.isMounted) _layout(size);
   }
 
   Future<bool> attemptSwap(Position first, Position second) async {
-    if (_session.status != LevelStatus.playing) return false;
+    if (isInputLocked) return false;
     final result = await _inputGate.run(() async {
-      final turn = _session.play(first, second);
-      if (!turn.resolution.isValid) {
-        await audio.play('invalid');
-        await haptics.tap();
-        await boardComponent.animateInvalidSwap(
-          first,
-          second,
-          animationDuration * 0.75,
+      try {
+        final turn = _session.play(first, second);
+        if (!turn.resolution.isValid) {
+          unawaited(audio.play('invalid'));
+          unawaited(haptics.tap());
+          await _animateWhileActive(
+            boardComponent.animateInvalidSwap(
+              first,
+              second,
+              animationDuration * 0.75,
+            ),
+          );
+          return false;
+        }
+        // Charge the gesture immediately, but reveal a terminal result only
+        // after the board has settled and its completion has been reported.
+        _publishHud();
+        unawaited(audio.play('swap'));
+        await _animateWhileActive(
+          boardComponent.animateResolution(
+            first,
+            second,
+            turn.resolution,
+            animationDuration,
+          ),
         );
-        return false;
+        if (!isActive) return true;
+        if (turn.resolution.cascades.length > 1) {
+          cascadeMessage.value =
+              '${turn.resolution.cascades.length}x Tasty Cascade!';
+          _cascadeMessageTimer?.cancel();
+          _cascadeMessageTimer = Timer(const Duration(milliseconds: 850), () {
+            if (isActive) cascadeMessage.value = null;
+          });
+        }
+        return true;
+      } finally {
+        if (isActive) {
+          _reportLevelEnd();
+          _publishHud();
+        }
       }
-      // A valid player gesture always costs exactly one move. Publish it
-      // before cascade animation so automatic matches never look chargeable.
-      _publishHud();
-      await audio.play('swap');
-      await boardComponent.animateResolution(
-        first,
-        second,
-        turn.resolution,
-        animationDuration,
-      );
-      if (turn.resolution.cascades.length > 1) {
-        cascadeMessage.value =
-            '${turn.resolution.cascades.length}x Tasty Cascade!';
-        Future<void>.delayed(const Duration(milliseconds: 850), () {
-          if (cascadeMessage.value != null) cascadeMessage.value = null;
-        });
-      }
-      _publishHud();
-      if (turn.status != LevelStatus.playing) {
-        _endReported = true;
-        await audio.play(turn.status == LevelStatus.won ? 'win' : 'lose');
-        if (turn.status == LevelStatus.won) await haptics.celebrate();
-        onLevelEnded?.call(turn.status, turn.score);
-      }
-      return true;
     });
     return result ?? false;
   }
 
   @override
   void update(double dt) {
+    if (!isActive) return;
     super.update(dt);
-    if (!isLoaded ||
+    if (paused ||
         _session.status != LevelStatus.playing ||
         _session.timeRemainingSeconds == null) {
       return;
@@ -173,26 +201,45 @@ class IslandMatchGame extends FlameGame {
     while (_timerAccumulator >= 1 && _session.status == LevelStatus.playing) {
       _timerAccumulator -= 1;
       _session.elapseSecond();
+      if (!_inputGate.isLocked) _reportLevelEnd();
       _publishHud();
-      if (_session.status == LevelStatus.lost && !_endReported) {
-        _endReported = true;
-        unawaited(audio.play('lose'));
-        onLevelEnded?.call(LevelStatus.lost, _session.score);
-      }
     }
   }
 
   void _publishHud() {
+    if (!isActive) return;
     hud.value = GameHudState(
       moves: _session.movesRemaining,
       score: _session.score,
-      status: _session.status,
+      status: _endReported ? _session.status : LevelStatus.playing,
       timeRemainingSeconds: _session.timeRemainingSeconds,
+      goals: _goalSnapshots(_session.goals.goals),
     );
   }
 
+  void _reportLevelEnd() {
+    final status = _session.status;
+    if (_endReported || status == LevelStatus.playing) return;
+    _endReported = true;
+    if (isActive) {
+      unawaited(audio.play(status == LevelStatus.won ? 'win' : 'lose'));
+      if (status == LevelStatus.won) unawaited(haptics.celebrate());
+    }
+    onLevelEnded?.call(status, _session.score);
+  }
+
+  Future<void> _animateWhileActive(Future<void> animation) =>
+      Future.any([animation, _removal.future]);
+
   @override
   void onRemove() {
+    if (_removed) return;
+    _removed = true;
+    _removal.complete();
+    _cascadeMessageTimer?.cancel();
+    // The domain turn is already authoritative even if navigation interrupts
+    // its visuals. Preserve an earned result without notifying a disposed HUD.
+    if (_ready) _reportLevelEnd();
     hud.dispose();
     cascadeMessage.dispose();
     super.onRemove();
@@ -244,10 +291,41 @@ class GameHudState {
     required this.score,
     required this.status,
     this.timeRemainingSeconds,
+    this.goals = const [],
   });
 
   final int moves;
   final int score;
   final LevelStatus status;
   final int? timeRemainingSeconds;
+  final List<GameGoalProgress> goals;
 }
+
+class GameGoalProgress {
+  const GameGoalProgress({
+    required this.kind,
+    required this.target,
+    required this.progress,
+    this.pieceKind,
+  });
+
+  final GoalKind kind;
+  final int target;
+  final int progress;
+  final PieceKind? pieceKind;
+
+  bool get isComplete => progress >= target;
+
+  int get remaining => (target - progress).clamp(0, target);
+}
+
+List<GameGoalProgress> _goalSnapshots(Iterable<GoalState> goals) =>
+    List.unmodifiable([
+      for (final goal in goals)
+        GameGoalProgress(
+          kind: goal.kind,
+          target: goal.target,
+          progress: goal.progress,
+          pieceKind: goal.pieceKind,
+        ),
+    ]);
