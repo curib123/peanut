@@ -97,6 +97,11 @@ class BoardComponent extends PositionComponent
     }
     canvas.drawPicture(_surface!);
     for (final position in game.boardObjectives.cream) {
+      if (!_board.contains(position) ||
+          (game.level != null &&
+              !game.level!.playableCells.contains(position))) {
+        continue;
+      }
       canvas.drawRRect(
         _cellRect(position),
         Paint()..color = const Color(0x6687DFD8),
