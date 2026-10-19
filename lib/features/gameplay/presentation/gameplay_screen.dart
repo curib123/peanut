@@ -15,6 +15,7 @@ import '../../../services/content/bundled_level_repository.dart';
 import '../../../services/content/world_presentation_catalog.dart';
 import '../../../services/audio/game_audio_service.dart';
 import '../../progress/application/progress_controller.dart';
+import 'victory_celebration.dart';
 
 class GameplayScreen extends ConsumerStatefulWidget {
   const GameplayScreen({super.key, required this.level});
@@ -52,9 +53,8 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen>
     _gameFuture = const BundledLevelRepository().load(widget.level).then((
       level,
     ) async {
-      final presentation = (await WorldPresentationCatalog.load()).world(
-        level.worldId,
-      );
+      final catalog = await WorldPresentationCatalog.load();
+      final presentation = catalog.world(level.worldId);
       final game = _game = IslandMatchGame(
         level: level,
         animationDuration: reducedMotion ? 0.04 : 0.18,
@@ -63,7 +63,11 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen>
         haptics: GameHapticsService(enabled: settings.hapticsEnabled),
         onLevelEnded: _onLevelEnded,
       );
-      return _GameplayLoad(game: game, presentation: presentation);
+      return _GameplayLoad(
+        game: game,
+        presentation: presentation,
+        lastLevel: catalog.lastLevel,
+      );
     });
   }
 
@@ -122,6 +126,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen>
             boardKey: _boardKey,
             game: loaded.game,
             level: widget.level,
+            lastLevel: loaded.lastLevel,
             worldName: loaded.presentation.name,
             backgroundAsset: loaded.presentation.backgroundAsset,
             paused: _paused,
@@ -138,6 +143,7 @@ class _LoadedGameplay extends StatelessWidget {
     required this.boardKey,
     required this.game,
     required this.level,
+    required this.lastLevel,
     required this.worldName,
     required this.backgroundAsset,
     required this.paused,
@@ -147,6 +153,7 @@ class _LoadedGameplay extends StatelessWidget {
   final IslandMatchGame game;
   final GlobalKey boardKey;
   final int level;
+  final int lastLevel;
   final String worldName;
   final String backgroundAsset;
   final bool paused;
@@ -298,14 +305,15 @@ class _LoadedGameplay extends StatelessWidget {
             onExit: () => context.go('/map'),
           ),
         if (hud.status == LevelStatus.won)
-          _VictoryOverlay(
-            title: 'Perfect Batch!',
+          VictoryCelebration(
             stars: game.level?.starsForCompletedScore(hud.score) ?? 1,
             reducedMotion: game.reducedMotion,
             score: hud.score,
             movesRemaining: hud.moves,
-            primaryLabel: 'Level Map',
-            onPrimary: () => context.go('/map'),
+            onMap: () => context.go('/map'),
+            onNext: level < lastLevel
+                ? () => context.go('/level/${level + 1}')
+                : null,
           ),
         if (hud.status == LevelStatus.lost)
           _StatusOverlay(
@@ -323,10 +331,15 @@ class _LoadedGameplay extends StatelessWidget {
 }
 
 class _GameplayLoad {
-  const _GameplayLoad({required this.game, required this.presentation});
+  const _GameplayLoad({
+    required this.game,
+    required this.presentation,
+    required this.lastLevel,
+  });
 
   final IslandMatchGame game;
   final WorldPresentation presentation;
+  final int lastLevel;
 }
 
 class _CascadeBanner extends StatelessWidget {
@@ -350,94 +363,6 @@ class _CascadeBanner extends StatelessWidget {
       ),
     ),
   );
-}
-
-class _VictoryOverlay extends StatelessWidget {
-  const _VictoryOverlay({
-    required this.title,
-    required this.stars,
-    required this.reducedMotion,
-    required this.score,
-    required this.movesRemaining,
-    required this.primaryLabel,
-    required this.onPrimary,
-  });
-  final String title;
-  final int stars;
-  final bool reducedMotion;
-  final int score;
-  final int movesRemaining;
-  final String primaryLabel;
-  final VoidCallback onPrimary;
-  @override
-  Widget build(BuildContext context) {
-    return ColoredBox(
-      color: const Color(0x99000000),
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: GlassPanel(
-              child: Padding(
-                padding: const EdgeInsets.all(28),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(
-                            color: const Color(0xFFFFDF9D),
-                            fontWeight: FontWeight.w900,
-                          ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(
-                        3,
-                        (index) => TweenAnimationBuilder<double>(
-                          tween: Tween(begin: 0, end: 1),
-                          duration: reducedMotion
-                              ? Duration.zero
-                              : Duration(milliseconds: 250 + index * 170),
-                          builder: (context, value, child) => Transform.scale(
-                            scale: value,
-                            child: Icon(
-                              index < stars
-                                  ? Icons.star_rounded
-                                  : Icons.star_outline_rounded,
-                              color: const Color(0xFFFFC43D),
-                              size: 44,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text('Score: $score'),
-                    Text(
-                      '+${movesRemaining * 100} unused-move bonus',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFFFFDF9D),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    GamePrimaryButton(
-                      label: primaryLabel,
-                      onPressed: onPrimary,
-                      compact: true,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _TutorialBanner extends StatelessWidget {
