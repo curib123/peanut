@@ -15,10 +15,10 @@ void main() {
         .where((path) => path.startsWith('assets/'))
         .toList();
 
-    expect(assets, hasLength(212));
+    expect(assets, hasLength(213));
     expect(assets.where((path) => path.endsWith('.svg')), hasLength(33));
     expect(assets.where((path) => path.endsWith('.wav')), hasLength(26));
-    expect(assets.where((path) => path.endsWith('.png')), hasLength(26));
+    expect(assets.where((path) => path.endsWith('.png')), hasLength(27));
     expect(assets.where((path) => path.endsWith('.webp')), hasLength(6));
     expect(assets.where((path) => path.endsWith('.json')), hasLength(121));
 
@@ -77,6 +77,21 @@ void main() {
     expect(frame.image.height, 1024);
     expect(frame.image.width ~/ 4, 384);
     expect(frame.image.height ~/ 2, 512);
+    codec.dispose();
+  });
+
+  test('victory trophy is packaged with real transparent padding', () async {
+    final bytes = await rootBundle.load('assets/images/ui/victory_trophy.png');
+    final codec = await ui.instantiateImageCodec(bytes.buffer.asUint8List());
+    final frame = await codec.getNextFrame();
+    final image = frame.image;
+    expect(image.width, greaterThanOrEqualTo(1024));
+    expect(image.height, greaterThanOrEqualTo(1024));
+    final pixels = (await image.toByteData())!;
+    expect(pixels.getUint8(3), 0, reason: 'The corner must be transparent.');
+    final center = ((image.height ~/ 2) * image.width + image.width ~/ 2) * 4;
+    expect(pixels.getUint8(center + 3), greaterThan(200));
+    image.dispose();
     codec.dispose();
   });
 
