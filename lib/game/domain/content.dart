@@ -136,6 +136,12 @@ class LevelDefinition {
   final int seed;
   final Map<PieceKind, int> spawnWeights;
   final List<int> starThresholds;
+
+  int starsForCompletedScore(int score) => score >= starThresholds[2]
+      ? 3
+      : score >= starThresholds[1]
+      ? 2
+      : 1;
   final List<MechanicDefinition> goals;
   final List<MechanicDefinition> blockers;
   final Set<Position> playableCells;
