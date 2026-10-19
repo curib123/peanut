@@ -527,6 +527,7 @@ class _BoardMarkers extends PositionComponent {
         text: ui.TextSpan(
           text: '${entry.value.layers}',
           style: ui.TextStyle(
+            fontFamily: 'Roboto',
             color: const Color(0xFFFFE3A0),
             fontSize: extent * .2,
             fontWeight: ui.FontWeight.w900,
