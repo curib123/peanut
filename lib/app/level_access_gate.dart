@@ -15,19 +15,22 @@ class LevelAccessGate extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final progress = ref.watch(progressControllerProvider);
-    if (!progress.isLoaded)
+    if (!progress.isLoaded) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     return FutureBuilder<WorldPresentationCatalog>(
       future: WorldPresentationCatalog.load(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData && !snapshot.hasError)
+        if (!snapshot.hasData && !snapshot.hasError) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
+        }
         final unavailable =
             snapshot.hasError || level < 1 || level > snapshot.data!.lastLevel;
-        if (!unavailable && level <= progress.data.highestUnlockedLevel)
+        if (!unavailable && level <= progress.data.highestUnlockedLevel) {
           return child;
+        }
         return Scaffold(
           body: SafeArea(
             child: Center(
