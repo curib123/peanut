@@ -11,14 +11,26 @@ class GameAudioService {
 
   final SoundPlayer player;
   bool soundEnabled;
+  final Set<String> _pendingCues = {};
+
+  // Bound device/decode requests during cascades and browser audio startup.
+  // These are startup slots: the player owns sounds after playback begins.
+  static const _maxPendingSounds = 6;
+  static const _startupTimeout = Duration(seconds: 2);
 
   Future<bool> play(String name) async {
-    if (!soundEnabled) return false;
+    if (!soundEnabled ||
+        _pendingCues.length >= _maxPendingSounds ||
+        !_pendingCues.add(name)) {
+      return false;
+    }
     try {
-      await player('sfx/$name.wav');
+      await player('sfx/$name.wav').timeout(_startupTimeout);
       return true;
     } catch (_) {
       return false;
+    } finally {
+      _pendingCues.remove(name);
     }
   }
 }
