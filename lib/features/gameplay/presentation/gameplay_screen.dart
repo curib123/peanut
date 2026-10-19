@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../game/domain/level_session.dart';
 import '../../../game/domain/content.dart';
+import '../../../game/domain/objectives.dart';
 import '../../../game/presentation/island_match_game.dart';
 import '../../../core/widgets/game_primary_button.dart';
 import '../../../core/widgets/glass_panel.dart';
@@ -22,14 +25,23 @@ class GameplayScreen extends ConsumerStatefulWidget {
   ConsumerState<GameplayScreen> createState() => _GameplayScreenState();
 }
 
-class _GameplayScreenState extends ConsumerState<GameplayScreen> {
+class _GameplayScreenState extends ConsumerState<GameplayScreen>
+    with WidgetsBindingObserver {
   late final Future<_GameplayLoad> _gameFuture;
   IslandMatchGame? _game;
   bool _paused = false;
+  late final ProgressController _progress;
+  late final int _highestUnlockedAtStart;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _progress = ref.read(progressControllerProvider.notifier);
+    _highestUnlockedAtStart = ref
+        .read(progressControllerProvider)
+        .data
+        .highestUnlockedLevel;
     final reducedMotion = ref
         .read(progressControllerProvider)
         .data
@@ -55,11 +67,26 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
   }
 
   void _onLevelEnded(LevelStatus status, int score) {
-    if (status != LevelStatus.won) return;
-    final stars = score >= 10000 ? 3 : (score >= 7000 ? 2 : 1);
-    ref
-        .read(progressControllerProvider.notifier)
-        .completeLevel(level: widget.level, score: score, stars: stars);
+    if (status != LevelStatus.won || widget.level > _highestUnlockedAtStart) {
+      return;
+    }
+    final stars = _game?.level?.starsForCompletedScore(score) ?? 1;
+    unawaited(
+      _progress.completeLevel(level: widget.level, score: score, stars: stars),
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed && !_paused && mounted) {
+      _togglePause();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   void _togglePause() {
@@ -138,75 +165,121 @@ class _LoadedGameplay extends StatelessWidget {
             ),
           ),
         ),
-        Column(
-          children: [
-            const SizedBox(height: 94),
-            _GameHud(hud: hud),
-            Expanded(
-              child: Stack(
-                fit: StackFit.expand,
+        SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1100),
+              child: Column(
                 children: [
-                  Semantics(
-                    label: 'Playable eight by eight match board',
-                    child: GameWidget(game: game),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-              child: GlassPanel(
-                radius: 24,
-                tint: const Color(0xB83A1C12),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                child: Row(
-                  children: [
-                    IconButton(
-                      tooltip: 'Back',
-                      color: Colors.white,
-                      onPressed: () => context.pop(),
-                      icon: const Icon(Icons.arrow_back_rounded),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+                    child: GlassPanel(
+                      radius: 22,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 4,
+                      ),
+                      child: Row(
                         children: [
-                          Text(
-                            worldName,
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(color: Colors.white),
+                          IconButton(
+                            tooltip: 'Back',
+                            color: Colors.white,
+                            onPressed: () => context.canPop()
+                                ? context.pop()
+                                : context.go('/map'),
+                            icon: const Icon(Icons.arrow_back_rounded),
                           ),
-                          Text(
-                            'Level $level',
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontWeight: FontWeight.w700,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  worldName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Color(0xFFFFDF9D),
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 17,
+                                  ),
+                                ),
+                                Text(
+                                  'Level $level',
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
+                          IconButton(
+                            tooltip: 'Pause',
+                            color: Colors.white,
+                            onPressed: hud.status == LevelStatus.playing
+                                ? onTogglePause
+                                : null,
+                            icon: const Icon(Icons.pause_rounded),
                           ),
                         ],
                       ),
                     ),
-                    IconButton(
-                      tooltip: 'Pause',
-                      color: Colors.white,
-                      onPressed: onTogglePause,
-                      icon: const Icon(Icons.pause_rounded),
+                  ),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final board = Semantics(
+                          label:
+                              'Playable ${game.board.rows} by ${game.board.columns} match board',
+                          child: Center(
+                            child: AspectRatio(
+                              aspectRatio: game.board.columns / game.board.rows,
+                              child: GameWidget(game: game),
+                            ),
+                          ),
+                        );
+                        final tutorial =
+                            game.level?.tutorial.isNotEmpty == true &&
+                                hud.score == 0
+                            ? _TutorialBanner(step: game.level!.tutorial.first)
+                            : const SizedBox.shrink();
+                        if (constraints.maxWidth >
+                            constraints.maxHeight * 1.4) {
+                          return Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      _GameHud(hud: hud),
+                                      _RecipeGoals(goals: hud.goals),
+                                      tutorial,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Expanded(flex: 3, child: board),
+                            ],
+                          );
+                        }
+                        return Column(
+                          children: [
+                            _GameHud(hud: hud),
+                            _RecipeGoals(goals: hud.goals),
+                            Expanded(child: board),
+                            tutorial,
+                          ],
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
-        if (game.level?.tutorial.isNotEmpty == true && hud.score == 0)
-          _TutorialBanner(step: game.level!.tutorial.first),
         ValueListenableBuilder<String?>(
           valueListenable: game.cascadeMessage,
           builder: (context, message, child) => message == null
@@ -223,6 +296,7 @@ class _LoadedGameplay extends StatelessWidget {
         if (hud.status == LevelStatus.won)
           _VictoryOverlay(
             title: 'Perfect Batch!',
+            stars: game.level?.starsForCompletedScore(hud.score) ?? 1,
             score: hud.score,
             movesRemaining: hud.moves,
             primaryLabel: 'Level Map',
@@ -276,66 +350,77 @@ class _CascadeBanner extends StatelessWidget {
 class _VictoryOverlay extends StatelessWidget {
   const _VictoryOverlay({
     required this.title,
+    required this.stars,
     required this.score,
     required this.movesRemaining,
     required this.primaryLabel,
     required this.onPrimary,
   });
   final String title;
+  final int stars;
   final int score;
   final int movesRemaining;
   final String primaryLabel;
   final VoidCallback onPrimary;
   @override
   Widget build(BuildContext context) {
-    final stars = score >= 10000
-        ? 3
-        : score >= 7000
-        ? 2
-        : 1;
     return ColoredBox(
       color: const Color(0x99000000),
       child: Center(
-        child: GlassPanel(
-          child: Padding(
-            padding: const EdgeInsets.all(28),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(title, style: Theme.of(context).textTheme.headlineMedium),
-                const SizedBox(height: 12),
-                Row(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: GlassPanel(
+              child: Padding(
+                padding: const EdgeInsets.all(28),
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: List.generate(
-                    3,
-                    (index) => TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0, end: 1),
-                      duration: Duration(milliseconds: 250 + index * 170),
-                      builder: (context, value, child) => Transform.scale(
-                        scale: value,
-                        child: Icon(
-                          index < stars
-                              ? Icons.star_rounded
-                              : Icons.star_outline_rounded,
-                          color: const Color(0xFFFFC43D),
-                          size: 44,
+                  children: [
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            color: const Color(0xFFFFDF9D),
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        3,
+                        (index) => TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0, end: 1),
+                          duration: Duration(milliseconds: 250 + index * 170),
+                          builder: (context, value, child) => Transform.scale(
+                            scale: value,
+                            child: Icon(
+                              index < stars
+                                  ? Icons.star_rounded
+                                  : Icons.star_outline_rounded,
+                              color: const Color(0xFFFFC43D),
+                              size: 44,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    Text('Score: $score'),
+                    Text(
+                      '+${movesRemaining * 100} unused-move bonus',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 20),
+                    GamePrimaryButton(
+                      label: primaryLabel,
+                      onPressed: onPrimary,
+                      compact: true,
+                    ),
+                  ],
                 ),
-                Text('Score: $score'),
-                Text(
-                  '+${movesRemaining * 100} unused-move bonus',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 20),
-                GamePrimaryButton(
-                  label: primaryLabel,
-                  onPressed: onPrimary,
-                  compact: true,
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -349,23 +434,22 @@ class _TutorialBanner extends StatelessWidget {
   final TutorialStep step;
 
   @override
-  Widget build(BuildContext context) => Positioned(
-    left: 20,
-    right: 20,
-    bottom: 18,
-    child: IgnorePointer(
-      child: GlassPanel(
-        tint: Theme.of(context).colorScheme.primaryContainer,
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            children: [
-              const Icon(Icons.lightbulb_rounded),
-              const SizedBox(width: 10),
-              Expanded(child: Text(step.message)),
-            ],
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+    child: GlassPanel(
+      radius: 18,
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        children: [
+          const Icon(Icons.lightbulb_rounded, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              step.message,
+              style: const TextStyle(fontSize: 13, color: Color(0xFFFFE9BD)),
+            ),
           ),
-        ),
+        ],
       ),
     ),
   );
@@ -373,36 +457,193 @@ class _TutorialBanner extends StatelessWidget {
 
 class _GameHud extends StatelessWidget {
   const _GameHud({required this.hud});
-
   final GameHudState hud;
 
   @override
   Widget build(BuildContext context) => GlassPanel(
-    margin: const EdgeInsets.fromLTRB(12, 8, 12, 6),
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    radius: 20,
+    margin: const EdgeInsets.fromLTRB(12, 4, 12, 6),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    child: Column(
       children: [
-        Text(
-          hud.timeRemainingSeconds == null
-              ? 'Moves: ${hud.moves}'
-              : 'Moves: ${hud.moves}  •  ${_clock(hud.timeRemainingSeconds!)}',
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(color: Colors.white),
+        Row(
+          children: [
+            Expanded(
+              child: _metric(
+                'Moves: ${hud.moves}',
+                hud.moves <= 5
+                    ? const Color(0xFFFFA19B)
+                    : const Color(0xFFFFD87B),
+                Alignment.centerLeft,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: _metric(
+                'Score: ${hud.score}',
+                Colors.white,
+                Alignment.centerRight,
+              ),
+            ),
+          ],
         ),
-        Text(
-          'Score: ${hud.score}',
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(color: Colors.white),
-        ),
+        if (hud.timeRemainingSeconds != null) ...[
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.timer_outlined,
+                size: 16,
+                color: hud.timeRemainingSeconds! <= 10
+                    ? const Color(0xFFFFA19B)
+                    : const Color(0xFF9EE9EF),
+              ),
+              const SizedBox(width: 5),
+              Flexible(
+                child: Text(
+                  'Time: ${_clock(hud.timeRemainingSeconds!)}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: hud.timeRemainingSeconds! <= 10
+                        ? const Color(0xFFFFA19B)
+                        : const Color(0xFF9EE9EF),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
+    ),
+  );
+
+  Widget _metric(String label, Color color, Alignment alignment) => FittedBox(
+    fit: BoxFit.scaleDown,
+    alignment: alignment,
+    child: Text(
+      label,
+      style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900, color: color),
     ),
   );
 
   String _clock(int seconds) =>
       '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
+}
+
+class _RecipeGoals extends StatelessWidget {
+  const _RecipeGoals({required this.goals});
+  final List<GameGoalProgress> goals;
+
+  @override
+  Widget build(BuildContext context) {
+    if (goals.isEmpty) return const SizedBox.shrink();
+    return GlassPanel(
+      radius: 20,
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 6),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'RECIPE GOALS',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.8,
+              color: Color(0xFFFFD87B),
+            ),
+          ),
+          const SizedBox(height: 7),
+          for (final goal in goals)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: Semantics(
+                label: '${_label(goal)}: ${goal.progress} of ${goal.target}',
+                child: Row(
+                  children: [
+                    Icon(
+                      goal.isComplete
+                          ? Icons.check_circle_rounded
+                          : _icon(goal.kind),
+                      size: 20,
+                      color: goal.isComplete
+                          ? const Color(0xFF9FE5B5)
+                          : const Color(0xFFFFD87B),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _label(goal),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '${goal.progress} / ${goal.target}',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xFFFFDF9D),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              value: goal.progress / goal.target,
+                              minHeight: 4,
+                              backgroundColor: const Color(0x40FFFFFF),
+                              color: goal.isComplete
+                                  ? const Color(0xFF9FE5B5)
+                                  : const Color(0xFFFFCB65),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _label(GameGoalProgress goal) => switch (goal.kind) {
+    GoalKind.targetScore => 'Bake points',
+    GoalKind.collectPieces =>
+      'Collect ${goal.pieceKind?.id.replaceAll('_', ' ') ?? 'ingredients'}',
+    GoalKind.clearFrosting => 'Clear frosting',
+    GoalKind.breakCrates => 'Break peanut crates',
+    GoalKind.dropRecipeBaskets => 'Drop recipe baskets',
+    GoalKind.spreadCream => 'Spread coconut cream',
+    GoalKind.lightOvens => 'Light festival ovens',
+  };
+
+  IconData _icon(GoalKind kind) => switch (kind) {
+    GoalKind.targetScore => Icons.auto_awesome_rounded,
+    GoalKind.collectPieces => Icons.bakery_dining_rounded,
+    GoalKind.clearFrosting => Icons.layers_rounded,
+    GoalKind.breakCrates => Icons.inventory_2_rounded,
+    GoalKind.dropRecipeBaskets => Icons.shopping_basket_rounded,
+    GoalKind.spreadCream => Icons.water_drop_rounded,
+    GoalKind.lightOvens => Icons.local_fire_department_rounded,
+  };
 }
 
 class _StatusOverlay extends StatelessWidget {
@@ -424,26 +665,46 @@ class _StatusOverlay extends StatelessWidget {
   Widget build(BuildContext context) => ColoredBox(
     color: const Color(0x99000000),
     child: Center(
-      child: GlassPanel(
-        child: Padding(
-          padding: const EdgeInsets.all(28),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(title, style: Theme.of(context).textTheme.headlineMedium),
-              if (message != null) ...[
-                const SizedBox(height: 8),
-                Text(message!),
-              ],
-              const SizedBox(height: 20),
-              GamePrimaryButton(
-                label: primaryLabel,
-                onPressed: onPrimary,
-                compact: true,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: GlassPanel(
+            padding: const EdgeInsets.all(24),
+            child: Padding(
+              padding: const EdgeInsets.all(28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: const Color(0xFFFFDF9D),
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  if (message != null) ...[
+                    const SizedBox(height: 8),
+                    Text(message!),
+                  ],
+                  const SizedBox(height: 20),
+                  GamePrimaryButton(
+                    label: primaryLabel,
+                    onPressed: onPrimary,
+                    compact: true,
+                  ),
+                  if (onExit != null)
+                    TextButton(
+                      onPressed: onExit,
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFFFFDF9D),
+                      ),
+                      child: const Text('Level Map'),
+                    ),
+                ],
               ),
-              if (onExit != null)
-                TextButton(onPressed: onExit, child: const Text('Level Map')),
-            ],
+            ),
           ),
         ),
       ),

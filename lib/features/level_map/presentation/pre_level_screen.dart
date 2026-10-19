@@ -47,86 +47,108 @@ class PreLevelScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Center(
-                    child: GlassPanel(
-                      margin: const EdgeInsets.all(22),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 26),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFFFE2A0),
-                                shape: BoxShape.circle,
+                  SafeArea(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 520),
+                          child: GlassPanel(
+                            margin: const EdgeInsets.all(22),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                24,
+                                24,
+                                24,
+                                26,
                               ),
-                              child: const Icon(
-                                Icons.bakery_dining_rounded,
-                                size: 38,
-                                color: AppColors.caramel,
-                              ),
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              definition.metadata['name']?.toString() ??
-                                  'Morning Recipe',
-                              style: Theme.of(context).textTheme.titleLarge,
-                              textAlign: TextAlign.center,
-                            ),
-                            if (world != null) Text(world.name),
-                            const SizedBox(height: 18),
-                            Wrap(
-                              alignment: WrapAlignment.center,
-                              spacing: 10,
-                              runSpacing: 10,
-                              children: [
-                                for (final goal in definition.goals)
-                                  _InfoPill(
-                                    icon: Icons.flag_rounded,
-                                    label: _goalLabel(goal),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(14),
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFFFE2A0),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.bakery_dining_rounded,
+                                      size: 38,
+                                      color: AppColors.caramel,
+                                    ),
                                   ),
-                                _InfoPill(
-                                  icon: Icons.swap_horiz_rounded,
-                                  label: '${definition.moves} moves',
-                                ),
-                                if (definition.timeLimitSeconds != null)
-                                  _InfoPill(
-                                    icon: Icons.timer_rounded,
-                                    label:
-                                        '${definition.timeLimitSeconds}s time trial',
+                                  const SizedBox(height: 14),
+                                  Text(
+                                    definition.metadata['name']?.toString() ??
+                                        'Morning Recipe',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(color: Colors.white),
+                                    textAlign: TextAlign.center,
                                   ),
-                              ],
-                            ),
-                            if (definition.tutorial.isNotEmpty) ...[
-                              const SizedBox(height: 18),
-                              Container(
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFF2CF),
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.lightbulb_rounded),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Text(
-                                        definition.tutorial.first.message,
-                                        textAlign: TextAlign.left,
+                                  if (world != null) Text(world.name),
+                                  const SizedBox(height: 18),
+                                  Wrap(
+                                    alignment: WrapAlignment.center,
+                                    spacing: 10,
+                                    runSpacing: 10,
+                                    children: [
+                                      for (final goal in definition.goals)
+                                        _InfoPill(
+                                          icon: Icons.flag_rounded,
+                                          label: _goalLabel(goal),
+                                        ),
+                                      _InfoPill(
+                                        icon: Icons.swap_horiz_rounded,
+                                        label: '${definition.moves} moves',
+                                      ),
+                                      if (definition.timeLimitSeconds != null)
+                                        _InfoPill(
+                                          icon: Icons.timer_rounded,
+                                          label:
+                                              '${definition.timeLimitSeconds}s time trial',
+                                        ),
+                                    ],
+                                  ),
+                                  if (definition.tutorial.isNotEmpty) ...[
+                                    const SizedBox(height: 18),
+                                    Container(
+                                      padding: const EdgeInsets.all(14),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFF2CF),
+                                        borderRadius: BorderRadius.circular(18),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.lightbulb_rounded,
+                                            color: AppColors.cocoa,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              definition.tutorial.first.message,
+                                              textAlign: TextAlign.left,
+                                              style: const TextStyle(
+                                                color: AppColors.cocoa,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
-                                ),
+                                  const SizedBox(height: 22),
+                                  GamePrimaryButton(
+                                    label: 'Start Level',
+                                    icon: Icons.play_arrow_rounded,
+                                    onPressed: () => context.go('/game/$level'),
+                                  ),
+                                ],
                               ),
-                            ],
-                            const SizedBox(height: 22),
-                            GamePrimaryButton(
-                              label: 'Start Level',
-                              icon: Icons.play_arrow_rounded,
-                              onPressed: () => context.go('/game/$level'),
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -174,7 +196,15 @@ class _InfoPill extends StatelessWidget {
       children: [
         Icon(icon, size: 19, color: AppColors.caramel),
         const SizedBox(width: 7),
-        Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
+        Flexible(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              color: AppColors.cocoa,
+            ),
+          ),
+        ),
       ],
     ),
   );

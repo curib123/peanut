@@ -43,77 +43,87 @@ class HomeScreen extends StatelessWidget {
                 const Positioned(top: 18, right: 18, child: _SettingsButton()),
                 Align(
                   alignment: const Alignment(0, .28),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: GlassPanel(
-                      padding: const EdgeInsets.fromLTRB(24, 28, 24, 26),
-                      radius: 32,
-                      tint: const Color(0xCC3A1C12),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const _BakeryMark(),
-                          const SizedBox(height: 24),
-                          Text(
-                            'Puff & Crunch',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.displaySmall
-                                ?.copyWith(
-                                  color: Colors.white,
-                                  shadows: const [
-                                    Shadow(
-                                      color: Colors.black54,
-                                      blurRadius: 10,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(top: 68, bottom: 12),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 460),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: GlassPanel(
+                            padding: const EdgeInsets.fromLTRB(24, 28, 24, 26),
+                            radius: 32,
+                            tint: const Color(0xCC3A1C12),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const _BakeryMark(),
+                                const SizedBox(height: 24),
+                                Text(
+                                  'Puff & Crunch',
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displaySmall
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                        shadows: const [
+                                          Shadow(
+                                            color: Colors.black54,
+                                            blurRadius: 10,
+                                          ),
+                                        ],
+                                      ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Island Match',
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(
+                                        color: const Color(0xFFFFD76A),
+                                        letterSpacing: 2,
+                                      ),
+                                ),
+                                const SizedBox(height: 18),
+                                const Text(
+                                  'A sunny bakery adventure is warming up!',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 18),
+                                const Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 10,
+                                  runSpacing: 8,
+                                  children: [
+                                    _FeatureChip(
+                                      icon: Icons.route_rounded,
+                                      label: '120 levels',
+                                    ),
+                                    _FeatureChip(
+                                      icon: Icons.public_rounded,
+                                      label: '6 worlds',
+                                    ),
+                                    _FeatureChip(
+                                      icon: Icons.auto_awesome_rounded,
+                                      label: 'Play offline',
                                     ),
                                   ],
                                 ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Island Match',
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  color: const Color(0xFFFFD76A),
-                                  letterSpacing: 2,
+                                const SizedBox(height: 32),
+                                GamePrimaryButton(
+                                  onPressed: () => context.push('/map'),
+                                  icon: Icons.play_arrow_rounded,
+                                  label: 'Play Adventure',
                                 ),
-                          ),
-                          const SizedBox(height: 18),
-                          const Text(
-                            'A sunny bakery adventure is warming up!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 18),
-                          const Wrap(
-                            alignment: WrapAlignment.center,
-                            spacing: 10,
-                            runSpacing: 8,
-                            children: [
-                              _FeatureChip(
-                                icon: Icons.route_rounded,
-                                label: '120 levels',
-                              ),
-                              _FeatureChip(
-                                icon: Icons.public_rounded,
-                                label: '6 worlds',
-                              ),
-                              _FeatureChip(
-                                icon: Icons.auto_awesome_rounded,
-                                label: 'Daily magic',
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 32),
-                          GamePrimaryButton(
-                            onPressed: () => context.push('/map'),
-                            icon: Icons.play_arrow_rounded,
-                            label: 'Play Adventure',
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
