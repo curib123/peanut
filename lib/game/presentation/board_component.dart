@@ -13,6 +13,7 @@ import 'match_burst_component.dart';
 import 'piece_component.dart';
 import 'polished_sprite_component.dart';
 import 'power_effect_component.dart';
+import 'score_popup_component.dart';
 
 class BoardComponent extends PositionComponent
     with TapCallbacks, DragCallbacks, HasGameReference<IslandMatchGame> {
@@ -23,6 +24,7 @@ class BoardComponent extends PositionComponent
   final domain.BlockerGrid blockers;
   final Map<domain.Position, PieceComponent> _pieces = {};
   final List<PolishedSpriteComponent> _blockerSprites = [];
+  final List<ScorePopupComponent> _scorePopups = [];
   bool _animating = false;
   Vector2? _pendingSize;
   int _blockerRequest = 0;
@@ -192,6 +194,7 @@ class BoardComponent extends PositionComponent
         cascadeIndex++
       ) {
         final cascade = resolution.cascades[cascadeIndex];
+        _showCascadeReward(cascade, cascadeIndex);
         final activatedKinds = cascade.activatedSpecials
             .map(
               (position) => cascade.beforeClear.pieceAt(position)?.specialKind,
@@ -320,6 +323,35 @@ class BoardComponent extends PositionComponent
         reducedMotion: game.reducedMotion,
       ),
     );
+  }
+
+  void _showCascadeReward(domain.CascadeFrame cascade, int cascadeIndex) {
+    if (cascade.matched.isEmpty) return;
+    _scorePopups.removeWhere((popup) => popup.isRemoving || popup.isRemoved);
+    // Rapid cascades can overlap briefly, but never accumulate text layers.
+    while (_scorePopups.length >= 3) {
+      _scorePopups.removeAt(0).removeFromParent();
+    }
+    var center = Offset.zero;
+    for (final cell in cascade.matched) {
+      center += _center(cell);
+    }
+    center = center / cascade.matched.length.toDouble();
+    final extent = cellExtent;
+    final horizontalMargin = (extent * 1.3).clamp(0.0, size.x / 2);
+    final topMargin = (extent * 1.25).clamp(0.0, size.y / 2);
+    final popup = ScorePopupComponent.forCascade(
+      cascade: cascade,
+      cascadeIndex: cascadeIndex,
+      origin: Vector2(
+        center.dx.clamp(horizontalMargin, size.x - horizontalMargin),
+        center.dy.clamp(topMargin, size.y - extent * .5),
+      ),
+      cellExtent: extent,
+      reducedMotion: game.reducedMotion,
+    );
+    _scorePopups.add(popup);
+    add(popup);
   }
 
   void resizeBoard(Vector2 newSize) {
