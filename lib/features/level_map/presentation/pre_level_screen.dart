@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../game/domain/content.dart';
@@ -7,14 +8,16 @@ import '../../../core/widgets/game_primary_button.dart';
 import '../../../core/widgets/glass_panel.dart';
 import '../../../services/content/bundled_level_repository.dart';
 import '../../../services/content/world_presentation_catalog.dart';
+import '../../progress/application/progress_controller.dart';
 
-class PreLevelScreen extends StatelessWidget {
+class PreLevelScreen extends ConsumerWidget {
   const PreLevelScreen({super.key, required this.level});
 
   final int level;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final save = ref.watch(progressControllerProvider).data;
     return Scaffold(
       appBar: AppBar(title: Text('Level $level')),
       body: FutureBuilder<LevelDefinition>(
@@ -49,12 +52,13 @@ class PreLevelScreen extends StatelessWidget {
                   ),
                   SafeArea(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      padding: const EdgeInsets.only(top: 20, bottom: 130),
                       child: Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 520),
                           child: GlassPanel(
                             margin: const EdgeInsets.all(22),
+                            padding: EdgeInsets.zero,
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(
                                 24,
@@ -65,17 +69,10 @@ class PreLevelScreen extends StatelessWidget {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(14),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFFFE2A0),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.bakery_dining_rounded,
-                                      size: 38,
-                                      color: AppColors.caramel,
-                                    ),
+                                  Image.asset(
+                                    'assets/images/specials/peanut_kisses.png',
+                                    height: 68,
+                                    excludeFromSemantics: true,
                                   ),
                                   const SizedBox(height: 14),
                                   Text(
@@ -87,18 +84,91 @@ class PreLevelScreen extends StatelessWidget {
                                         ?.copyWith(color: Colors.white),
                                     textAlign: TextAlign.center,
                                   ),
-                                  if (world != null) Text(world.name),
+                                  if (world != null)
+                                    Text(
+                                      world.name,
+                                      style: const TextStyle(
+                                        color: Color(0xFFFFDF9D),
+                                      ),
+                                    ),
+                                  const SizedBox(height: 12),
+                                  Semantics(
+                                    label:
+                                        'Best: ${save.starsFor(level)} of 3 stars',
+                                    child: ExcludeSemantics(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          for (var star = 1; star <= 3; star++)
+                                            Icon(
+                                              star <= save.starsFor(level)
+                                                  ? Icons.star_rounded
+                                                  : Icons.star_outline_rounded,
+                                              color: const Color(0xFFFFD76A),
+                                              size: 28,
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    save.bestScoreFor(level) > 0
+                                        ? 'Best score ${save.bestScoreFor(level)}'
+                                        : 'Your first batch awaits',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                   const SizedBox(height: 18),
+                                  for (final goal in definition.goals)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 10,
+                                      ),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.coconut,
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Image.asset(
+                                              _goalAsset(goal),
+                                              width: 44,
+                                              height: 44,
+                                              excludeFromSemantics: true,
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Text(
+                                                _goalLabel(goal),
+                                                style: const TextStyle(
+                                                  color: AppColors.cocoa,
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   Wrap(
                                     alignment: WrapAlignment.center,
                                     spacing: 10,
                                     runSpacing: 10,
                                     children: [
-                                      for (final goal in definition.goals)
-                                        _InfoPill(
-                                          icon: Icons.flag_rounded,
-                                          label: _goalLabel(goal),
-                                        ),
+                                      _InfoPill(
+                                        icon:
+                                            Icons.local_fire_department_rounded,
+                                        label:
+                                            'Difficulty ${definition.metadata['difficulty'] ?? 1}',
+                                      ),
                                       _InfoPill(
                                         icon: Icons.swap_horiz_rounded,
                                         label: '${definition.moves} moves',
@@ -108,6 +178,48 @@ class PreLevelScreen extends StatelessWidget {
                                           icon: Icons.timer_rounded,
                                           label:
                                               '${definition.timeLimitSeconds}s time trial',
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    'FRESH INGREDIENTS',
+                                    style: TextStyle(
+                                      color: Color(0xFFFFDF9D),
+                                      fontSize: 11,
+                                      letterSpacing: 1.7,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Wrap(
+                                    alignment: WrapAlignment.center,
+                                    spacing: 10,
+                                    runSpacing: 8,
+                                    children: [
+                                      for (final piece
+                                          in definition.spawnWeights.keys)
+                                        SizedBox(
+                                          width: 100,
+                                          child: Column(
+                                            children: [
+                                              Image.asset(
+                                                'assets/images/pieces/${piece.id}.png',
+                                                width: 34,
+                                                height: 34,
+                                                excludeFromSemantics: true,
+                                              ),
+                                              Text(
+                                                _pieceLabel(piece.id),
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                     ],
                                   ),
@@ -139,13 +251,40 @@ class PreLevelScreen extends StatelessWidget {
                                       ),
                                     ),
                                   ],
-                                  const SizedBox(height: 22),
-                                  GamePrimaryButton(
-                                    label: 'Start Level',
-                                    icon: Icons.play_arrow_rounded,
-                                    onPressed: () => context.go('/game/$level'),
-                                  ),
+                                  const SizedBox(height: 8),
                                 ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: DecoratedBox(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0x002B160E), Color(0xF52B160E)],
+                        ),
+                      ),
+                      child: SafeArea(
+                        top: false,
+                        minimum: const EdgeInsets.fromLTRB(22, 20, 22, 12),
+                        child: Center(
+                          heightFactor: 1,
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 420),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: GamePrimaryButton(
+                                label: 'Start Level',
+                                icon: Icons.play_arrow_rounded,
+                                onPressed: () => context.go('/game/$level'),
                               ),
                             ),
                           ),
@@ -175,6 +314,26 @@ class PreLevelScreen extends StatelessWidget {
       _ => 'Complete the bakery objective',
     };
   }
+
+  String _goalAsset(MechanicDefinition goal) => switch (goal.id) {
+    'collect_pieces' =>
+      'assets/images/pieces/${goal.parameters['pieceId']}.png',
+    'clear_frosting' => 'assets/images/blockers/sugar_frosting.png',
+    'break_crates' => 'assets/images/blockers/peanut_crate.png',
+    'light_ovens' => 'assets/images/blockers/oven_stone.png',
+    'spread_cream' => 'assets/images/pieces/coconut_cream.png',
+    _ => 'assets/images/specials/golden_recipe_spark.png',
+  };
+
+  String _pieceLabel(String id) => switch (id) {
+    'peanut' => 'Peanut',
+    'egg' => 'Egg',
+    'sugar_crystal' => 'Sugar crystal',
+    'caramel_ribbon' => 'Caramel ribbon',
+    'coconut_cream' => 'Coconut cream',
+    'cocoa_crumb' => 'Cocoa crumb',
+    _ => id.replaceAll('_', ' '),
+  };
 }
 
 class _InfoPill extends StatelessWidget {
