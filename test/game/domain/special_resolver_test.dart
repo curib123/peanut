@@ -225,6 +225,183 @@ void main() {
       expect(plan.cleared.length, greaterThanOrEqualTo(25));
     });
 
+    test('combined beams recursively trigger specials outside their cross', () {
+      final board =
+          comboBoard(
+              beam(BeamOrientation.horizontal),
+              beam(BeamOrientation.vertical),
+            )
+            ..setPiece(const Position(2, 5), burst())
+            ..setPiece(const Position(1, 6), beam(BeamOrientation.vertical));
+
+      final plan = activatePair(resolver, board);
+
+      expect(
+        plan.cleared,
+        containsAll([
+          const Position(0, 2),
+          const Position(6, 3), // Original combined cross.
+          const Position(1, 5), // The struck oven's area.
+          const Position(6, 6), // The oven then strikes a second beam.
+        ]),
+      );
+      expect(plan.activated, {
+        const Position(2, 2),
+        const Position(2, 3),
+        const Position(2, 5),
+        const Position(1, 6),
+      });
+    });
+
+    test('beam and oven bands chain through an oven into another beam', () {
+      final board = comboBoard(beam(BeamOrientation.horizontal), burst())
+        ..setPiece(const Position(3, 6), burst())
+        ..setPiece(const Position(4, 6), beam(BeamOrientation.horizontal));
+
+      final plan = activatePair(resolver, board);
+
+      expect(
+        plan.cleared,
+        containsAll([
+          const Position(1, 0), const Position(6, 4), // Combined bands.
+          const Position(4, 5), // Chained oven, outside the bands.
+          const Position(4, 0), // Its chained beam's far end.
+        ]),
+      );
+      expect(plan.activated, {
+        const Position(2, 2),
+        const Position(2, 3),
+        const Position(3, 6),
+        const Position(4, 6),
+      });
+    });
+
+    test('double oven area triggers a beam and a second distant oven', () {
+      final board = comboBoard(burst(), burst())
+        ..setPiece(const Position(4, 5), beam(BeamOrientation.vertical))
+        ..setPiece(const Position(6, 5), burst());
+
+      final plan = activatePair(resolver, board);
+
+      expect(
+        plan.cleared,
+        containsAll([
+          const Position(0, 0), const Position(4, 5), // Combined area.
+          const Position(6, 5), // Beam beyond that area.
+          const Position(5, 6), // The second oven's area.
+        ]),
+      );
+      expect(plan.activated, {
+        const Position(2, 2),
+        const Position(2, 3),
+        const Position(4, 5),
+        const Position(6, 5),
+      });
+    });
+
+    test('combined blasts activate every kind of recipe-created power', () {
+      final recipes = <(SpecialKind, List<MatchGroup>, Position)>[
+        (
+          SpecialKind.sugarBeam,
+          [
+            matchGroup(
+              PieceKind.peanut,
+              MatchOrientation.vertical,
+              column: 5,
+              length: 4,
+            ),
+          ],
+          const Position(0, 5),
+        ),
+        (
+          SpecialKind.goldenRecipeSpark,
+          [
+            matchGroup(
+              PieceKind.egg,
+              MatchOrientation.vertical,
+              column: 5,
+              length: 5,
+            ),
+          ],
+          const Position(0, 1),
+        ),
+        (
+          SpecialKind.ovenBurst,
+          [
+            MatchGroup(
+              type: PieceKind.sugarCrystal,
+              positions: {
+                const Position(0, 1),
+                const Position(1, 1),
+                const Position(2, 1),
+                const Position(1, 0),
+                const Position(1, 2),
+              },
+            ),
+          ],
+          const Position(1, 5),
+        ),
+        (
+          SpecialKind.peanutSpinner,
+          [
+            MatchGroup(
+              type: PieceKind.caramelRibbon,
+              positions: {
+                const Position(0, 0),
+                const Position(0, 1),
+                const Position(1, 0),
+                const Position(1, 1),
+              },
+            ),
+          ],
+          const Position(1, 1),
+        ),
+        (
+          SpecialKind.peanutKisses,
+          [
+            matchGroup(
+              PieceKind.peanut,
+              MatchOrientation.horizontal,
+              row: 0,
+              length: 3,
+            ),
+            matchGroup(
+              PieceKind.egg,
+              MatchOrientation.horizontal,
+              row: 1,
+              length: 3,
+            ),
+            matchGroup(
+              PieceKind.sugarCrystal,
+              MatchOrientation.horizontal,
+              row: 2,
+              length: 3,
+            ),
+          ],
+          const Position(0, 1),
+        ),
+      ];
+      for (final (kind, matches, remoteTarget) in recipes) {
+        final creation = resolver.resolveMatches(plainBoard(), matches);
+        final power = creation.created.values.single;
+        expect(power.specialKind, kind);
+        final board = comboBoard(
+          beam(BeamOrientation.horizontal),
+          beam(BeamOrientation.vertical),
+        )..setPiece(const Position(2, 5), power);
+
+        final plan = activatePair(resolver, board);
+
+        expect(plan.activated, {
+          const Position(2, 2),
+          const Position(2, 3),
+          const Position(2, 5),
+        }, reason: kind.name);
+        expect(plan.cleared, contains(remoteTarget), reason: kind.name);
+        expect(plan.created, isEmpty, reason: kind.name);
+      }
+    });
+
     test('Recipe Spark plus regular clears every piece of that type', () {
       final board = comboBoard(spark(), const Piece(PieceKind.egg))
         ..setPiece(const Position(0, 0), const Piece(PieceKind.egg));
@@ -232,6 +409,18 @@ void main() {
         activatePair(resolver, board).cleared,
         contains(const Position(0, 0)),
       );
+    });
+
+    test('a consumed spark does not also clear its own stored ingredient', () {
+      final board = comboBoard(spark(), const Piece(PieceKind.egg))
+        ..setPiece(const Position(0, 0), const Piece(PieceKind.peanut))
+        ..setPiece(const Position(0, 1), const Piece(PieceKind.egg));
+
+      final plan = activatePair(resolver, board);
+
+      expect(plan.cleared, contains(const Position(0, 1)));
+      expect(plan.cleared, isNot(contains(const Position(0, 0))));
+      expect(plan.activated, {const Position(2, 2)});
     });
 
     test('Recipe Spark plus Beam clears target pieces and their lines', () {
@@ -254,6 +443,22 @@ void main() {
     test('Recipe Spark plus Recipe Spark clears the board', () {
       final plan = activatePair(resolver, comboBoard(spark(), spark()));
       expect(plan.cleared, hasLength(49));
+    });
+
+    test('double spark records every struck power once', () {
+      final board = comboBoard(spark(), spark())
+        ..setPiece(const Position(0, 0), beam(BeamOrientation.vertical))
+        ..setPiece(const Position(6, 6), burst());
+
+      final plan = activatePair(resolver, board);
+
+      expect(plan.cleared, hasLength(49));
+      expect(plan.activated, {
+        const Position(2, 2),
+        const Position(2, 3),
+        const Position(0, 0),
+        const Position(6, 6),
+      });
     });
 
     test('Spinner plus special activates the partner without duplicates', () {

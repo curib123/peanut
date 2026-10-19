@@ -32,7 +32,7 @@ class SpecialResolver {
 
     if (firstSpecial == SpecialKind.goldenRecipeSpark &&
         secondSpecial == SpecialKind.goldenRecipeSpark) {
-      return SpecialPlan(cleared: board.positions.toSet(), activated: seeds);
+      return _expand(board, board.positions.toSet(), alreadyActivated: seeds);
     }
     if (firstSpecial == SpecialKind.goldenRecipeSpark ||
         secondSpecial == SpecialKind.goldenRecipeSpark) {
@@ -45,15 +45,12 @@ class SpecialResolver {
     }
     if (firstSpecial == SpecialKind.sugarBeam &&
         secondSpecial == SpecialKind.sugarBeam) {
-      return SpecialPlan(
-        cleared: {
-          ..._row(board, first.row),
-          ..._column(board, first.column),
-          ..._row(board, second.row),
-          ..._column(board, second.column),
-        },
-        activated: seeds,
-      );
+      return _expand(board, {
+        ..._row(board, first.row),
+        ..._column(board, first.column),
+        ..._row(board, second.row),
+        ..._column(board, second.column),
+      }, alreadyActivated: seeds);
     }
     if (_isPair(
       firstSpecial,
@@ -62,17 +59,18 @@ class SpecialResolver {
       SpecialKind.ovenBurst,
     )) {
       final center = firstSpecial == SpecialKind.ovenBurst ? first : second;
-      return SpecialPlan(
-        cleared: _crossBands(board, center, radius: 1),
-        activated: seeds,
+      return _expand(
+        board,
+        _crossBands(board, center, radius: 1),
+        alreadyActivated: seeds,
       );
     }
     if (firstSpecial == SpecialKind.ovenBurst &&
         secondSpecial == SpecialKind.ovenBurst) {
-      return SpecialPlan(
-        cleared: {..._area(board, first, 2), ..._area(board, second, 2)},
-        activated: seeds,
-      );
+      return _expand(board, {
+        ..._area(board, first, 2),
+        ..._area(board, second, 2),
+      }, alreadyActivated: seeds);
     }
     if (firstSpecial == SpecialKind.peanutSpinner ||
         secondSpecial == SpecialKind.peanutSpinner) {
@@ -210,12 +208,20 @@ class SpecialResolver {
         cleared.addAll(_area(board, target, 1));
       }
     }
-    return _expand(board, cleared);
+    // The swapped ingredient determines this spark's footprint. Its stored
+    // ingredient must not add a second, unrelated color clear during expansion.
+    return _expand(board, cleared, alreadyActivated: {spark});
   }
 
-  SpecialPlan _expand(Board board, Set<Position> initial) {
+  SpecialPlan _expand(
+    Board board,
+    Set<Position> initial, {
+    Set<Position> alreadyActivated = const {},
+  }) {
     final cleared = <Position>{...initial};
-    final activated = <Position>{};
+    // Combination sources already supplied their combined footprint. Continue
+    // the chain from other struck powers without replaying the source effects.
+    final activated = <Position>{...alreadyActivated};
     final queue = <Position>[...initial];
     while (queue.isNotEmpty) {
       final position = queue.removeLast();
