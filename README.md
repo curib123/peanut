@@ -45,3 +45,5 @@ python tool/generate_sfx.py
 ```
 
 Read `PLAN.md`, `PROGRESS.md`, `ARCHITECTURE.md`, `GAME_DESIGN.md`, and `THIRD_PARTY_NOTICES.md` before changing a development phase or preparing a distribution build.
+
+The [19 October quality review](docs/QUALITY_REVIEW_2026-10-19.md) records the gameplay fixes, presentation/sound updates, verification results, and remaining device/browser checks. The [screenshot tour](docs/screenshots/README.md) covers 16 states, including live powers, basket goals, time trials, and landscape play.

@@ -152,3 +152,12 @@ Current phase: Phase 13 (completed)
 
 - Windows Developer Mode is disabled; desktop plugin builds may require enabling it. Android and web release checks are unaffected.
 - Local release APKs use the development signing key; store publication must inject a private production signing configuration.
+
+## Quality review — 19 October 2026
+
+- Fixed cascade-time blocker/refill handling, basket support, locked-cell move recovery, special-combination chaining, result lifecycle races, rotation, recipe access, and configured star awards.
+- Added responsive cocoa-and-gold panels, live recipe progress, board objective/layer markers, bounded power VFX, reduced-motion selection, keyboard button activation, and current-level map recovery.
+- Rebuilt all 19 sound effects as short deterministic layered stereo cues and bounded sound startup/failure recovery.
+- Verification: 128 Flutter tests; all 120 campaign sessions through terminal states; 10,000 bounded simulations; no analyzer issues; 73 formatted Dart files; two SFX export tests; 16-state screenshot capture; release web and Android APK builds.
+- Final real-browser playthrough remains unverified after Chromium stalled and isolated Edge startup timed out. No physical Android device was connected.
+- See [the quality review](docs/QUALITY_REVIEW_2026-10-19.md) for evidence and limits. Earlier hashes/counts above are historical snapshots.
