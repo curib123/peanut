@@ -9,6 +9,7 @@ import 'package:flutter/material.dart' as ui;
 
 import '../domain/match3.dart' as domain;
 import 'island_match_game.dart';
+import 'hint_component.dart';
 import 'match_burst_component.dart';
 import 'piece_component.dart';
 import 'polished_sprite_component.dart';
@@ -25,6 +26,9 @@ class BoardComponent extends PositionComponent
   final Map<domain.Position, PieceComponent> _pieces = {};
   final List<PolishedSpriteComponent> _blockerSprites = [];
   final List<ScorePopupComponent> _scorePopups = [];
+  Picture? _surface;
+  final IdleHintController _idleHints = IdleHintController();
+  HintComponent? _hint;
   bool _animating = false;
   Vector2? _pendingSize;
   int _blockerRequest = 0;
@@ -33,6 +37,48 @@ class BoardComponent extends PositionComponent
   Vector2 _dragDelta = Vector2.zero();
 
   double get cellExtent => size.x / _board.columns;
+
+  /// Also called by the pause action, because a paused Flame tree stops updates.
+  void clearHint() {
+    _idleHints.reset();
+    _hint?.removeFromParent();
+    _hint = null;
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (!game.isActive ||
+        game.isInputLocked ||
+        _animating ||
+        _selected != null ||
+        _dragStart != null) {
+      clearHint();
+      return;
+    }
+    if (_hint != null) return;
+    final move = _idleHints.update(
+      dt,
+      board: _board,
+      unavailableCells: {
+        ...blockers.blockingPositions,
+        ...blockers.lockedPositions,
+        if (game.level != null)
+          for (final cell in _board.positions)
+            if (!game.level!.playableCells.contains(cell)) cell,
+      },
+    );
+    if (move == null) return;
+    final hint = HintComponent(
+      move: move,
+      cellExtent: cellExtent,
+      size: size.clone(),
+      reducedMotion: game.reducedMotion,
+      visibleWhen: () => game.isActive && !game.isInputLocked && !_animating,
+    );
+    _hint = hint;
+    add(hint);
+  }
 
   @override
   Future<void> onLoad() async {
@@ -44,30 +90,73 @@ class BoardComponent extends PositionComponent
 
   @override
   void render(Canvas canvas) {
+    if (_surface == null) {
+      final recorder = PictureRecorder();
+      _renderSurface(Canvas(recorder));
+      _surface = recorder.endRecording();
+    }
+    canvas.drawPicture(_surface!);
+    for (final position in game.boardObjectives.cream) {
+      canvas.drawRRect(
+        _cellRect(position),
+        Paint()..color = const Color(0x6687DFD8),
+      );
+    }
+  }
+
+  RRect _cellRect(domain.Position position) {
     final cell = cellExtent;
+    return RRect.fromRectAndRadius(
+      Rect.fromLTWH(
+        position.column * cell + 2,
+        position.row * cell + 2,
+        cell - 4,
+        cell - 4,
+      ),
+      Radius.circular(cell * .2),
+    );
+  }
+
+  void _renderSurface(Canvas canvas) {
     final tray = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.x, size.y),
+      Rect.fromLTWH(-3, -3, size.x + 6, size.y + 9),
       const Radius.circular(24),
     );
-    canvas.drawShadow(Path()..addRRect(tray), const Color(0xCC100A06), 8, true);
+    canvas.drawShadow(Path()..addRRect(tray), const Color(0xB3100E0A), 9, true);
     canvas.drawRRect(
       tray,
       Paint()
         ..shader = const ui.LinearGradient(
           begin: ui.Alignment.topLeft,
           end: ui.Alignment.bottomRight,
-          colors: [Color(0xFFBA8753), Color(0xFF4D281B), Color(0xFFBA8753)],
-          stops: [0, .55, 1],
+          colors: [
+            Color(0xFFF6D799),
+            Color(0xFFBC8047),
+            Color(0xFF5D3423),
+            Color(0xFFB37B43),
+          ],
+          stops: [0, .24, .7, 1],
         ).createShader(tray.outerRect),
     );
     canvas.drawRRect(
       tray,
       Paint()
-        ..color = const Color(0xFFFFDFA1)
+        ..color = const Color(0xFFFFE6AA)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.3,
+        ..strokeWidth = 1.5,
     );
-    final objectives = game.boardObjectives;
+    final inner = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, size.x, size.y),
+      const Radius.circular(21),
+    );
+    canvas.drawRRect(inner, Paint()..color = const Color(0xFF172F31));
+    canvas.drawRRect(
+      inner,
+      Paint()
+        ..color = const Color(0xFF412C22)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
     for (var row = 0; row < _board.rows; row++) {
       for (var column = 0; column < _board.columns; column++) {
         final position = domain.Position(row, column);
@@ -75,33 +164,54 @@ class BoardComponent extends PositionComponent
             !game.level!.playableCells.contains(position)) {
           continue;
         }
-        final rect = RRect.fromRectAndRadius(
-          Rect.fromLTWH(column * cell + 2, row * cell + 2, cell - 4, cell - 4),
-          Radius.circular(cell * .2),
+        final rect = _cellRect(position);
+        canvas.drawRRect(
+          rect.shift(const Offset(0, 1.5)),
+          Paint()..color = const Color(0xBB0B2023),
         );
         canvas.drawRRect(
           rect,
           Paint()
-            ..color = (row + column).isEven
-                ? const Color(0xF02F4547)
-                : const Color(0xF0395152),
+            ..shader = ui.LinearGradient(
+              begin: ui.Alignment.topLeft,
+              end: ui.Alignment.bottomRight,
+              colors: (row + column).isEven
+                  ? const [Color(0xFF466663), Color(0xFF294548)]
+                  : const [Color(0xFF527570), Color(0xFF335254)],
+            ).createShader(rect.outerRect),
         );
         canvas.drawRRect(
           rect,
           Paint()
-            ..color = const Color(0x26FFF1BD)
+            ..color = const Color(0x32D3EFE0)
             ..style = PaintingStyle.stroke
-            ..strokeWidth = .7,
+            ..strokeWidth = .8,
         );
-        if (objectives.cream.contains(position)) {
-          canvas.drawRRect(rect, Paint()..color = const Color(0x6687DFD8));
-        }
+        canvas.drawArc(
+          rect.outerRect.deflate(1),
+          3.35,
+          1.1,
+          false,
+          Paint()
+            ..color = const Color(0x3AEEFFDC)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.2,
+        );
       }
     }
   }
 
   @override
+  void onRemove() {
+    clearHint();
+    _surface?.dispose();
+    _surface = null;
+    super.onRemove();
+  }
+
+  @override
   void onTapUp(TapUpEvent event) {
+    clearHint();
     if (game.isInputLocked) return;
     final tapped = _positionAt(event.localPosition);
     if (tapped == null) return;
@@ -117,6 +227,7 @@ class BoardComponent extends PositionComponent
   @override
   void onDragStart(DragStartEvent event) {
     super.onDragStart(event);
+    clearHint();
     if (game.isInputLocked) return;
     _dragStart = _positionAt(event.localPosition);
     _dragDelta = Vector2.zero();
@@ -153,6 +264,7 @@ class BoardComponent extends PositionComponent
     domain.Position second,
     double duration,
   ) async {
+    clearHint();
     _animating = true;
     try {
       await _animateSwap(first, second, duration);
@@ -181,6 +293,7 @@ class BoardComponent extends PositionComponent
     domain.TurnResolution resolution,
     double duration,
   ) async {
+    clearHint();
     _animating = true;
     try {
       await _animateSwap(first, second, duration);
@@ -239,6 +352,7 @@ class BoardComponent extends PositionComponent
             MatchSparklesComponent(
               origins: cascade.matched.map(_center),
               extent: cellExtent,
+              boardSize: size.clone(),
             ),
           );
         }
@@ -276,6 +390,7 @@ class BoardComponent extends PositionComponent
   }
 
   void _finishAnimation() {
+    clearHint();
     _animating = false;
     final pending = _pendingSize;
     _pendingSize = null;
@@ -355,11 +470,14 @@ class BoardComponent extends PositionComponent
   }
 
   void resizeBoard(Vector2 newSize) {
+    clearHint();
     if (_animating) {
       _pendingSize = newSize.clone();
       return;
     }
     size = newSize;
+    _surface?.dispose();
+    _surface = null;
     _rebuild(_board);
     unawaited(refreshBlockers());
   }
@@ -520,10 +638,16 @@ class BoardComponent extends PositionComponent
 class _BoardMarkers extends PositionComponent {
   _BoardMarkers(this.board) : super(priority: 20);
   final BoardComponent board;
+  final Map<String, ui.TextPainter> _labels = {};
+  double _lastExtent = 0;
 
   @override
   void render(Canvas canvas) {
     final extent = board.cellExtent;
+    if (_lastExtent != extent) {
+      _disposeLabels();
+      _lastExtent = extent;
+    }
     final objectives = board.game.boardObjectives;
     for (final cell in objectives.recipeBaskets) {
       _badge(
@@ -555,18 +679,21 @@ class _BoardMarkers extends PositionComponent {
         extent * .15,
         Paint()..color = const Color(0xF02B201D),
       );
-      final text = ui.TextPainter(
-        text: ui.TextSpan(
-          text: '${entry.value.layers}',
-          style: ui.TextStyle(
-            fontFamily: 'Roboto',
-            color: const Color(0xFFFFE3A0),
-            fontSize: extent * .2,
-            fontWeight: ui.FontWeight.w900,
+      final text = _labels.putIfAbsent(
+        'layers:${entry.value.layers}',
+        () => ui.TextPainter(
+          text: ui.TextSpan(
+            text: '${entry.value.layers}',
+            style: ui.TextStyle(
+              fontFamily: 'Roboto',
+              color: const Color(0xFFFFE3A0),
+              fontSize: extent * .2,
+              fontWeight: ui.FontWeight.w900,
+            ),
           ),
-        ),
-        textDirection: ui.TextDirection.ltr,
-      )..layout();
+          textDirection: ui.TextDirection.ltr,
+        )..layout(),
+      );
       text.paint(canvas, origin - Offset(text.width / 2, text.height / 2));
     }
   }
@@ -595,18 +722,34 @@ class _BoardMarkers extends PositionComponent {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.2,
     );
-    final text = ui.TextPainter(
-      text: ui.TextSpan(
-        text: String.fromCharCode(icon.codePoint),
-        style: ui.TextStyle(
-          fontFamily: icon.fontFamily,
-          package: icon.fontPackage,
-          color: color,
-          fontSize: extent * .31,
+    final text = _labels.putIfAbsent(
+      'icon:${icon.codePoint}:${color.toARGB32()}',
+      () => ui.TextPainter(
+        text: ui.TextSpan(
+          text: String.fromCharCode(icon.codePoint),
+          style: ui.TextStyle(
+            fontFamily: icon.fontFamily,
+            package: icon.fontPackage,
+            color: color,
+            fontSize: extent * .31,
+          ),
         ),
-      ),
-      textDirection: ui.TextDirection.ltr,
-    )..layout();
+        textDirection: ui.TextDirection.ltr,
+      )..layout(),
+    );
     text.paint(canvas, origin - Offset(text.width / 2, text.height / 2));
+  }
+
+  void _disposeLabels() {
+    for (final label in _labels.values) {
+      label.dispose();
+    }
+    _labels.clear();
+  }
+
+  @override
+  void onRemove() {
+    _disposeLabels();
+    super.onRemove();
   }
 }

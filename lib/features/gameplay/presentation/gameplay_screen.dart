@@ -100,6 +100,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen>
       final game = _game;
       if (game == null) return;
       if (_paused) {
+        if (game.isActive) game.boardComponent.clearHint();
         game.pauseEngine();
       } else {
         game.resumeEngine();
