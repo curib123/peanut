@@ -639,12 +639,22 @@ class _LevelNode extends StatelessWidget {
                           fontSize: 22,
                         ),
                       ),
-                      Text(
-                        '${List.filled(stars, '*').join()}${List.filled(3 - stars, '-').join()}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                          height: .9,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(
+                          3,
+                          (index) => Icon(
+                            index < stars
+                                ? Icons.star_rounded
+                                : Icons.star_outline_rounded,
+                            size: 14,
+                            color: index < stars
+                                ? const Color(0xFFFFF0A6)
+                                : const Color(0xB3FFFFFF),
+                            shadows: const [
+                              Shadow(color: Color(0x88572B13), blurRadius: 2),
+                            ],
+                          ),
                         ),
                       ),
                     ],
