@@ -134,17 +134,30 @@ class BoardObjectives {
     );
   }
 
-  int settleBaskets({required int rows, required BlockerGrid blockers}) {
+  int settleBaskets({
+    required int rows,
+    required BlockerGrid blockers,
+    Set<Position> clearedCells = const {},
+    Set<Position> inaccessibleCells = const {},
+  }) {
     var dropped = 0;
     final ordered = recipeBaskets.toList()
       ..sort((a, b) => b.row.compareTo(a.row));
     recipeBaskets.clear();
     for (final basket in ordered) {
-      var target = basket;
-      while (target.row + 1 < rows &&
-          !blockers.blocksCell(Position(target.row + 1, target.column))) {
-        target = Position(target.row + 1, target.column);
+      // Baskets are overlays: each cleared supporting cell in their gravity
+      // segment lets them descend one row. Intact pieces still support them.
+      var fall = 0;
+      for (var row = basket.row + 1; row < rows; row++) {
+        final below = Position(row, basket.column);
+        if (blockers.blocksCell(below) ||
+            inaccessibleCells.contains(below) ||
+            recipeBaskets.contains(below)) {
+          break;
+        }
+        if (clearedCells.contains(below)) fall++;
       }
+      final target = Position(basket.row + fall, basket.column);
       if (target.row == rows - 1) {
         dropped++;
       } else {

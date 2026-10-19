@@ -98,7 +98,17 @@ void main() {
       const Position(2, 2),
       const Position(3, 2),
     });
-    final dropped = objectives.settleBaskets(rows: 4, blockers: blockers);
+    final dropped = objectives.settleBaskets(
+      rows: 4,
+      blockers: blockers,
+      clearedCells: {
+        const Position(1, 0),
+        const Position(2, 0),
+        const Position(3, 0),
+        const Position(1, 1),
+        const Position(3, 1),
+      },
+    );
 
     expect(impact.creamSpread, 1);
     expect(impact.ovensLit, 1);

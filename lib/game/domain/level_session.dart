@@ -47,6 +47,14 @@ class LevelSession {
     for (final position in this.inaccessibleCells) {
       if (board.contains(position)) board.setPiece(position, null);
     }
+    turnEngine.ensurePlayable(
+      board,
+      unavailableCells: {
+        ...this.blockers.blockingPositions,
+        ...this.blockers.lockedPositions,
+        ...this.inaccessibleCells,
+      },
+    );
   }
 
   final TurnEngine turnEngine;
@@ -81,11 +89,53 @@ class LevelSession {
       return _invalid();
     }
 
+    var creamSpread = 0;
+    var ovensLit = 0;
+    var droppedBaskets = 0;
+    final removedBlockers = <BlockerKind, int>{};
+    final blockedCells = {...blockers.blockingPositions, ...inaccessibleCells};
+    final lockedCells = {...blockers.lockedPositions};
     final resolution = turnEngine.resolveSwap(
       board,
       first,
       second,
-      blockedCells: {...blockers.blockingPositions, ...inaccessibleCells},
+      blockedCells: blockedCells,
+      lockedCells: lockedCells,
+      onClear: (beforeClear, plan) {
+        final previouslyBlocked = blockers.blockingPositions;
+        final impact = blockers.resolveClear(
+          beforeClear,
+          plan.cleared,
+          isSpecialClear: plan.activated.isNotEmpty,
+        );
+        for (final entry in impact.removed.entries) {
+          removedBlockers.update(
+            entry.key,
+            (count) => count + entry.value,
+            ifAbsent: () => entry.value,
+          );
+        }
+        blockedCells
+          ..clear()
+          ..addAll(blockers.blockingPositions)
+          ..addAll(inaccessibleCells);
+        lockedCells
+          ..clear()
+          ..addAll(blockers.lockedPositions);
+        final objectiveImpact = boardObjectives.resolveClear(plan.cleared);
+        creamSpread += objectiveImpact.creamSpread;
+        ovensLit += objectiveImpact.ovensLit;
+        droppedBaskets += boardObjectives.settleBaskets(
+          rows: board.rows,
+          blockers: blockers,
+          clearedCells: {
+            for (final cell in plan.cleared)
+              if (beforeClear.pieceAt(cell) != null) cell,
+            ...previouslyBlocked.difference(blockers.blockingPositions),
+          },
+          inaccessibleCells: inaccessibleCells,
+        );
+      },
     );
     if (!resolution.isValid) {
       return LevelTurnResult(
@@ -99,10 +149,7 @@ class LevelSession {
 
     movesRemaining--;
     var turnScore = 0;
-    var creamSpread = 0;
-    var ovensLit = 0;
     final collected = <PieceKind, int>{};
-    final removedBlockers = <BlockerKind, int>{};
 
     for (var index = 0; index < resolution.cascades.length; index++) {
       final frame = resolution.cascades[index];
@@ -114,27 +161,8 @@ class LevelSession {
           collected.update(piece.kind, (count) => count + 1, ifAbsent: () => 1);
         }
       }
-      final impact = blockers.resolveClear(
-        frame.beforeClear,
-        frame.matched,
-        isSpecialClear: frame.activatedSpecials.isNotEmpty,
-      );
-      for (final entry in impact.removed.entries) {
-        removedBlockers.update(
-          entry.key,
-          (count) => count + entry.value,
-          ifAbsent: () => entry.value,
-        );
-      }
-      final objectiveImpact = boardObjectives.resolveClear(frame.matched);
-      creamSpread += objectiveImpact.creamSpread;
-      ovensLit += objectiveImpact.ovensLit;
     }
 
-    final droppedBaskets = boardObjectives.settleBaskets(
-      rows: board.rows,
-      blockers: blockers,
-    );
     final chocolateSpread = blockers.endTurnChocolateSpread(board);
     score += turnScore;
     final progress = TurnProgress(

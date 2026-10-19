@@ -61,16 +61,34 @@ class TurnEngine {
   final MoveValidator moveValidator;
   final SpecialResolver specialResolver;
 
+  bool ensurePlayable(
+    Board board, {
+    Set<Position> unavailableCells = const {},
+  }) {
+    if (moveValidator.hasValidMove(board, unavailableCells: unavailableCells)) {
+      return false;
+    }
+    shuffler.shuffle(board, unavailableCells: unavailableCells);
+    return true;
+  }
+
   TurnResolution resolveSwap(
     Board board,
     Position first,
     Position second, {
     int maxCascades = 100,
     Set<Position> blockedCells = const {},
+    Set<Position> lockedCells = const {},
+    // Called synchronously before gravity so removed blockers open immediately.
+    // The owner may update blockedCells/lockedCells for subsequent cascades.
+    void Function(Board beforeClear, SpecialPlan plan)? onClear,
   }) {
-    if (blockedCells.contains(first) ||
-        blockedCells.contains(second) ||
-        !moveValidator.isValidSwap(board, first, second)) {
+    if (!moveValidator.isValidSwap(
+      board,
+      first,
+      second,
+      unavailableCells: {...blockedCells, ...lockedCells},
+    )) {
       return TurnResolution.invalid(board: board);
     }
 
@@ -102,6 +120,7 @@ class TurnEngine {
         board.setPiece(creation.key, creation.value);
       }
       final afterRemoval = board.copy();
+      onClear?.call(beforeClear, plan);
       resolver.applyGravity(board, blocked: blockedCells);
       final afterGravity = board.copy();
       resolver.refill(board, blocked: blockedCells);
@@ -120,11 +139,10 @@ class TurnEngine {
       throw StateError('Cascade limit of $maxCascades exceeded.');
     }
 
-    var wasShuffled = false;
-    if (!moveValidator.hasValidMove(board)) {
-      shuffler.shuffle(board);
-      wasShuffled = true;
-    }
+    final wasShuffled = ensurePlayable(
+      board,
+      unavailableCells: {...blockedCells, ...lockedCells},
+    );
     return TurnResolution.valid(
       afterSwap: afterSwap,
       cascades: List.unmodifiable(cascades),

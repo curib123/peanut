@@ -72,6 +72,11 @@ class BlockerGrid {
       if (blocksCell(position)) position,
   };
 
+  Set<Position> get lockedPositions => {
+    for (final position in _blockers.keys)
+      if (locksSwap(position)) position,
+  };
+
   BlockerState? at(Position position) => _blockers[position];
 
   bool blocksCell(Position position) => switch (_blockers[position]?.kind) {
