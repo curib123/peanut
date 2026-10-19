@@ -12,6 +12,7 @@ import 'package:puff_and_crunch/core/theme/app_theme.dart';
 import 'package:puff_and_crunch/features/gameplay/presentation/gameplay_screen.dart';
 import 'package:puff_and_crunch/game/domain/match3.dart';
 import 'package:puff_and_crunch/game/presentation/island_match_game.dart';
+import 'package:puff_and_crunch/services/audio/game_audio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -136,7 +137,9 @@ void main() {
       score: 11200,
       status: LevelStatus.won,
     );
-    await tester.pump(const Duration(milliseconds: 600));
+    for (var frame = 0; frame < 60; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../docs/screenshots/07-victory.png'),
@@ -165,15 +168,49 @@ void main() {
       matchesGoldenFile('../docs/screenshots/10-sugar-harbor.png'),
     );
 
-    await _pumpSpecialShowcase(tester);
+    final showcase = await _pumpSpecialShowcase(tester);
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('../docs/screenshots/11-special-pieces.png'),
     );
+    var settled = false;
+    final powerTurn = showcase.attemptSwap(
+      const Position(0, 0),
+      const Position(0, 1),
+    );
+    powerTurn.then((_) => settled = true);
+    for (var frame = 0; frame < 16; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../docs/screenshots/13-power-activation.png'),
+    );
+    for (var frame = 0; frame < 400 && !settled; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    expect(settled, isTrue);
+    expect(await powerTurn, isTrue);
+    await _pumpGameplay(tester, level: 41);
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../docs/screenshots/14-basket-goals.png'),
+    );
+    await _pumpGameplay(tester, level: 120);
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../docs/screenshots/15-time-trial.png'),
+    );
+    await tester.binding.setSurfaceSize(const Size(844, 390));
+    await _pumpGameplay(tester, level: 11);
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('../docs/screenshots/16-landscape-gameplay.png'),
+    );
   });
 }
 
-Future<void> _pumpSpecialShowcase(WidgetTester tester) async {
+Future<IslandMatchGame> _pumpSpecialShowcase(WidgetTester tester) async {
   final board =
       Board([
           for (var row = 0; row < 6; row++)
@@ -215,7 +252,12 @@ Future<void> _pumpSpecialShowcase(WidgetTester tester) async {
           const Position(0, 4),
           const Piece(PieceKind.peanut, specialKind: SpecialKind.peanutKisses),
         );
-  final game = IslandMatchGame(initialBoard: board, reducedMotion: true);
+  final game = IslandMatchGame(
+    initialBoard: board,
+    reducedMotion: false,
+    audio: GameAudioService(player: (_) async {}),
+    haptics: GameHapticsService(enabled: false),
+  );
   await tester.pumpWidget(
     MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -238,6 +280,7 @@ Future<void> _pumpSpecialShowcase(WidgetTester tester) async {
   for (var frame = 0; frame < 60; frame++) {
     await tester.pump(const Duration(milliseconds: 16));
   }
+  return game;
 }
 
 Future<void> _pumpGameplay(WidgetTester tester, {required int level}) async {
