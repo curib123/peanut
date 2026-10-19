@@ -26,14 +26,7 @@ class PieceComponent extends PositionComponent {
     _isSelected = value;
     removeWhere((component) => component is ScaleEffect);
     scale = Vector2.all(1);
-    if (value && !reducedMotion) {
-      add(
-        ScaleEffect.to(
-          Vector2.all(1.09),
-          EffectController(duration: .32, reverseDuration: .32, infinite: true),
-        ),
-      );
-    }
+    priority = value ? 5 : 0;
   }
 
   static const _fallbackColors = {
@@ -66,6 +59,7 @@ class PieceComponent extends PositionComponent {
     super.render(canvas);
     final center = Offset(size.x / 2, size.y / 2);
     final radius = size.x * .39;
+    final specialColor = _powerColor;
     if (_isSelected || piece.isSpecial) {
       final bounds = Rect.fromLTWH(
         size.x * .03,
@@ -75,7 +69,10 @@ class PieceComponent extends PositionComponent {
       );
       canvas.drawRRect(
         RRect.fromRectAndRadius(bounds, Radius.circular(size.x * .22)),
-        Paint()..color = Color(_isSelected ? 0x66FFE195 : 0x22FFCB65),
+        Paint()
+          ..color = _isSelected
+              ? const Color(0x44FFE195)
+              : specialColor!.withValues(alpha: .14),
       );
       if (_isSelected) {
         canvas.drawRRect(
@@ -83,7 +80,36 @@ class PieceComponent extends PositionComponent {
           Paint()
             ..color = const Color(0xFFFFE3A0)
             ..style = PaintingStyle.stroke
-            ..strokeWidth = 2.5,
+            ..strokeWidth = 2.3,
+        );
+        final pulse = reducedMotion ? 0.0 : math.sin(_elapsed * 5) * .5 + .5;
+        final inset = size.x * (.065 + pulse * .012);
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            bounds.deflate(inset),
+            Radius.circular(size.x * .17),
+          ),
+          Paint()
+            ..color = const Color(0xFFFFF6CE).withValues(alpha: .5 + pulse * .3)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = .8,
+        );
+        _glint(canvas, Offset(size.x * .12, size.y * .12), size.x * .075, 1);
+      }
+    }
+    if (specialColor != null) {
+      final phase = reducedMotion ? 0.0 : _elapsed * .65;
+      for (var i = 0; i < 3; i++) {
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: size.x * .405),
+          phase + i * math.pi * 2 / 3,
+          math.pi * .38,
+          false,
+          Paint()
+            ..color = specialColor.withValues(alpha: .65)
+            ..style = PaintingStyle.stroke
+            ..strokeCap = StrokeCap.round
+            ..strokeWidth = size.x * .023,
         );
       }
     }
@@ -93,55 +119,81 @@ class PieceComponent extends PositionComponent {
         width: size.x * .58,
         height: size.x * .13,
       ),
-      Paint()..color = const Color(0x36000000),
+      Paint()..color = const Color(0x4D08191B),
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: center + Offset(0, size.x * .33),
+        width: size.x * .39,
+        height: size.x * .06,
+      ),
+      Paint()..color = const Color(0x4A061315),
     );
     final sprite = _sprite;
     if (sprite != null) {
       final phase = math.sin(_elapsed * 2.35 + piece.kind.id.hashCode % 17);
       final bob = reducedMotion ? 0.0 : phase * size.x * .022;
       final breathe = reducedMotion ? 1.0 : 1 + phase * .014;
-      final bounds = Rect.fromLTWH(0, 0, size.x, size.y);
       canvas.save();
       canvas.translate(size.x / 2, size.y / 2 + bob);
       canvas.scale(breathe, breathe);
       canvas.translate(-size.x / 2, -size.y / 2);
       final sweep = (_elapsed + (piece.kind.id.hashCode % 11) * .37) % 7;
-      final showShine = !reducedMotion && sweep < .85;
-      if (showShine) canvas.saveLayer(bounds, Paint());
       sprite.render(
         canvas,
         position: Vector2.all(size.x * .03),
         size: Vector2.all(size.x * .94),
       );
-      if (showShine) {
-        canvas.drawRect(
-          bounds,
-          Paint()
-            ..shader = LinearGradient(
-              begin: Alignment(-1.5 + sweep * 3.2, -1),
-              end: Alignment(-.7 + sweep * 3.2, 1),
-              colors: const [
-                Color(0x00FFFFFF),
-                Color(0x99FFFFFF),
-                Color(0x00FFFFFF),
-              ],
-              stops: const [.4, .5, .6],
-            ).createShader(bounds)
-            ..blendMode = BlendMode.srcATop,
+      if (!reducedMotion && sweep < .85) {
+        _glint(
+          canvas,
+          Offset(size.x * .68, size.y * .26),
+          size.x * .055,
+          math.sin(sweep / .85 * math.pi),
         );
       }
-      if (showShine) canvas.restore();
       canvas.restore();
     } else {
+      final color = _fallbackColors[piece.kind.id] ?? const Color(0xFFE968A8);
+      final bounds = Rect.fromCircle(center: center, radius: radius);
       canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCircle(center: center, radius: radius),
-          Radius.circular(size.x * .22),
-        ),
+        RRect.fromRectAndRadius(bounds, Radius.circular(size.x * .22)),
         Paint()
-          ..color = _fallbackColors[piece.kind.id] ?? const Color(0xFFE968A8),
+          ..shader = LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color.lerp(color, const Color(0xFFFFFFFF), .3)!, color],
+          ).createShader(bounds),
       );
+      _glint(canvas, Offset(size.x * .32, size.y * .28), size.x * .07, .75);
     }
+  }
+
+  Color? get _powerColor => switch (piece.specialKind) {
+    SpecialKind.sugarBeam => const Color(0xFF7EECED),
+    SpecialKind.goldenRecipeSpark => const Color(0xFFFFD271),
+    SpecialKind.ovenBurst => const Color(0xFFFF934F),
+    SpecialKind.peanutSpinner => const Color(0xFFC4A2FF),
+    SpecialKind.peanutKisses => const Color(0xFFFF9FBE),
+    null => null,
+  };
+
+  void _glint(Canvas canvas, Offset center, double radius, double alpha) {
+    final paint = Paint()
+      ..color = const Color(0xFFFFF9DE).withValues(alpha: alpha)
+      ..strokeWidth = size.x * .02
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+      center - Offset(radius, 0),
+      center + Offset(radius, 0),
+      paint,
+    );
+    canvas.drawLine(
+      center - Offset(0, radius),
+      center + Offset(0, radius),
+      paint,
+    );
+    canvas.drawCircle(center, radius * .3, paint);
   }
 
   String _spritePath() => switch (piece.specialKind) {
