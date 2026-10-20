@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/android-beta-release.yml'
       - 'test/presentation/level_map_navigation_test.dart'
+      - 'test/presentation/enhanced_home_recipe_test.dart'
   workflow_dispatch:
 
 permissions:
