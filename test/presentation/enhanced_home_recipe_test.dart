@@ -147,11 +147,14 @@ Future<void> _show(
     await tester.pump(const Duration(milliseconds: 100));
     if (ready.evaluate().isNotEmpty) break;
   }
-  expect(
-    ready,
-    findsOneWidget,
-    reason: 'Wait for bundled recipe data before settling animations.',
-  );
+  if (ready.evaluate().isEmpty) {
+    final screenTexts = tester
+        .widgetList<Text>(find.byType(Text, skipOffstage: false))
+        .map((widget) => widget.data)
+        .whereType<String>()
+        .toList();
+    fail('Recipe preview unavailable. Texts: $screenTexts');
+  }
   await tester.pumpAndSettle();
 }
 
