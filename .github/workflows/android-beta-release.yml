@@ -1,0 +1,104 @@
+name: Android beta release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/android-beta-release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: puff-and-crunch-android-beta
+  cancel-in-progress: false
+
+jobs:
+  build-test-and-release:
+    name: Validate and publish Android test APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out game source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.0'
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Check Dart formatting
+        run: dart format --output=none --set-exit-if-changed lib test tool
+
+      - name: Analyze game code
+        run: flutter analyze --no-pub
+
+      - name: Run Flutter tests
+        run: flutter test --no-pub
+
+      - name: Validate the complete 120-level campaign
+        run: dart run tool/validate_levels.dart --simulations=10000
+
+      - name: Fit Gradle memory to GitHub runner
+        run: sed -i 's/-Xmx8G/-Xmx4G/; s/-XX:MaxMetaspaceSize=4G/-XX:MaxMetaspaceSize=1G/' android/gradle.properties
+
+      - name: Build Android release APK (development-signed)
+        run: flutter build apk --release --no-pub
+
+      - name: Prepare APK, SHA-256, and release notes
+        shell: bash
+        run: |
+          mkdir -p release-assets
+          cp build/app/outputs/flutter-apk/app-release.apk release-assets/Puff-and-Crunch-v1.0.0-beta.1-android.apk
+          (
+            cd release-assets
+            sha256sum Puff-and-Crunch-v1.0.0-beta.1-android.apk > SHA256SUMS.txt
+          )
+          cat > release-notes.md <<'NOTES'
+          # Puff & Crunch: Island Match — Android Testing Release
+
+          Original offline Flutter/Flame tropical-bakery match-3 adventure.
+
+          ## Included
+          - 120 playable levels across six distinct 20-stage island worlds
+          - Time trials, seven objective types, six blocker families, and five special recipe powers
+          - Characterful original artwork, animated cascades, music and sound effects
+          - Offline saved progress, accessibility preferences, and responsive portrait/landscape gameplay
+
+          ## Validation
+          This APK is published only after GitHub Actions passes source formatting, Flutter static analysis, Flutter tests, 120-level/10,000-simulation validation, and the Android APK build. The SHA256SUMS.txt attachment enables download integrity checks.
+
+          ## Important
+          **Internal Android testing build.** The APK is signed with the project's development key, not a private production signing key. It is **not** a Google Play / production-store distribution artifact. Physical-device playtesting, sound checks and real-user difficulty assessment remain recommended before a production release.
+
+          Source: https://github.com/curib123/peanut
+          NOTES
+
+      - name: Publish GitHub prerelease with verified APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if gh release view v1.0.0-beta.1 >/dev/null 2>&1; then
+            echo 'Release v1.0.0-beta.1 already exists; refusing to overwrite it.'
+            exit 1
+          fi
+          gh release create v1.0.0-beta.1 \
+            release-assets/Puff-and-Crunch-v1.0.0-beta.1-android.apk \
+            release-assets/SHA256SUMS.txt \
+            --target "$GITHUB_SHA" \
+            --title "Puff & Crunch: Island Match — v1.0.0-beta.1" \
+            --notes-file release-notes.md \
+            --prerelease
