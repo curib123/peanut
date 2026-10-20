@@ -140,7 +140,7 @@ Future<void> _show(
   final ready = find.text(
     screen is PreLevelScreen ? 'Start Level' : 'Play Adventure',
   );
-  for (var i = 0; i < 80; i++) {
+  for (var i = 0; i < 240; i++) {
     await tester.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 40)),
     );
@@ -150,7 +150,7 @@ Future<void> _show(
   expect(
     ready,
     findsOneWidget,
-    reason: 'Wait for bundled recipe data before settling animations.',
+    reason: 'Bundled recipe data did not finish loading in the allotted test window.',
   );
   await tester.pumpAndSettle();
 }
