@@ -10,18 +10,42 @@ import '../../../services/content/bundled_level_repository.dart';
 import '../../../services/content/world_presentation_catalog.dart';
 import '../../progress/application/progress_controller.dart';
 
-class PreLevelScreen extends ConsumerWidget {
+class PreLevelScreen extends ConsumerStatefulWidget {
   const PreLevelScreen({super.key, required this.level});
 
   final int level;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PreLevelScreen> createState() => _PreLevelScreenState();
+}
+
+class _PreLevelScreenState extends ConsumerState<PreLevelScreen> {
+  late Future<LevelDefinition> _levelFuture;
+  late final Future<WorldPresentationCatalog> _worldFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _levelFuture = const BundledLevelRepository().load(widget.level);
+    _worldFuture = WorldPresentationCatalog.load();
+  }
+
+  @override
+  void didUpdateWidget(covariant PreLevelScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.level != widget.level) {
+      _levelFuture = const BundledLevelRepository().load(widget.level);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final level = widget.level;
     final save = ref.watch(progressControllerProvider).data;
     return Scaffold(
       appBar: AppBar(title: Text('Level $level')),
       body: FutureBuilder<LevelDefinition>(
-        future: const BundledLevelRepository().load(level),
+        future: _levelFuture,
         builder: (context, snapshot) {
           final definition = snapshot.data;
           if (snapshot.hasError) {
@@ -33,7 +57,7 @@ class PreLevelScreen extends ConsumerWidget {
             return const Center(child: CircularProgressIndicator());
           }
           return FutureBuilder<WorldPresentationCatalog>(
-            future: WorldPresentationCatalog.load(),
+            future: _worldFuture,
             builder: (context, worldSnapshot) {
               final world = worldSnapshot.data?.world(definition.worldId);
               return Stack(
