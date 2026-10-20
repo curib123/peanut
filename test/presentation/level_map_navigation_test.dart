@@ -114,10 +114,7 @@ void main() {
       expect(node.label, 'Level 1, 0 stars');
       expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
       final locked = tester.getSemantics(find.byKey(const Key('level-2')));
-      expect(
-        locked.getSemanticsData().flagsCollection.isEnabled,
-        isFalse,
-      );
+      expect(locked.getSemanticsData().flagsCollection.isEnabled, isFalse);
       expect(locked.getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
       handle.dispose();
     },
