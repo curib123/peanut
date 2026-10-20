@@ -150,7 +150,7 @@ Future<void> _show(
   expect(
     ready,
     findsOneWidget,
-    reason: 'Bundled recipe data did not finish loading in the allotted test window.',
+    reason: 'Wait for bundled recipe data before settling animations.',
   );
   await tester.pumpAndSettle();
 }
